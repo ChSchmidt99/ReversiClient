@@ -1,5 +1,6 @@
 #include "../include/connector.h"
 #include "../include/utilities.h"
+#include "../include/servermessage.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <errno.h>
@@ -9,7 +10,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define BUFFSIZE 256
+
+//TODO: Maybe split up in network manager and protocol manager
 
 struct _Connector {
     char* hostname;
@@ -25,7 +29,7 @@ Connector* newConnector(const char* hostname, const char* port) {
     return connector;
 }
 
-void deleteConnector(Connector* connector) {
+void freeConnector(Connector* connector) {
     free(connector->hostname);
     free(connector->port);
     free(connector);
@@ -72,19 +76,41 @@ void disconnectFromServer(Connector* connector){
     connector->socket = -1;
 }
 
+void getServerGreeting(int socket){
+    char buffer[BUFFSIZE];
+    ssize_t readSize = read(socket, buffer, BUFFSIZE);
+    if (readSize < 0)
+        die("Failed to read from socket");
+
+    ServerMessage* message = parseServerVersion(buffer);
+    if (message->type == Error)
+        die(message->message);
+
+    printServerMessage(message);
+    freeServerMessage(message);
+}
+
+void sendClientVersion(int socket){
+    //TODO: Add Version number to #define
+    char buffer[] = "VERSION 2.0\n";
+    write(socket, buffer, strlen(buffer));
+}
+
+void getVersionResponse(int socket){
+    char buffer[BUFFSIZE];
+    ssize_t readSize = read(socket, buffer, BUFFSIZE);
+    if (readSize < 0)
+        die("Failed to read from socket");
+
+    //TODO: Implement me
+    printf("%s\n",buffer);
+}
+
 void initiateProlog(Connector *connector) {
     if (connector->socket == -1) 
         die("Connector not connected to server!");
-        
 
-    char buffer[BUFFSIZE];
-    ssize_t readSize = read(connector->socket, buffer, BUFFSIZE);
-    if (readSize < 0)
-        die("Failed to read from socket");
-        
-
-    printf("%s", buffer);
-
-    //TODO: Implement Me!
-
+    getServerGreeting(connector->socket);
+    sendClientVersion(connector->socket);
+    getVersionResponse(connector->socket);
 }

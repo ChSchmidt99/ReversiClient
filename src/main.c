@@ -18,6 +18,6 @@ int main(int argc, char *argv[]) {
     connectToServer(connector);
     initiateProlog(connector);
     disconnectFromServer(connector);
-    deleteConnector(connector);
+    freeConnector(connector);
     return EXIT_SUCCESS;
 }
