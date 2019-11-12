@@ -14,3 +14,11 @@ char* copyStringToNewMemoryAddr(const char* str){
     strcpy(newString,str);
     return newString;
 }
+
+char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char* divider){
+    char* out = malloc(sizeof(char) * (strlen(str1) + strlen(str2) + strlen(divider)));
+    strcat(out, str1);
+    strcat(out, divider);
+    strcat(out, str2);
+    return out;
+}

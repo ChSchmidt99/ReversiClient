@@ -1,16 +1,11 @@
 #include <stdio.h>
 #include "../include/minunit.h"
+#include "./test_utilities.c"
  
  int tests_run = 0;
 
- static char * exampleTest() {
-     mu_assert("Should Be True",  1 == 1);
-     mu_assert("Should Be False", 1 != 2);
-     return 0;
- }
-
  static char * all_tests() {
-     mu_run_test(exampleTest);
+     mu_run_test_no_count(utilities_tests);
      return 0;
  }
  

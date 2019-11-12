@@ -24,7 +24,6 @@ typedef struct _ServerMessage {
     void* data;
 } ServerMessage;
 
+ServerMessage* newServerMessage(ServerMessageType type, ServerMessageCommand command, char* message, void* data);
 void freeServerMessage(ServerMessage* serverMessage);
 void printServerMessage(ServerMessage* serverMessage);
-
-ServerMessage* parseServerVersion(char* data);

@@ -1,23 +1,28 @@
 #include "../include/optionreader.h"
-#include "../include/connector.h"
+#include "../include/connection.h"
+#include "../include/prolog.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 #define GAMEKINDNAME "Reversi"
 #define PORTNUMBER "1357"
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
+#define VERSION_NUMBER "2.0"
 
 int main(int argc, char *argv[]) {
-    char* GameId = readGameID(argc,argv);
-    if (GameId == NULL) {
+    char* gameId = readGameID(argc,argv);
+    if (gameId == NULL) {
         printf("GameId must be set!\n");
         return EXIT_FAILURE;
     }
-    char* PlayerNumberPreference = readPreferencedPlayerNumber(argc,argv);
-    Connector* connector = newConnector(HOSTNAME,PORTNUMBER);
-    connectToServer(connector);
-    initiateProlog(connector);
-    disconnectFromServer(connector);
-    freeConnector(connector);
+    char* playerPreference = readPreferencedPlayerNumber(argc,argv);
+    
+    Connection* connection = newConnection(HOSTNAME,PORTNUMBER);
+    connectToServer(connection);
+    initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
+    free(gameId);
+    free(playerPreference);
+    disconnectFromServer(connection);
+    freeConnection(connection);
     return EXIT_SUCCESS;
 }
