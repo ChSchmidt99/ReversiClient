@@ -1,12 +1,13 @@
 #include <stdio.h>
 
 #include "../include/prolog.h"
+#include "../include/servermessage.h"
 
 void printAndFree(void* message);
 
 //TODO: Splitup and clean function
 void initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
-    char* message = getServerGreeting(connection);
+    ServerMessage* message = getServerGreeting(connection);
     printAndFree(message);
 
     sendClientVersion(connection, version);
@@ -33,6 +34,6 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
 }
 
 void printAndFree(void* message){
-    printf("%s",(char*) message);
-    free(message);
+    printServerMessage(message);
+    freeServerMessage(message);
 }

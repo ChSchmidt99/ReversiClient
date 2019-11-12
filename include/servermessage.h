@@ -1,3 +1,5 @@
+#ifndef SERVERMESSAGE_H
+#define SERVERMESSAGE_H
 
 typedef enum _ServerMessageStage {
     Error = 0,
@@ -6,24 +8,19 @@ typedef enum _ServerMessageStage {
     Spielzug = 3
 } ServerMessageType;
 
-typedef enum _ServerMessageCommand {
-    Unknown = 0,
-    AcceptingConnections = 1,
-    VersionAccepted = 2,
-    PlayingGameKind = 3,
-    GameName = 4,
-    PlayerMeta = 5,
-    PlayerCount = 6,
-    OtherPlayer = 7
-} ServerMessageCommand;
 
 typedef struct _ServerMessage {
     ServerMessageType type;
-    ServerMessageCommand command;
+    char* clearText;
     char* message;
     void* data;
 } ServerMessage;
 
-ServerMessage* newServerMessage(ServerMessageType type, ServerMessageCommand command, char* message, void* data);
+ServerMessage* newServerMessage(ServerMessageType type, char* message, char* clearText, void* data);
 void freeServerMessage(ServerMessage* serverMessage);
+
+//TODO: Implement Me
+ServerMessage* parseServerMessage(char* message);
 void printServerMessage(ServerMessage* serverMessage);
+
+#endif

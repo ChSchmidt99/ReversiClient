@@ -1,3 +1,7 @@
+#ifndef LIST_H
+#define LIST_H
+
+
 #include<stdlib.h>
 
 typedef struct List_t List;
@@ -11,3 +15,4 @@ void removeListItem(List* list, void* data);
 void* getAtIndex(List* list, int i);
 void iterateOverList(List* list, void(*handler)(void* data));
 size_t getLength(List* list);
+#endif

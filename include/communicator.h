@@ -1,16 +1,22 @@
+#ifndef COMMUNICATOR_H
+#define COMMUNICATOR_H
+
 #include "./connection.h"
+#include "./servermessage.h"
 #include "./list.h"
 
 //TODO: Maybe use communicator struct instead of connection
-char*  getServerGreeting(Connection* connection);
-char*  getVersionResponse(Connection* connection);
-char*  getGameKind(Connection* connection);
-char*  getGameName(Connection* connection);
-char*  getPlayerMeta(Connection* connection);
+ServerMessage* getServerGreeting(Connection* connection);
+ServerMessage* getVersionResponse(Connection* connection);
+ServerMessage* getGameKind(Connection* connection);
+ServerMessage* getGameName(Connection* connection);
+ServerMessage* getPlayerMeta(Connection* connection);
 
-// A char* List
+// A ServerMessage* List
 List* getOtherPlayers(Connection* connection);
 
 void sendClientVersion(Connection* connection, const char* version);
 void sendGameId(Connection* connection, const char* gameID);
 void sendPlayerPreference(Connection* connection, const char* preference);
+
+#endif 

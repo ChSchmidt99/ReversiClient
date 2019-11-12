@@ -36,6 +36,6 @@ $(BUILD_DIR)/$(PROG_MAINO): $(PROG_MAIN)
 .PHONY: clean
 
 clean:
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR) 
 
 MKDIR_P ?= mkdir -p

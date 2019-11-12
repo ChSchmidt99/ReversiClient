@@ -10,28 +10,28 @@
 #define GAMEID "ID"
 #define PLAYERPREFERENCE "PLAYER"
 
-//TODO: Maybe Wrap responses in ServerMessageType
+//TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
 bool isEndPlayers(char* message);
 
-char*  getServerGreeting(Connection* connection){
-    return readServerMessage(connection);
+ServerMessage* getServerGreeting(Connection* connection){
+    return parseServerMessage(readServerMessage(connection));
 }
 
-char*  getVersionResponse(Connection* connection){
-    return readServerMessage(connection);
+ServerMessage* getVersionResponse(Connection* connection){
+    return parseServerMessage(readServerMessage(connection));
 }
 
-char*  getGameKind(Connection* connection){
-    return readServerMessage(connection);
+ServerMessage* getGameKind(Connection* connection){
+    return parseServerMessage(readServerMessage(connection));
 }
 
-char*  getGameName(Connection* connection){
-    return readServerMessage(connection);
+ServerMessage* getGameName(Connection* connection){
+    return parseServerMessage(readServerMessage(connection));
 }
 
-char*  getPlayerMeta(Connection* connection){
-    return readServerMessage(connection);
+ServerMessage* getPlayerMeta(Connection* connection){
+    return parseServerMessage(readServerMessage(connection));
 }
 
 List* getOtherPlayers(Connection* connection){

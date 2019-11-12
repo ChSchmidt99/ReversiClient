@@ -1,3 +1,6 @@
+#ifndef CONNECTION_H
+#define CONNECTION_H
+
 #include <stdlib.h>
 
 typedef struct _Connection Connection;
@@ -10,3 +13,5 @@ void disconnectFromServer(Connection* connectoion);
 
 char* readServerMessage(Connection* connection);
 void writeServerMessage(Connection* connection, const char* message, size_t messageLength);
+
+#endif 
