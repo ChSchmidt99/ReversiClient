@@ -7,7 +7,7 @@
 #define GAMEKINDNAME "Reversi"
 #define PORTNUMBER "1357"
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
-#define VERSION_NUMBER "2.0"
+#define VERSION_NUMBER "2.3"
 
 int main(int argc, char *argv[]) {
     char* gameId = readGameID(argc,argv);
