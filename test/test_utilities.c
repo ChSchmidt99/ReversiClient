@@ -7,7 +7,7 @@ static char * testConcatStringsToNewMemoryAddr() {
     char* str1 = "Hallo";
     char* str2 = "Welt";
     char* newString = concatStringToNewMemoryAddr(str1,str2," ");
-    mu_assert("Strings Should be Equal", strcmp("Hallo Welt",newString));
+    mu_assert("Strings Should be Equal", strcmp("Hallo Welt",newString) == 0);
     return 0;
 }
 
