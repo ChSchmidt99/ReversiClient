@@ -27,6 +27,8 @@ $(BUILD_DIR)/%.c.o: %.c
 $(TEST_EXEC): $(OBJS) $(BUILD_DIR)/$(TEST_MAINO)
 	$(CC) $(OBJS) $(BUILD_DIR)/$(TEST_MAINO) -o $(BUILD_DIR)/$@ $(LDFLAGS)
 
+.PHONY: $(BUILD_DIR)/$(TEST_MAINO)
+
 $(BUILD_DIR)/$(TEST_MAINO): $(TEST_MAIN)
 	$(CC) -c $< -o $@
 
