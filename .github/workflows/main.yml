@@ -1,14 +1,20 @@
 name: CI
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - master
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
-
+    
+    
+    - name: Build Test files
+      run: ls
     - name: Build Test files
       run: make test
     - name: Run Test
