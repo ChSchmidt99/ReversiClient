@@ -1,6 +1,10 @@
+# type: "make" to build the main file and all dependencies. Execute with build/play
+# tpye: "make test" to build the main test file and all dependencies. Execute with build/test
+# tpye: "make clean" to delete all previously compiled binaries
+
 CC=gcc
 
-TARGET_EXEC ?= sysprak-client
+TARGET_EXEC ?= play
 TEST_EXEC ?= test
 
 TEST_MAIN ?= test/test_main.c

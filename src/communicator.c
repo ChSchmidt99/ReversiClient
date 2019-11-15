@@ -56,30 +56,32 @@ bool isEndPlayers(char* message){
         return false;    
 }
 
+void logMessage(char* message){
+    printf("Sending: '%s'\n",message);
+}
+
 void sendClientVersion(Connection* connection, const char* version){
     char* message = concatStringToNewMemoryAddr(VERSION,version," ");
-    //TODO: Better logging    
-    printf("Sending: %s\n",message);
-    writeServerMessage(connection, message, strlen(message));
+    logMessage(message);
+    writeServerMessage(connection, message);
     free(message);
 }
 
 void sendGameId(Connection* connection, const char* gameID){
     char* message = concatStringToNewMemoryAddr(GAMEID,gameID," ");
-    //TODO: Better logging    
-    printf("Sending: %s\n",message);
-    writeServerMessage(connection, message, strlen(message));
+    logMessage(message);
+    writeServerMessage(connection, message);
     free(message);
 }
 
 void sendPlayerPreference(Connection* connection, const char* preference){
     if (preference == NULL){
-        //TODO: Better logging    
-        printf("Sending: %s\n",PLAYERPREFERENCE);
-        writeServerMessage(connection, PLAYERPREFERENCE, strlen(PLAYERPREFERENCE));
+        logMessage(PLAYERPREFERENCE);
+        writeServerMessage(connection, PLAYERPREFERENCE);
     } else {
         char* message = concatStringToNewMemoryAddr(PLAYERPREFERENCE,preference," ");
-        writeServerMessage(connection, message, strlen(message));
+        logMessage(message);
+        writeServerMessage(connection, message);
         free(message);
     }
 }

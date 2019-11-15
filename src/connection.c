@@ -32,7 +32,6 @@ void freeConnection(Connection* connection) {
     free(connection);
 }
 
-//TODO: Pass errors to instance above
 void connectToServer(Connection* connection){    
     struct addrinfo* socketAddr = getSocketAddr(connection->hostname, connection->port);
     if (socketAddr == NULL)
@@ -50,7 +49,6 @@ void connectToServer(Connection* connection){
     connection->socket = sock;
 }
 
-//TODO: Pass errors to instance above
 void disconnectFromServer(Connection* connection){
     if (connection->socket != -1){
         if (close(connection->socket) == -1)
@@ -59,7 +57,6 @@ void disconnectFromServer(Connection* connection){
     connection->socket = -1;
 }
 
-//TODO: Pass errors to instance above
 char* readServerMessage(Connection* connection){
     if (connection->socket == -1)
         die("Not connectet to server");
@@ -69,13 +66,14 @@ char* readServerMessage(Connection* connection){
     return message;
 }
 
-//TODO: Pass errors to instance above
-void writeServerMessage(Connection* connection, const char* message, size_t messageLength){
+void writeServerMessage(Connection* connection, char* message){
     if (connection->socket == -1)
         die("Not connectet to server");
     
-    if (write(connection->socket, message, BUFFSIZE) == -1)
+    char* in = concatStringToNewMemoryAddr(message,"\n","");
+    if (write(connection->socket, in, strlen(in)) == -1)
         die("Failed to write message to server");
+    free(in);
 }
 
 struct addrinfo* getSocketAddr(const char* hostname, const char* port) {
