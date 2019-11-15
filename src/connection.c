@@ -9,7 +9,7 @@
 #include "../include/utilities.h"
 #include "../include/connection.h"
 
-#define BUFFSIZE 256
+#define BUFFSIZE 512
 
 struct addrinfo* getSocketAddr(const char* hostname, const char* port);
 
@@ -65,10 +65,11 @@ char* readServerMessage(Connection* connection){
     //TODO: Get buff size dynamically
     char* buffer = malloc(sizeof(char) * BUFFSIZE);
     ssize_t len = read(connection->socket, buffer, BUFFSIZE - 1);
+
+    if (len == BUFFSIZE - 1)
+        die("Message bigger than buffer, case not yet impemented!");
+
     buffer[len] = '\0';
-
-    printf("Read %zu bytes from Socket\n",len);
-
     return buffer;
 }
 
@@ -80,7 +81,6 @@ void writeMessageToServer(Connection* connection, char* message){
     ssize_t len;
     if ((len = write(connection->socket, in, strlen(in))) == -1)
         die("Failed to write message to server");
-    printf("Written %zu bytes to Socket: '%s'\n",len,in);
     free(in);
 }
 
