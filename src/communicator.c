@@ -61,6 +61,7 @@ int getTotalPlayers(Connection* connection){
 }
 
 ServerMessage* getEndplayers(Connection* connection){
+    printf("Received End Players: \n");
     return parseServerMessage(readServerMessage(connection));
 }
 

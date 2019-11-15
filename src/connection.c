@@ -66,6 +66,9 @@ char* readServerMessage(Connection* connection){
     char* buffer = malloc(sizeof(char) * BUFFSIZE);
     ssize_t len = read(connection->socket, buffer, BUFFSIZE - 1);
     buffer[len] = '\0';
+
+    printf("Read %zu bytes from Socket\n",len);
+
     return buffer;
 }
 
@@ -74,8 +77,10 @@ void writeMessageToServer(Connection* connection, char* message){
         die("Not connectet to server");
     
     char* in = concatStringToNewMemoryAddr(message,"\n","");
-    if (write(connection->socket, in, strlen(in)) == -1)
+    ssize_t len;
+    if ((len = write(connection->socket, in, strlen(in))) == -1)
         die("Failed to write message to server");
+    printf("Written %zu bytes to Socket: '%s'\n",len,in);
     free(in);
 }
 

@@ -7,7 +7,7 @@ void die (char* message) {
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
-    char* newString = malloc(sizeof(char) * (strlen(str) + 1));
+    char* newString = calloc((strlen(str) + 1),sizeof(char));
     if (newString == NULL){
         perror("Failed to allocate memory");
     }
@@ -16,7 +16,7 @@ char* copyStringToNewMemoryAddr(const char* str){
 }
 
 char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char* divider){
-    char* out = malloc(sizeof(char) * (strlen(str1) + strlen(str2) + strlen(divider)));
+    char* out = calloc((strlen(str1) + strlen(str2) + strlen(divider) + 1), sizeof(char));
     strcat(out, str1);
     strcat(out, divider);
     strcat(out, str2);
