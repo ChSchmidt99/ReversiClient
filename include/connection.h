@@ -12,6 +12,6 @@ void connectToServer(Connection* connection);
 void disconnectFromServer(Connection* connectoion);
 
 char* readServerMessage(Connection* connection);
-void writeServerMessage(Connection* connection, char* message);
+void writeMessageToServer(Connection* connection, char* message);
 
 #endif 

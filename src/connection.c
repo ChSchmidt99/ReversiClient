@@ -1,4 +1,5 @@
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <netinet/in.h>
 #include <errno.h>
 #include <string.h>
@@ -61,12 +62,14 @@ char* readServerMessage(Connection* connection){
     if (connection->socket == -1)
         die("Not connectet to server");
     
-    char* message = malloc(sizeof(char) * BUFFSIZE);
-    read(connection->socket, message, BUFFSIZE);
-    return message;
+    //TODO: Get buff size dynamically
+    char* buffer = malloc(sizeof(char) * BUFFSIZE);
+    ssize_t len = read(connection->socket, buffer, BUFFSIZE - 1);
+    buffer[len] = '\0';
+    return buffer;
 }
 
-void writeServerMessage(Connection* connection, char* message){
+void writeMessageToServer(Connection* connection, char* message){
     if (connection->socket == -1)
         die("Not connectet to server");
     

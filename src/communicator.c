@@ -5,7 +5,7 @@
 #include "../include/connection.h"
 #include "../include/utilities.h"
 
-#define ENDPLAYERS "ENDPLAYERS"
+#define ENDPLAYERS "+ ENDPLAYERS\n"
 #define VERSION "VERSION"
 #define GAMEID "ID"
 #define PLAYERPREFERENCE "PLAYER"
@@ -34,26 +34,34 @@ ServerMessage* getPlayerMeta(Connection* connection){
     return parseServerMessage(readServerMessage(connection));
 }
 
-List* getOtherPlayers(Connection* connection){
-    List* otherPlayers = newEmptyList();
-
-    bool receivingPlayers = true;
-    while(receivingPlayers){
+char** getOtherPlayers(Connection* connection, int n){
+    //TODO: Mode parsing to Server Message
+    char** names = malloc(sizeof(char*)*n);
+    for (int i = 0; i < n; i++){
         char* player = readServerMessage(connection);
-        if (isEndPlayers(player))
-            receivingPlayers = false;
-        else 
-            append(otherPlayers, player);       
-        
+        if (*player == '+'){
+            printf("Got Player: %s",player);
+            names[i] = player; 
+        } else {
+            die(player);
+        }
     }
-    return otherPlayers;
+    return names;
 }
 
-bool isEndPlayers(char* message){
-    if (strcmp(message, ENDPLAYERS) == 0)
-        return true;
-    else
-        return false;    
+int getTotalPlayers(Connection* connection){
+    //TODO: Wrap result in Servermessage
+    ServerMessage* message = parseServerMessage(readServerMessage(connection));
+    if (message->type == Error)
+        return -1;
+
+    //TODO: Properly parse number in parse Server Message
+    char ASCInum = message->clearText[6];
+    return ASCInum - '0';
+}
+
+ServerMessage* getEndplayers(Connection* connection){
+    return parseServerMessage(readServerMessage(connection));
 }
 
 void logMessage(char* message){
@@ -63,25 +71,25 @@ void logMessage(char* message){
 void sendClientVersion(Connection* connection, const char* version){
     char* message = concatStringToNewMemoryAddr(VERSION,version," ");
     logMessage(message);
-    writeServerMessage(connection, message);
+    writeMessageToServer(connection, message);
     free(message);
 }
 
 void sendGameId(Connection* connection, const char* gameID){
     char* message = concatStringToNewMemoryAddr(GAMEID,gameID," ");
     logMessage(message);
-    writeServerMessage(connection, message);
+    writeMessageToServer(connection, message);
     free(message);
 }
 
 void sendPlayerPreference(Connection* connection, const char* preference){
     if (preference == NULL){
         logMessage(PLAYERPREFERENCE);
-        writeServerMessage(connection, PLAYERPREFERENCE);
+        writeMessageToServer(connection, PLAYERPREFERENCE);
     } else {
         char* message = concatStringToNewMemoryAddr(PLAYERPREFERENCE,preference," ");
         logMessage(message);
-        writeServerMessage(connection, message);
+        writeMessageToServer(connection, message);
         free(message);
     }
 }

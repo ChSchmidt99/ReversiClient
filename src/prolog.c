@@ -4,7 +4,7 @@
 #include "../include/servermessage.h"
 #include "../include/utilities.h"
 
-void printAndFree(void* message);
+void printAndFree(ServerMessage* message);
 
 //TODO: Splitup and clean function
 void initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
@@ -40,12 +40,25 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
         die(message->clearText);
     printAndFree(message);
 
-    List* otherPlayers = getOtherPlayers(connection);
-    iterateOverList(otherPlayers, printAndFree);    
-    freeList(otherPlayers);
+    int totalPlayers = getTotalPlayers(connection);
+    printf("Got Total Players: %i\n",totalPlayers);
+    char** otherPlayers = getOtherPlayers(connection, totalPlayers - 1);
+    printf("Got Other Players\n");
+    for (int i = 0; i < totalPlayers;i++){
+        printf("%s\n",otherPlayers[i]);
+        free(otherPlayers[i]);
+    }
+    free(otherPlayers);
+
+    /*
+    message = getEndplayers(connection);
+    if (message->type == Error)
+        die(message->clearText);
+    printAndFree(message);
+    */
 }
 
-void printAndFree(void* message){
+void printAndFree(ServerMessage* message){
     printServerMessage(message);
     freeServerMessage(message);
 }

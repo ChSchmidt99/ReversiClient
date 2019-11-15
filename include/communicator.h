@@ -11,9 +11,9 @@ ServerMessage* getVersionResponse(Connection* connection);
 ServerMessage* getGameKind(Connection* connection);
 ServerMessage* getGameName(Connection* connection);
 ServerMessage* getPlayerMeta(Connection* connection);
-
-// A ServerMessage* List
-List* getOtherPlayers(Connection* connection);
+int getTotalPlayers(Connection* connection);
+ServerMessage* getEndplayers(Connection* connection);
+char** getOtherPlayers(Connection* connection, int n);
 
 void sendClientVersion(Connection* connection, const char* version);
 void sendGameId(Connection* connection, const char* gameID);
