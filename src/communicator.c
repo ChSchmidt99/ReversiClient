@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../include/communicator.h"
-#include "../include/connection.h"
-#include "../include/utilities.h"
+#include "communicator.h"
+#include "connection.h"
+#include "utilities.h"
 
 #define ENDPLAYERS "+ ENDPLAYERS\n"
 #define VERSION "VERSION"

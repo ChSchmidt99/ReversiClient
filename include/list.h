@@ -12,7 +12,7 @@ void append(List* list, void* data);
 void freeList(List* list);
 void popLast(List* list);
 void removeListItem(List* list, void* data);
-void* getAtIndex(List* list, int i);
+void* getAtIndex(List* list, unsigned long i);
 void iterateOverList(List* list, void(*handler)(void* data));
 size_t getLength(List* list);
 #endif

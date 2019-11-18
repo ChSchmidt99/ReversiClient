@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/servermessage.h"
-#include "../include/utilities.h"
+#include "servermessage.h"
+#include "utilities.h"
 
 ServerMessage* newServerMessage(ServerMessageType type, char* message, char* clearText, void* data){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));

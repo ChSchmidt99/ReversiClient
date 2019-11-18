@@ -1,4 +1,4 @@
-#include "../include/list.h"
+#include "list.h"
 
 #include <stdio.h>
 
@@ -102,7 +102,7 @@ void* getNodeAtIndex(Node* list, int i){
     }
 }
 
-void* getAtIndex(List* list, int i){
+void* getAtIndex(List* list, unsigned long i){
     if (i > list->length - 1 || list->length == 0){
         return NULL;
     } else {

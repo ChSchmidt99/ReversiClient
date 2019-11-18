@@ -1,9 +1,9 @@
 #ifndef COMMUNICATOR_H
 #define COMMUNICATOR_H
 
-#include "./connection.h"
-#include "./servermessage.h"
-#include "./list.h"
+#include "connection.h"
+#include "servermessage.h"
+#include "list.h"
 
 //TODO: Maybe use communicator struct instead of connection
 ServerMessage* getServerGreeting(Connection* connection);

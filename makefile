@@ -18,7 +18,7 @@ SRC_DIRS ?= src
 SRCS := $(shell find $(SRC_DIRS) -name *.c ! -name main.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
-INC_FLAGS := -I include
+INC_FLAGS := -Iinclude
 LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) $(BUILD_DIR)/$(PROG_MAINO)
@@ -26,7 +26,7 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) $(BUILD_DIR)/$(PROG_MAINO)
 
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ $(LDFLAGS)
 
 $(TEST_EXEC): $(OBJS) $(BUILD_DIR)/$(TEST_MAINO)
 	$(CC) $(OBJS) $(BUILD_DIR)/$(TEST_MAINO) -o $(BUILD_DIR)/$@ $(LDFLAGS)
@@ -34,10 +34,10 @@ $(TEST_EXEC): $(OBJS) $(BUILD_DIR)/$(TEST_MAINO)
 .PHONY: $(BUILD_DIR)/$(TEST_MAINO)
 
 $(BUILD_DIR)/$(TEST_MAINO): $(TEST_MAIN)
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/$(PROG_MAINO): $(PROG_MAIN)
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ $(LDFLAGS)
 
 .PHONY: clean
 

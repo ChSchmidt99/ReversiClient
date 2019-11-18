@@ -1,4 +1,4 @@
-#include "../include/utilities.h"
+#include "utilities.h"
 #include <string.h>
 
 void die (char* message) {

@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#include "../include/utilities.h"
-#include "../include/connection.h"
+#include "utilities.h"
+#include "connection.h"
 
 #define BUFFSIZE 512
 
