@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "communicator.h"
-#include "connection.h"
+#include "communicator/communicator.h"
+#include "communicator/connection.h"
 #include "utilities.h"
 
 #define ENDPLAYERS "+ ENDPLAYERS\n"

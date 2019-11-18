@@ -7,7 +7,7 @@
 #include <netdb.h>
 
 #include "utilities.h"
-#include "connection.h"
+#include "communicator/connection.h"
 
 #define BUFFSIZE 512
 

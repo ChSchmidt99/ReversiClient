@@ -1,5 +1,5 @@
-#include "../include/minunit.h"
-#include "../include/utilities.h"
+#include "minunit.h"
+#include "utilities.h"
 #include <string.h>
 
 

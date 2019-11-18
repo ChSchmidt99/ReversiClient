@@ -1,6 +1,6 @@
 #include "optionreader.h"
-#include "connection.h"
-#include "prolog.h"
+#include "communicator/connection.h"
+#include "communicator/prolog.h"
 #include <stdlib.h>
 #include <stdio.h>
 

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "servermessage.h"
+#include "communicator/servermessage.h"
 #include "utilities.h"
 
 ServerMessage* newServerMessage(ServerMessageType type, char* message, char* clearText, void* data){

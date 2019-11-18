@@ -1,8 +1,8 @@
 #ifndef COMMUNICATOR_H
 #define COMMUNICATOR_H
 
-#include "connection.h"
-#include "servermessage.h"
+#include "communicator/connection.h"
+#include "communicator/servermessage.h"
 #include "list.h"
 
 //TODO: Maybe use communicator struct instead of connection

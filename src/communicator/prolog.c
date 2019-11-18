@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-#include "prolog.h"
-#include "servermessage.h"
+#include "communicator/prolog.h"
+#include "communicator/servermessage.h"
 #include "utilities.h"
 
 //TODO: remove me 
 #include <string.h>
-#include "connection.h"
+#include "communicator/connection.h"
 
 void printAndFree(ServerMessage* message);
 
