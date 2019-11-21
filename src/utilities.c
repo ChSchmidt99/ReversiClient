@@ -1,7 +1,7 @@
 #include "utilities.h"
 #include <string.h>
 
-void die (char* message) {
+void panic (char* message) {
     perror(message);
     exit (EXIT_FAILURE);
 }

@@ -3,7 +3,6 @@
 
 #include "communicator/connection.h"
 #include "communicator/servermessage.h"
-#include "list.h"
 
 //TODO: Maybe use communicator struct instead of connection
 ServerMessage* getServerGreeting(Connection* connection);

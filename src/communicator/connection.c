@@ -36,15 +36,15 @@ void freeConnection(Connection* connection) {
 void connectToServer(Connection* connection){    
     struct addrinfo* socketAddr = getSocketAddr(connection->hostname, connection->port);
     if (socketAddr == NULL)
-        die("failed to get address information");
+        panic("failed to get address information");
 
     int sock = socket(socketAddr->ai_family,socketAddr->ai_socktype,socketAddr->ai_protocol);
     if (sock == -1) 
-        die("failed to create socket");
+        panic("failed to create socket");
         
 
     if (connect(sock,socketAddr->ai_addr,socketAddr->ai_addrlen) == -1) 
-        die("failed to connect to socket");
+        panic("failed to connect to socket");
         
     freeaddrinfo(socketAddr);
     connection->socket = sock;
@@ -53,21 +53,21 @@ void connectToServer(Connection* connection){
 void disconnectFromServer(Connection* connection){
     if (connection->socket != -1){
         if (close(connection->socket) == -1)
-            die("Failed To close Socket");
+            panic("Failed To close Socket");
     }
     connection->socket = -1;
 }
 
 char* readServerMessage(Connection* connection){
     if (connection->socket == -1)
-        die("Not connectet to server");
+        panic("Not connectet to server");
     
     //TODO: Get buff size dynamically
     char* buffer = malloc(sizeof(char) * BUFFSIZE);
     ssize_t len = read(connection->socket, buffer, BUFFSIZE - 1);
 
     if (len == BUFFSIZE - 1)
-        die("Message bigger than buffer, case not yet impemented!");
+        panic("Message bigger than buffer, case not yet impemented!");
 
     buffer[len] = '\0';
     return buffer;
@@ -75,16 +75,16 @@ char* readServerMessage(Connection* connection){
 
 void writeMessageToServer(Connection* connection, char* message){
     if (connection->socket == -1)
-        die("Not connectet to server");
+        panic("Not connectet to server");
     
     char* in = concatStringToNewMemoryAddr(message,"\n","");
     ssize_t len;
     if ((len = write(connection->socket, in, strlen(in))) == -1)
-        die("Failed to write message to server");
+        panic("Failed to write message to server");
     free(in);
 }
 
-struct addrinfo* getSocketAddr(const char* hostname, const char* port) {
+struct addrinfo* getSocketAddr(const char* hostname, const char* port){
     struct addrinfo hints;
     memset(&hints,0,sizeof(hints));
     hints.ai_family = AF_UNSPEC;
