@@ -66,7 +66,7 @@ bool isValidMove(Field* field, char own, unsigned int x, unsigned int y) {
 
     // vertical check ^
     long int found = -1;
-    for(unsigned int i = y; i >= 0; i--) {
+    for(long int i = y; i >= 0; i--) {
         char column = getColumn(field, x, i);
 
         if(column == '*' && i != y) {
@@ -83,7 +83,7 @@ bool isValidMove(Field* field, char own, unsigned int x, unsigned int y) {
     }
     found = -1;
 
-    for(unsigned int i = y; i < field->height; i++) {
+    for(long int i = y; i < field->height; i++) {
         char column = getColumn(field, x, i);
 
         if(column == '*' && i != y)
@@ -99,7 +99,7 @@ bool isValidMove(Field* field, char own, unsigned int x, unsigned int y) {
     }
     found = -1;
 
-    for(unsigned int j = x; j >= 0; j--) {
+    for(long int j = x; j >= 0; j--) {
         char column = getColumn(field, j, y);
 
         if(column == '*' && j != x)
@@ -116,7 +116,7 @@ bool isValidMove(Field* field, char own, unsigned int x, unsigned int y) {
     found = -1;
 
     // horizontal check >
-    for(unsigned int j = x; j < field->width; j++) {
+    for(long int j = x; j < field->width; j++) {
         char column = getColumn(field, j, y);
 
         if(column == '*' && j != x)
@@ -133,7 +133,7 @@ bool isValidMove(Field* field, char own, unsigned int x, unsigned int y) {
     found = -1;
 
     // diagonal check <^
-    for(unsigned int i = y, j = x; i >= 0 && j >= 0; j--, i--) {
+    for(long int i = y, j = x; i >= 0 && j >= 0; j--, i--) {
         char column = getColumn(field, j, i);
 
         if(column == '*' && i != y)
@@ -149,7 +149,7 @@ bool isValidMove(Field* field, char own, unsigned int x, unsigned int y) {
     }
 
     // diagonal check |>
-    for(unsigned int i = y, j = x; i < field->height && j < field->width; j++, i++) {
+    for(long int i = y, j = x; i < field->height && j < field->width; j++, i++) {
         char column = getColumn(field, j, i);
 
         if(column == '*' && i != y)
