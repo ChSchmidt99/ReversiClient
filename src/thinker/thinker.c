@@ -4,7 +4,7 @@
 #include "thinker/thinker.h"
 #include "thinker/field.h"
 
-void tick(void* shm, int pipe[]) {
+void tick(char* shm, int pipe[]) {
     close(pipe[0]);
     sigset_t set;
     int sig;
@@ -21,7 +21,7 @@ void tick(void* shm, int pipe[]) {
         printf("Loading current board");
 
         Field* field = createField(8, 8);
-        // TODO loadField(field, NULL)
+        loadFieldFromSHM(field, shm);
         long int x = -1, y = -1;
         for(unsigned int j = 0; j < field->width; j++) {
             for(unsigned int i = 0 ; i < field->height; i++) {

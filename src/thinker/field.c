@@ -29,6 +29,15 @@ void loadField(Field* field, char* str[]) {
     }
 }
 
+void loadFieldFromSHM(Field* field, const char* str) {
+    for(unsigned int row = 0 ; row < field->width; row++) {
+        for(unsigned int column = 0 ; column < field->height; column++) {
+            unsigned int index = row * field->width + column;
+            field->columns[index] = str[index];
+        }
+    }
+}
+
 void printField(Field* field) {
     printf("ROWS:   ");
     for(unsigned int j = 0 ; j < field->width; j++) {

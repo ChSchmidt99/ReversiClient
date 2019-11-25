@@ -5,6 +5,6 @@
 #include <signal.h>
 #include <stdio.h>
 
-void tick(void* shm, int pipe[]);
+void tick(char* shm, int pipe[]);
 
 #endif

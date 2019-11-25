@@ -12,6 +12,8 @@ Field* createField(unsigned int width, unsigned int height);
 
 void loadField(Field* field, char* str[]);
 
+void loadFieldFromSHM(Field* field, const char* str);
+
 void printField(Field* field);
 
 char getColumn(Field* field, unsigned int x, unsigned int y);
