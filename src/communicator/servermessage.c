@@ -1,11 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "communicator/servermessage.h"
+#include "servermessage_priv.h"
 #include "utilities.h"
-
-int unwrapError(char* message);
-char* getClearText(char* message);
-void* getData(char* message);
 
 ServerMessage* newServerMessage(char* message, char* clearText, void* data, int isError){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
