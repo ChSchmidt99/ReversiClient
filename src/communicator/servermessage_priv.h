@@ -1,4 +1,4 @@
-#include "servermessage.h"
+#include "communicator/servermessage.h"
 
 int unwrapError(char* message);
 char* getClearText(char* message);
