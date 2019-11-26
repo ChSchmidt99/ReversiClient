@@ -6,5 +6,6 @@
 
 char* readGameID(int argc, char *argv[]);
 char* readPreferencedPlayerNumber(int argc, char *argv[]);
+char* readConfigFilePath(int argc, char *argv[]);
 
 #endif

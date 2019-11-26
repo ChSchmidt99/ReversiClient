@@ -8,6 +8,7 @@
 #define PORTNUMBER "1357"
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define VERSION_NUMBER "2.3"
+#define DEFAULT_CONFIG_PATH "../client.conf"
 
 int main(int argc, char *argv[]) {
     char* gameId = readGameID(argc,argv);
@@ -16,6 +17,10 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     char* playerPreference = readPreferencedPlayerNumber(argc,argv);
+    char* configFilePath = readConfigFilePath(argc, argv);
+    if (configFilePath == NULL) {
+        configFilePath = DEFAULT_CONFIG_PATH;
+    }
     
     Connection* connection = newConnection(HOSTNAME,PORTNUMBER);
     connectToServer(connection);
