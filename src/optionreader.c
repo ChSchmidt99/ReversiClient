@@ -22,6 +22,6 @@ char* readPreferencedPlayerNumber(int argc, char *argv[]){
     return getOptionArg(argc,argv,'p');
 }
 
-char* readConfigFile(int argc, char *argv[]){
+char* readConfigFilePath(int argc, char *argv[]){
     return getOptionArg(argc,argv,'c');
 }
