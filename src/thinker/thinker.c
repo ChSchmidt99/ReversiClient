@@ -7,7 +7,6 @@
 void tick(char* shm, int pipe[]) {
     close(pipe[0]);
     sigset_t mask, oldMask;
-    int sig;
 
     sigemptyset(&mask);
     sigaddset(&mask, SIGUSR1);
