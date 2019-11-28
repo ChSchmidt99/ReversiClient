@@ -21,6 +21,7 @@ void tick(char* shm, int pipe[]) {
         printf("Got signal from communicator, waking up..");
         printf("Loading current board");
 
+        /*
         Field* field = createField(8, 8);
         loadFieldFromSHM(field, shm);
         long int x = -1, y = -1;
@@ -38,7 +39,7 @@ void tick(char* shm, int pipe[]) {
 
         char* move = toString(x, y);
         write(pipe[1], move, sizeof(move) + 1);
-        free(move);
+        free(move);*/
         printf("Sent move to connector, sleeping again");
     }
 }
