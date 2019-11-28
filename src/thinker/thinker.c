@@ -18,7 +18,36 @@ void tick(char* shm, int pipe[]) {
     if(sigwait(&sigset, &sig) != 0) {
         perror("sigwait");
     }
-    printf("Got signal %i, exiting..\n", sig);
+
+    //printf("Got signal %i, exiting..\n", sig);
+
+    printf("Got signal from communicator, waking up..");
+    printf("Loading current board");
     if(shm != NULL)
         printf("%s", shm);
+    Field* field = createField(8, 8);
+    loadFieldFromSHM(field, shm);
+    long int x = -1, y = -1;
+    for(unsigned int j = 0; j < field->width; j++) {
+        for(unsigned int i = 0 ; i < field->height; i++) {
+            if(isValidMove(field, 'W', j, i)) {
+                x = j;
+                y = i;
+                break;
+            }
+        }
+    }
+
+    printf("Found available move: %li %li", x, y);
+
+    char* move = toString(x, y);
+    write(pipe[1], move, sizeof(move) + 1);
+    free(move);
+    printf("Sent move to connector, sleeping again");
+
+    if(shm != NULL)
+        printf("%s", shm);
+
+    if(shm != NULL)
+        tick(shm, pipe);
 }
