@@ -13,6 +13,7 @@ void tick(char* shm, int pipe[]) {
     sigaddset(&set, SIGUSR1);
     sigprocmask(SIG_UNBLOCK, &set, NULL);
 
+    printf("Thinker is now waiting for signals (SIGUSR1)");
     int f = 0;
     while(f++ < 100) {
         sigwait(&set, &sig);
