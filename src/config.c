@@ -27,17 +27,12 @@ FILE* openFile(char* path) {
 Params* getParamsFromFile(char *filePath) {
   
   FILE* configFile = openFile(filePath);
-  //char line[256];
   char ch;
   int i = 0;
-
   char paramsArray[NUMBER_OF_STRING][MAX_STRING_SIZE];
-  //int j = 0;
   char key[100];
   char keyValue[100];
   char *pointer = key;
-  //ich muss params ja erstmal irgendwie belegen oder?
-  //Params* params = newParams(keyValue, keyValue, keyValue);
   while ((ch = getc(configFile)) != EOF) {
       if (ch == '\t' || ch == ' ') continue;
       else if ( ch == '=') {
@@ -47,7 +42,6 @@ Params* getParamsFromFile(char *filePath) {
       }
       else if ( ch == '\n') {
         i = 0;
-        printf( "KEY %s \n", key);
         pointer = key;
         if (strcmp(key, "hostName") == 0){
           strcpy(paramsArray[0], keyValue);
@@ -65,7 +59,6 @@ Params* getParamsFromFile(char *filePath) {
       pointer[i++] = ch;
   }
   Params* params = newParams(paramsArray[0], paramsArray[1], paramsArray[2]);
-  printf(" params: %s, %s, %s \n", params->hostName, params->portNumber, params->gameKind);
   fclose(configFile);
   return params;
 }

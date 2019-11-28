@@ -5,9 +5,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define GAMEKINDNAME "Reversi"
-#define PORTNUMBER "1357"
-#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
@@ -22,10 +19,9 @@ int main(int argc, char *argv[]) {
     if (configFilePath == NULL) {
         configFilePath = DEFAULT_CONFIG_PATH;
     }
-    //Params* params = getParamsFromFile(configFilePath);
-    getParamsFromFile(configFilePath);
+    Params* params = getParamsFromFile(configFilePath);
     
-    Connection* connection = newConnection(HOSTNAME,PORTNUMBER);
+    Connection* connection = newConnection(params->hostName,params->portNumber);
     connectToServer(connection);
     initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
     disconnectFromServer(connection);
