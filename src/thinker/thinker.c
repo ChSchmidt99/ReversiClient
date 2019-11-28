@@ -13,11 +13,12 @@ void tick(char* shm, int pipe[]) {
     if(sigaddset(&sigset, SIGUSR1) == -1) {
         perror("sigaddset");
     }
+    sigprocmask(SIG_BLOCK, &sigset, NULL);
     printf("Thinker is now waiting for signals (SIGUSR1)\n");
     if(sigwait(&sigset, &sig) != 0) {
         perror("sigwait");
     }
-    printf("Got signal, exiting..\n");
+    printf("Got signal %i, exiting..\n", sig);
     if(shm != NULL)
         printf("%s", shm);
 }
