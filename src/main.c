@@ -1,4 +1,5 @@
 #include "optionreader.h"
+#include "config.h"
 #include "communicator/connection.h"
 #include "communicator/prolog.h"
 #include <stdlib.h>
@@ -8,7 +9,7 @@
 #define PORTNUMBER "1357"
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define VERSION_NUMBER "2.3"
-#define DEFAULT_CONFIG_PATH "../client.conf"
+#define DEFAULT_CONFIG_PATH "./client.conf"
 
 int main(int argc, char *argv[]) {
     char* gameId = readGameID(argc,argv);
@@ -21,6 +22,8 @@ int main(int argc, char *argv[]) {
     if (configFilePath == NULL) {
         configFilePath = DEFAULT_CONFIG_PATH;
     }
+    //Params* params = getParamsFromFile(configFilePath);
+    getParamsFromFile(configFilePath);
     
     Connection* connection = newConnection(HOSTNAME,PORTNUMBER);
     connectToServer(connection);
