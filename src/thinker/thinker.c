@@ -6,17 +6,18 @@
 
 void tick(char* shm, int pipe[]) {
     close(pipe[0]);
-    sigset_t set;
+    sigset_t mask, oldMask;
     int sig;
 
-    sigemptyset(&set);
-    sigaddset(&set, SIGUSR1);
-    sigprocmask(SIG_BLOCK, &set, NULL);
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGUSR1);
+    sigprocmask(SIG_BLOCK, &mask, &oldMask);
 
     printf("Thinker is now waiting for signals (SIGUSR1)\n");
     int f = 0;
     while(f++ < 100) {
-        sigwait(&set, &sig);
+        sigsuspend(&oldMask);
+        sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
         printf("Got signal from communicator, waking up..");
         printf("Loading current board");
