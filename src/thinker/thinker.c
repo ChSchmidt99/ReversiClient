@@ -11,7 +11,7 @@ void tick(char* shm, int pipe[]) {
 
     sigemptyset(&set);
     sigaddset(&set, SIGUSR1);
-    sigprocmask(SIG_UNBLOCK, &set, NULL);
+    sigprocmask(SIG_BLOCK, &set, NULL);
 
     printf("Thinker is now waiting for signals (SIGUSR1)\n");
     int f = 0;
