@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     }
     char* playerPreference = readPreferencedPlayerNumber(argc,argv);
 
-    pid_t thinker, connector;
+    pid_t thinker;
     int fd[2];
 
     if(pipe(fd) < 0) {
