@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(thinker > 0) {
-        printf("[PARENT/%i] Started thinker child", thinker);
+        printf("[PARENT/%i] Started thinker child\n", thinker);
         if((connector = fork()) < 0) {
             perror("Could not fork for connector process");
             exit(EXIT_FAILURE);
@@ -40,16 +40,16 @@ int main(int argc, char *argv[]) {
 
         // still in the parent process
         if(connector > 0) {
-            printf("[PARENT/%i] Started connector child", connector);
+            printf("[PARENT/%i] Started connector child\n", connector);
             // still in the parent process
 
             if ((waitpid (thinker, NULL, 0)) < 0 || waitpid(connector, NULL, 0) < 0) {
                 perror ("Error waiting for child processes to die");
                 exit (EXIT_FAILURE);
             }
-            printf("Thinker and connector died, exiting..");
+            printf("Thinker and connector died, exiting..\n");
         } else {
-            printf("[CHILD/CONNECTOR] Starting connector..");
+            printf("[CHILD/CONNECTOR] Starting connector..\n");
             // start the connector process
             Connection* connection = newConnection(HOSTNAME,PORTNUMBER);
             connectToServer(connection);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
         }
     } else {
         // start the thinker process
-        printf("[CHILD/THINKER] Starting thinker..");
+        printf("[CHILD/THINKER] Starting thinker..\n");
         tick(NULL, fd);
     }
 }
