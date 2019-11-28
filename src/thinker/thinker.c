@@ -44,10 +44,4 @@ void tick(char* shm, int pipe[]) {
     write(pipe[1], move, sizeof(move) + 1);
     free(move);
     printf("Sent move to connector, sleeping again");
-
-    if(shm != NULL)
-        printf("%s", shm);
-
-    if(shm != NULL)
-        tick(shm, pipe);
 }
