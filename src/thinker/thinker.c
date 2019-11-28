@@ -20,7 +20,7 @@ void tick(char* shm, int pipe[]) {
 
         printf("Got signal from communicator, waking up..");
         printf("Loading current board");
-
+        printf("%s", shm);
         /*
         Field* field = createField(8, 8);
         loadFieldFromSHM(field, shm);
