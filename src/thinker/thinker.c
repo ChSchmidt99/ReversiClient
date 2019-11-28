@@ -5,18 +5,12 @@
 #include "thinker/field.h"
 
 void tick(char* shm, int pipe[]) {
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     close(pipe[0]);
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     sigset_t set;
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     int sig;
 
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     sigemptyset(&set);
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     sigaddset(&set, SIGUSR1);
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     sigprocmask(SIG_UNBLOCK, &set, NULL);
 
     printf("Thinker is now waiting for signals (SIGUSR1)\n");

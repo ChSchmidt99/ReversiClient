@@ -58,6 +58,8 @@ int main(int argc, char *argv[]) {
             freeConnection(connection);
             free(gameId);
             free(playerPreference);
+
+            kill(thinker, SIGUSR1);
             return EXIT_SUCCESS;
         }
     } else {
