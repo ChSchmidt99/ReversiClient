@@ -7,7 +7,7 @@ void panic (char* message) {
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
-    char* newString = calloc((strlen(str) + 1),sizeof(char));
+    char* newString = malloc(sizeof(char) * (strlen(str) + 1));
     if (newString == NULL){
         perror("Failed to allocate memory");
     }
