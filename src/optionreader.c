@@ -21,3 +21,7 @@ char* readGameID(int argc, char *argv[]){
 char* readPreferencedPlayerNumber(int argc, char *argv[]){
     return getOptionArg(argc,argv,'p');
 }
+
+char* readConfigFilePath(int argc, char *argv[]){
+    return getOptionArg(argc,argv,'c');
+}
