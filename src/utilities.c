@@ -32,10 +32,9 @@ char** slice(const char* str, char delimiter[]) {
     while(token) {
         result = realloc(result, sizeof(char*) * ++delimiterC);
 
-        if(result == NULL) {
+        if(result == NULL) 
             panic("Cannot realloc to split string to char**\n");
-            exit(EXIT_FAILURE);
-        }
+        
 
         result[delimiterC - 1] = token;
 

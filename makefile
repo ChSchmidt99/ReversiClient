@@ -19,7 +19,7 @@ SRCS := $(shell find $(SRC_DIRS) -name *.c ! -name main.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
 INC_FLAGS := -Iinclude
-LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror
+LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror -Wno-unused-parameter
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) $(BUILD_DIR)/$(PROG_MAINO)
 	$(CC) $(OBJS) $(BUILD_DIR)/$(PROG_MAINO) -o $@ $(LDFLAGS)

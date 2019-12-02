@@ -21,10 +21,7 @@ void freeParams(Params* params){
 }
 
 FILE* openFile(char* path) {
-    //char filePath[FILEPATH_BUFFER_SIZE];
     FILE *file = NULL;
-    //strncpy(filePath, path, (FILEPATH_BUFFER_SIZE - 1) * sizeof(char));
-
     if ((file=fopen(path,"r")) == NULL) { 
         printf("Fehler beim Oeffnen der Config-Datei!\n");
     }
