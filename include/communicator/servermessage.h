@@ -1,22 +1,14 @@
 #ifndef SERVERMESSAGE_H
 #define SERVERMESSAGE_H
 
-typedef enum _ServerMessageStage {
-    Error = 0,
-    Prolog = 1,
-    Spielverlauf = 2,
-    Spielzug = 3
-} ServerMessageType;
-
-
 typedef struct _ServerMessage {
-    ServerMessageType type;
     char* clearText;
     char* message;
     void* data;
+    int isError;
 } ServerMessage;
 
-ServerMessage* newServerMessage(ServerMessageType type, char* message, char* clearText, void* data);
+ServerMessage* newServerMessage(char* message, char* clearText, void* data, int isError);
 void freeServerMessage(ServerMessage* serverMessage);
 
 //TODO: Implement Me

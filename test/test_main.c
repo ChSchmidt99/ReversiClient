@@ -2,13 +2,15 @@
 #include "../include/minunit.h"
 #include "./test_utilities.c"
 #include "./test_config.c"
- 
+#include "./test_field.c"
+
  int tests_run = 0;
 
  static char * all_tests() {
      mu_run_test_no_count(utilities_tests);
      mu_run_test_no_count(config_tests);
-     return 0;
+     mu_run_test_no_count(field_tests);
+   return 0;
  }
  
  int main() {

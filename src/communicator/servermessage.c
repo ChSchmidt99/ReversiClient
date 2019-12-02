@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "communicator/servermessage.h"
+#include "servermessage_priv.h"
 #include "utilities.h"
 
-ServerMessage* newServerMessage(ServerMessageType type, char* message, char* clearText, void* data){
+ServerMessage* newServerMessage(char* message, char* clearText, void* data, int isError){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
-    serverMessage->type = type;
+    serverMessage->isError = isError;
     serverMessage->clearText = copyStringToNewMemoryAddr(clearText);
     serverMessage->message = copyStringToNewMemoryAddr(message);
     serverMessage->data = data;
@@ -20,17 +20,33 @@ void freeServerMessage(ServerMessage* serverMessage){
 }
 
 ServerMessage* parseServerMessage(char* message){
-    //TODO: Implement Me
-    if (*message == '+') {
-        message += 2;
-        return newServerMessage(Prolog, message, message, NULL);
-    } else {
-        message += 2;
-        return newServerMessage(Error,message, message, NULL);
-    }
+    int isError = unwrapError(message);
+    char* clearText = getClearText(message);
+    void* data = getData(message);
+    return newServerMessage(message, clearText, data, isError);
+}
+
+int unwrapError(char* message){
+    int isError = 0;
+    
+    if (*message == '-')
+        isError = 1;
+    
+    message += 2;
+    return isError;
+}
+
+char* getClearText(char* message){
+    //TODO: Implement Me!
+    return message;
+}
+
+void* getData(char* message){
+    //TODO: Implement Me!
+    return message;
 }
 
 void printServerMessage(ServerMessage* serverMessage){
-    //TODO: Implement Me
+    //TODO: Implement Me!
     printf("%s",serverMessage->clearText);
 }

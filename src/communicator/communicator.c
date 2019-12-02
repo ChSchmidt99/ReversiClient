@@ -12,7 +12,8 @@
 
 //TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
-bool isEndPlayers(char* message);
+
+void logMessage(char* message);
 
 ServerMessage* getServerGreeting(Connection* connection){
     return parseServerMessage(readServerMessage(connection));
@@ -43,7 +44,7 @@ char** getOtherPlayers(Connection* connection, int n){
             printf("Got Player: %s",player);
             names[i] = player; 
         } else {
-            die(player);
+            panic(player);
         }
     }
     return names;
@@ -52,7 +53,7 @@ char** getOtherPlayers(Connection* connection, int n){
 int getTotalPlayers(Connection* connection){
     //TODO: Wrap result in Servermessage
     ServerMessage* message = parseServerMessage(readServerMessage(connection));
-    if (message->type == Error)
+    if (message->isError == 1)
         return -1;
 
     //TODO: Properly parse number in parse Server Message
@@ -61,12 +62,7 @@ int getTotalPlayers(Connection* connection){
 }
 
 ServerMessage* getEndplayers(Connection* connection){
-    printf("Received End Players: \n");
     return parseServerMessage(readServerMessage(connection));
-}
-
-void logMessage(char* message){
-    printf("Sending: '%s'\n",message);
 }
 
 void sendClientVersion(Connection* connection, const char* version){
@@ -93,4 +89,45 @@ void sendPlayerPreference(Connection* connection, const char* preference){
         writeMessageToServer(connection, message);
         free(message);
     }
+}
+
+void logMessage(char* message){
+    printf("Sending: '%s'\n",message);
+}
+
+void send(Connection* connection, char* data, bool freeData) {
+    logMessage(data);
+    writeMessageToServer(connection, data);
+    if(freeData)
+        free(data);
+}
+
+void formatAndSend(Connection* connection, char* data, const char* firstParam, const char* secondParam, bool freeData) {
+    if(firstParam == NULL && secondParam == NULL) {
+        send(connection, data, freeData);
+        return;
+    }
+    char* message;
+    if(firstParam != NULL) {
+        message = concatStringToNewMemoryAddr(data, firstParam, " ");
+        if(freeData)
+            free(data);
+    } else {
+        message = data;
+    }
+
+    char* finalMessage;
+    if(secondParam != NULL) {
+        finalMessage = concatStringToNewMemoryAddr(message, secondParam, " ");
+        if(firstParam != NULL || freeData)
+            free(message);
+    } else {
+        finalMessage = message;
+    }
+
+    send(connection, finalMessage, true);
+}
+
+ServerMessage* receive(Connection* connection) {
+    return parseServerMessage(readServerMessage(connection));
 }

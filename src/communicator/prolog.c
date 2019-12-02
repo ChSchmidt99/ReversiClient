@@ -4,72 +4,70 @@
 #include "communicator/servermessage.h"
 #include "utilities.h"
 
-//TODO: remove me 
-#include <string.h>
-#include "communicator/connection.h"
-
 void printAndFree(ServerMessage* message);
 
 //TODO: Splitup and clean function
-void initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
+PlayerInfo* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
     ServerMessage* message = getServerGreeting(connection);
-    if (message->type == Error)
-        die(message->clearText);
+    if (message->isError == 1)
+        panic(message->clearText);
     printAndFree(message);
 
     sendClientVersion(connection, version);
 
     message = getVersionResponse(connection);
-    if (message->type == Error)
-        die(message->clearText);
+    if (message->isError == 1)
+        panic(message->clearText);
     printAndFree(message);
 
     sendGameId(connection, gameId);
 
     message = getGameKind(connection);
-    if (message->type == Error)
-        die(message->clearText);
+    if (message->isError == 1)
+        panic(message->clearText);
     printAndFree(message);
 
-    
     message = getGameName(connection);
-    if (message->type == Error)
-        die(message->clearText);
+    if (message->isError == 1)
+        panic(message->clearText);
     printAndFree(message);
 
-
-    sendPlayerPreference(connection, playerPreference);
+    formatAndSend(connection, "PLAYER", playerPreference, NULL, false);
+    //sendPlayerPreference(connection, playerPreference);
 
     message = getPlayerMeta(connection);
-    if (message->type == Error)
-        die(message->clearText);
+    if (message->isError == 1)
+        panic(message->clearText);
+
+    Player* own = parseOwn(message);
+    if(own != NULL) {
+
+    }
+
     printAndFree(message);
 
+    printf("?\n");
     //TODO: Parse and display properly
     message = getEndplayers(connection);
-    if (message->type == Error)
-        die(message->clearText);
+    if (message->isError == 1)
+        panic(message->clearText);
     printAndFree(message);
+    printf("??\n");
 
-    /*
-    int totalPlayers = getTotalPlayers(connection);
-    printf("Got Total Players: %i\n",totalPlayers);
-    
-    char** otherPlayers = getOtherPlayers(connection, totalPlayers - 1);
-    printf("Got Other Players\n");
-    for (int i = 0; i < totalPlayers;i++){
-        printf("%s\n",otherPlayers[i]);
-        free(otherPlayers[i]);
+    PlayerInfo *info = malloc(sizeof(PlayerInfo));
+    return info;
+}
+
+Player* parseOwn(ServerMessage* message) {
+    char** data = slice(message->clearText, " ");
+    int length = sliceLength(data);
+    for(int i = 0; i < length; i++) {
+        printf("%i > %s\n", i, data[i]);
     }
-    free(otherPlayers);
 
-    message = getEndplayers(connection);
-    if (message->type == Error)
-        die(message->clearText);
-    printAndFree(message);
-    */
-
+    Player* player = malloc(sizeof(Player));
+    return player;
 }
 
 void printAndFree(ServerMessage* message){
