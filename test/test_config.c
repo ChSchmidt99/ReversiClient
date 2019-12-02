@@ -17,6 +17,8 @@ static char * testGetParamsFromFile() {
             strcmp(params->gameKind,paramsToCompareWith->gameKind)
         ) == 0
     );
+    freeParams(paramsToCompareWith);
+    freeParams(params);
     return 0;
 }
 

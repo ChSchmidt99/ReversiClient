@@ -2,6 +2,7 @@
 #include <string.h>
 
 #define NUMBER_OF_STRING 3
+#define FILEPATH_BUFFER_SIZE 256
 #define MAX_STRING_SIZE 100
 
 Params* newParams(char* hostname, char* portNumber, char* gameKind){
@@ -12,12 +13,19 @@ Params* newParams(char* hostname, char* portNumber, char* gameKind){
     return params;
 }
 
+void freeParams(Params* params){
+    free(params->gameKind);
+    free(params->portNumber);
+    free(params->hostName);
+    free(params);
+}
+
 FILE* openFile(char* path) {
-    char filePath[256];
+    //char filePath[FILEPATH_BUFFER_SIZE];
     FILE *file = NULL;
-    strncpy(filePath, path, 255*sizeof(char));
-        
-    if ((file=fopen(filePath,"r")) == NULL) { 
+    //strncpy(filePath, path, (FILEPATH_BUFFER_SIZE - 1) * sizeof(char));
+
+    if ((file=fopen(path,"r")) == NULL) { 
         printf("Fehler beim Oeffnen der Config-Datei!\n");
     }
   

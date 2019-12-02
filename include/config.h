@@ -12,6 +12,7 @@ typedef struct _Params {
 } Params;
 
 Params* newParams(char* hostName, char* portNumber, char* gameKind);
+void freeParams(Params* params);
 
 FILE* openFile(char* path);
 Params* getParamsFromFile(char *filePath);
