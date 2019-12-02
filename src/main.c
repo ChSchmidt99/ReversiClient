@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <wait.h>
+
+//TODO: wait still needed? not available on macOS
+//#include <wait.h>
 
 #define PORTNUMBER "1357"
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
