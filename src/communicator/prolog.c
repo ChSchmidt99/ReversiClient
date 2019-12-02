@@ -11,7 +11,7 @@
 void printAndFree(ServerMessage* message);
 
 //TODO: Splitup and clean function
-void initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
+PlayerInfo* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
     ServerMessage* message = getServerGreeting(connection);
     if (message->isError == 1)
@@ -37,18 +37,38 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
         panic(message->clearText);
     printAndFree(message);
 
-    sendPlayerPreference(connection, playerPreference);
+    formatAndSend(connection, "PLAYER", "1", NULL, false);
+    //sendPlayerPreference(connection, playerPreference);
 
     message = getPlayerMeta(connection);
     if (message->isError == 1)
         panic(message->clearText);
+
+    Player* own = parseOwn(message);
+
     printAndFree(message);
+
     printf("?\n");
     //TODO: Parse and display properly
     message = getEndplayers(connection);
     if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
+    printf("??\n");
+
+    PlayerInfo *info = malloc(sizeof(PlayerInfo));
+    return info;
+}
+
+Player* parseOwn(ServerMessage* message) {
+    char** data = slice(message->clearText, " ");
+    int length = sliceLength(data);
+    for(int i = 0; i < length; i++) {
+        printf("%i > %s\n", i, data[i]);
+    }
+
+    Player* player = malloc(sizeof(Player));
+    return player;
 }
 
 void printAndFree(ServerMessage* message){
