@@ -37,20 +37,18 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
         panic(message->clearText);
     printAndFree(message);
 
-
     sendPlayerPreference(connection, playerPreference);
 
     message = getPlayerMeta(connection);
     if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
-
+    printf("?\n");
     //TODO: Parse and display properly
     message = getEndplayers(connection);
     if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
-    printf("--- TEST ---\n");
 }
 
 void printAndFree(ServerMessage* message){
