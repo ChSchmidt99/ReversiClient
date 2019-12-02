@@ -37,7 +37,7 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
         panic(message->clearText);
     printAndFree(message);
 
-    formatAndSend(connection, "PLAYER", "1", NULL, false);
+    formatAndSend(connection, "PLAYER", playerPreference, NULL, false);
     //sendPlayerPreference(connection, playerPreference);
 
     message = getPlayerMeta(connection);
@@ -45,6 +45,9 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
         panic(message->clearText);
 
     Player* own = parseOwn(message);
+    if(own != NULL) {
+
+    }
 
     printAndFree(message);
 
