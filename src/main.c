@@ -9,17 +9,18 @@
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
 int main(int argc, char *argv[]) {
+    char* configFilePath = readConfigFilePath(argc, argv);
+    if (configFilePath == NULL) {
+        configFilePath = DEFAULT_CONFIG_PATH;
+    }
+    Params* params = getParamsFromFile(configFilePath);
+
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
         printf("GameId must be set!\n");
         return EXIT_FAILURE;
     }
     char* playerPreference = readPreferencedPlayerNumber(argc,argv);
-    char* configFilePath = readConfigFilePath(argc, argv);
-    if (configFilePath == NULL) {
-        configFilePath = DEFAULT_CONFIG_PATH;
-    }
-    Params* params = getParamsFromFile(configFilePath);
     
     Connection* connection = newConnection(params->hostName,params->portNumber);
     connectToServer(connection);
