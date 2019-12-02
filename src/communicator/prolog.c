@@ -32,7 +32,6 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
         panic(message->clearText);
     printAndFree(message);
 
-    
     message = getGameName(connection);
     if (message->isError == 1)
         panic(message->clearText);
@@ -51,6 +50,7 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
     if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
+    printf("--- TEST ---\n");
 }
 
 void printAndFree(ServerMessage* message){

@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         free(gameId);
         free(playerPreference);
 
-        printf("[CONNECTOR] Finished prolog, dying..\n");
+        printf("[CONNECTOR] Finished prolog, exiting..\n");
         kill(thinker, SIGUSR1);
         return EXIT_SUCCESS;
     }
