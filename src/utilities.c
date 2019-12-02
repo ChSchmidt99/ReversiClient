@@ -46,7 +46,7 @@ int slice(const char* str, char delimiter[], char** result) {
     result[delimiterC] = 0;
     free(copy);
 
-    return result;
+    return delimiterC;
 }
 
 int sliceLength(char** slice) {
