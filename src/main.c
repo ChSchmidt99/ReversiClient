@@ -14,13 +14,6 @@
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
 int main(int argc, char *argv[]) {
-    char* gameId = readGameID(argc,argv);
-    if (gameId == NULL) {
-        printf("GameId must be set!\n");
-        return EXIT_FAILURE;
-    }
-    char* playerPreference = readPreferencedPlayerNumber(argc,argv);
-
     pid_t thinker;
     int fd[2];
 
@@ -49,6 +42,13 @@ int main(int argc, char *argv[]) {
     } else {
         printf("[CHILD/CONNECTOR] Starting connector..\n");
         // start the connector process
+        char* gameId = readGameID(argc,argv);
+        if (gameId == NULL) {
+            printf("GameId must be set!\n");
+            return EXIT_FAILURE;
+        }
+        char* playerPreference = readPreferencedPlayerNumber(argc,argv);
+
         char* configFilePath = readConfigFilePath(argc, argv);
         if (configFilePath == NULL) {
             configFilePath = DEFAULT_CONFIG_PATH;
