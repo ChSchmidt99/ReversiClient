@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
     Connection* connection = newConnection(HOSTNAME,PORTNUMBER);
     connectToServer(connection);
     initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
+
+    
     disconnectFromServer(connection);
     freeConnection(connection);
     free(gameId);

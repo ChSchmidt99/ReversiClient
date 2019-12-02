@@ -4,10 +4,6 @@
 #include "communicator/servermessage.h"
 #include "utilities.h"
 
-//TODO: remove me 
-//#include <string.h>
-//#include "communicator/connection.h"
-
 void printAndFree(ServerMessage* message);
 
 //TODO: Splitup and clean function
@@ -37,7 +33,6 @@ void initiateProlog(Connection* connection, const char* version, const char* gam
     if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
-
 
     sendPlayerPreference(connection, playerPreference);
 
