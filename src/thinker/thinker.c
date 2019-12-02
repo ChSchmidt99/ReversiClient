@@ -14,15 +14,12 @@ void tick(char* shm, int pipe[]) {
         perror("sigaddset");
     }
     sigprocmask(SIG_BLOCK, &sigset, NULL);
-    printf("Thinker is now waiting for signals (SIGUSR1)\n");
     if(sigwait(&sigset, &sig) != 0) {
         perror("sigwait");
     }
 
-    //printf("Got signal %i, exiting..\n", sig);
-
-    printf("Got signal from communicator, waking up..");
-    printf("Loading current board");
+    printf("Got signal from communicator, waking up..\n");
+    printf("Loading current board\n");
     if(shm != NULL)
         printf("%s", shm);
     /*
@@ -47,5 +44,5 @@ void tick(char* shm, int pipe[]) {
     write(pipe[1], move, sizeof(move) + 1);
     free(move);
      */
-    printf("Sent move to connector, sleeping again");
+    printf("Sent move to connector, sleeping again\n");
 }
