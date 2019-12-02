@@ -27,6 +27,7 @@ char** slice(const char* str, char delimiter[]) {
     char* copy = copyStringToNewMemoryAddr(str);
     char** result = NULL;
     char* token = strtok(copy, delimiter);
+    printf("slicing string '%s' with delimiter '%s'\n", copy, delimiter);
     int delimiterC = 0;
 
     while(token) {
