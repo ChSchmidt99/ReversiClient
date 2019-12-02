@@ -94,3 +94,40 @@ void sendPlayerPreference(Connection* connection, const char* preference){
 void logMessage(char* message){
     printf("Sending: '%s'\n",message);
 }
+
+void send(Connection* connection, char* data, bool freeData) {
+    logMessage(data);
+    writeMessageToServer(connection, data);
+    if(freeData)
+        free(data);
+}
+
+void formatAndSend(Connection* connection, char* data, const char* firstParam, const char* secondParam, bool freeData) {
+    if(firstParam == NULL && secondParam == NULL) {
+        send(connection, data, freeData);
+        return;
+    }
+    char* message;
+    if(firstParam != NULL) {
+        message = concatStringToNewMemoryAddr(data, firstParam, " ");
+        if(freeData)
+            free(data);
+    } else {
+        message = data;
+    }
+
+    char* finalMessage;
+    if(secondParam != NULL) {
+        finalMessage = concatStringToNewMemoryAddr(message, secondParam, " ");
+        if(firstParam != NULL || freeData)
+            free(message);
+    } else {
+        finalMessage = message;
+    }
+
+    send(connection, finalMessage, true);
+}
+
+ServerMessage* receive(Connection* connection) {
+    return parseServerMessage(readServerMessage(connection));
+}
