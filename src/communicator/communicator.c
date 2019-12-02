@@ -102,7 +102,7 @@ void send(Connection* connection, char* data, bool freeData) {
         free(data);
 }
 
-void formatAndSend(Connection* connection, char* data, char* firstParam, char* secondParam, bool freeData) {
+void formatAndSend(Connection* connection, char* data, const char* firstParam, const char* secondParam, bool freeData) {
     if(firstParam == NULL && secondParam == NULL) {
         send(connection, data, freeData);
         return;

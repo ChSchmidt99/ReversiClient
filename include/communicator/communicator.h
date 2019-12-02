@@ -19,7 +19,7 @@ void sendClientVersion(Connection* connection, const char* version);
 void sendGameId(Connection* connection, const char* gameID);
 void sendPlayerPreference(Connection* connection, const char* preference);
 
-void formatAndSend(Connection* connection, char* data, char* firstParam, char* secondParam, bool freeData);
+void formatAndSend(Connection* connection, char* data, const char* firstParam, const char* secondParam, bool freeData);
 
 void send(Connection* connection, char* data, bool freeData);
 
