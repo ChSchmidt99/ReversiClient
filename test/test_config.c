@@ -8,12 +8,9 @@ static int compareParamStructs(int firstParamElement, int secondParamElement, in
     return firstParamElement + secondParamElement + thirdParamElement;
 };
 
-static char * testGetParamsFromFile() {
+static char* testGetParamsFromFile() {
     Params* params = getParamsFromFile(WHITESPACE_CONFIG_FILE_PATH);
     Params* paramsToCompareWith = newParams("sysprak.priv.lab.nm.ifi.lmu.de", "1357", "Reversi");
-
-    printf("%s\n",params->hostName);
-
     mu_assert("Elements in both Param Structs should be equal", compareParamStructs(
             strcmp(params->hostName,paramsToCompareWith->hostName),
             strcmp(params->portNumber,paramsToCompareWith->portNumber),
@@ -25,7 +22,7 @@ static char * testGetParamsFromFile() {
     return 0;
 }
 
-static char * config_tests() {
+static char* config_tests() {
     mu_run_test(testGetParamsFromFile);
     return 0;
 }
