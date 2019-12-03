@@ -12,7 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: ./test/testWhiteSpaces.conf
     - name: Build Test files
       run: |
         make test
