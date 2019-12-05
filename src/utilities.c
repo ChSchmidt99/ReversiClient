@@ -29,7 +29,7 @@ int slice(const char* str, char delimiter[], int limit, char** result) {
     char* token = strtok(copy, delimiter);
     int delimiterC = 0;
 
-    while(token && limit-- > 0) {
+    while(token && (limit == -1 || limit-- > 0)) {
         result = realloc(result, sizeof(char*) * ++delimiterC);
 
         if(result == NULL) {
