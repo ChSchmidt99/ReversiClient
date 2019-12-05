@@ -31,18 +31,43 @@ char** slice(const char* str, char delimiter[], int limit) {
     char** result = NULL;
     if(limit == -1) {}
 
-    //unsigned long length = strlen(copy);
+    unsigned long length = strlen(copy);
     unsigned long index = 0;
-    while(token) {
-        result = realloc(result, sizeof(char*) * ++delimiterC);
+    if(limit == -1) {
+        while(token) {
+            result = realloc(result, sizeof(char*) * ++delimiterC);
 
-        if(result == NULL) {
-            panic("Cannot realloc to split string to char**\n");
-            exit(EXIT_FAILURE);
+            if(result == NULL) {
+                panic("Cannot realloc to split string to char**\n");
+                exit(EXIT_FAILURE);
+            }
+            result[delimiterC - 1] = token;
+            index += strlen(token) + 1;
+            token = strtok(NULL, delimiter);
         }
-        result[delimiterC - 1] = token;
-        index += strlen(token) + 1;
-        token = strtok(NULL, delimiter);
+    } else {
+        while(token && limit-- > 0) {
+            result = realloc(result, sizeof(char*) * ++delimiterC);
+
+            if(result == NULL) {
+                panic("Cannot realloc to split string to char**\n");
+                exit(EXIT_FAILURE);
+            }
+            result[delimiterC - 1] = token;
+            index += strlen(token);
+            token = strtok(NULL, delimiter);
+        }
+
+        result = realloc(result, sizeof(char*) * (delimiterC + 1));
+        if(token) {
+            char* pointer = result[delimiterC];
+            for(unsigned long l = index; l < length; l++) {
+                pointer[l] = str[l];
+            }
+            pointer[length] = 0;
+        } else {
+            result[delimiterC] = 0;
+        }
     }
 
     result = realloc(result, sizeof(char*) * (delimiterC + 1));
