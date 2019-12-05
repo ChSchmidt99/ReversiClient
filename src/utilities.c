@@ -31,7 +31,7 @@ char** slice(const char* str, char delimiter[], int limit) {
     char** result = NULL;
     if(limit == -1) {}
 
-    unsigned long length = strlen(copy);
+    //unsigned long length = strlen(copy);
     unsigned long index = 0;
     while(token) {
         result = realloc(result, sizeof(char*) * ++delimiterC);
@@ -51,6 +51,7 @@ char** slice(const char* str, char delimiter[], int limit) {
         exit (EXIT_FAILURE);
     }
     result[delimiterC] = token;
+    printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
     free(copy);
 
     return result;
