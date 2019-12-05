@@ -8,6 +8,7 @@ void panic(char* message);
 char* copyStringToNewMemoryAddr(const char* str);
 char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char* divider);
 
-int slice(const char* str, char delimiter[], int limit, char** result);
+char** slice(const char* str, char delimiter[], int limit);
+int sliceLength(char** data);
 
 #endif

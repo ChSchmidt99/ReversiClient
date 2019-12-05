@@ -23,12 +23,12 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
     return out;
 }
 
-int slice(const char* str, char delimiter[], int limit, char** result) {
+char** slice(const char* str, char delimiter[], int limit) {
     char* copy = copyStringToNewMemoryAddr(str);
     printf("slicing string '%s' (old was '%s') with delimiter '%s'\n", copy, str, delimiter);
     char* token = strtok(copy, delimiter);
     int delimiterC = 0;
-
+    char** result = NULL;
     while(token && (limit == -1 || limit-- > 0)) {
         result = realloc(result, sizeof(char*) * ++delimiterC);
 
@@ -51,5 +51,12 @@ int slice(const char* str, char delimiter[], int limit, char** result) {
     result[delimiterC] = 0;
     free(copy);
 
-    return delimiterC;
+    return result;
+}
+
+int sliceLength(char** data) {
+    int length = 0;
+    while(data[length++] != 0) {}
+
+    return length;
 }
