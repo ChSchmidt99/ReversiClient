@@ -49,7 +49,7 @@ char** slice(const char* str, char delimiter[], int limit) {
         exit (EXIT_FAILURE);
     }
     result[delimiterC] = 0;
-    free(copy);
+    //free(copy);
 
     for(int i = 0 ; i <= delimiterC; i++) {
         printf("%i is %s", i, result[i]);
