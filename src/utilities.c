@@ -51,6 +51,10 @@ char** slice(const char* str, char delimiter[], int limit) {
     result[delimiterC] = 0;
     free(copy);
 
+    for(int i = 0 ; i <= delimiterC; i++) {
+        printf("%i is %s", i, result[i]);
+    }
+
     return result;
 }
 
