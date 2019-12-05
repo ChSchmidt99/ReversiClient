@@ -42,7 +42,7 @@ char** slice(const char* str, char delimiter[], int limit) {
         if(--limit > 0)
             token = strtok(NULL, delimiter);
 
-        printf("token is %s", token);
+        printf("token is %s\n", token);
     }
 
     result = realloc(result, sizeof(char*) * (delimiterC + 1));
