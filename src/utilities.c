@@ -29,6 +29,8 @@ char** slice(const char* str, char delimiter[], int limit) {
     char* token = strtok(copy, delimiter);
     int delimiterC = 0;
     char** result = NULL;
+    if(limit == -1) {}
+
     while(token) {
         result = realloc(result, sizeof(char*) * ++delimiterC);
 
