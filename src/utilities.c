@@ -25,7 +25,7 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
 
 char** slice(const char* str, char delimiter[], int limit) {
     char* copy = copyStringToNewMemoryAddr(str);
-    printf("slicing string '%s' (old was '%s') with delimiter '%s'\n", copy, str, delimiter);
+    printf("slicing string '%s' with delimiter '%s'\n", copy, delimiter);
     char* token = strtok(copy, delimiter);
     int delimiterC = 0;
     char** result = NULL;
@@ -50,7 +50,7 @@ char** slice(const char* str, char delimiter[], int limit) {
         panic("Cannot realloc to split string to char**\n");
         exit (EXIT_FAILURE);
     }
-    result[delimiterC] = token;
+    result[delimiterC] = 0;
     //printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
     free(copy);
 
