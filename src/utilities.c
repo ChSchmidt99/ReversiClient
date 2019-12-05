@@ -38,6 +38,7 @@ int slice(const char* str, char delimiter[], int limit, char** result) {
         }
         printf("%i will be %s\n", delimiterC - 1, token);
         result[delimiterC - 1] = token;
+        printf("%i is %s", delimiterC - 1, result[delimiterC - 1]);
 
         token = strtok(NULL, delimiter);
     }
