@@ -40,7 +40,7 @@ char** slice(const char* str, char delimiter[], int limit) {
             panic("Cannot realloc to split string to char**\n");
             exit(EXIT_FAILURE);
         }
-        *result[delimiterC - 1] = *token;
+        result[delimiterC - 1] = token;
         index += strlen(token) + 1;
         token = strtok(NULL, delimiter);
     }
@@ -52,7 +52,7 @@ char** slice(const char* str, char delimiter[], int limit) {
     }
     result[delimiterC] = 0;
     //printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
-    free(copy);
+    //free(copy);
 
     return result;
 }
