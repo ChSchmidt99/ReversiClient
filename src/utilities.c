@@ -45,6 +45,13 @@ char** slice(const char* str, char delimiter[], int limit) {
             index += strlen(token) + 1;
             token = strtok(NULL, delimiter);
         }
+
+        result = realloc(result, sizeof(char*) * (delimiterC + 1));
+        if(result == NULL) {
+            panic("Cannot realloc to split string to char**\n");
+            exit (EXIT_FAILURE);
+        }
+        result[delimiterC] = 0;
     } else {
         while(token && limit-- > 0) {
             result = realloc(result, sizeof(char*) * ++delimiterC);
@@ -74,13 +81,6 @@ char** slice(const char* str, char delimiter[], int limit) {
         result = realloc(result, sizeof(char*) * (delimiterC + 1));
         result[delimiterC] = 0;
     }
-
-    result = realloc(result, sizeof(char*) * (delimiterC + 1));
-    if(result == NULL) {
-        panic("Cannot realloc to split string to char**\n");
-        exit (EXIT_FAILURE);
-    }
-    result[delimiterC] = 0;
     //printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
     //free(copy);
 
