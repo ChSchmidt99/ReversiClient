@@ -57,7 +57,7 @@ char** slice(const char* str, char delimiter[], int limit) {
             index += strlen(token);
             token = strtok(NULL, delimiter);
         }
-
+        printf("%lu > %lu\n", length, index);
         result = realloc(result, sizeof(char*) * (delimiterC + 1));
         if(token) {
             char* pointer = result[delimiterC];
