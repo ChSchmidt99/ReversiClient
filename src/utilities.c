@@ -68,8 +68,7 @@ char** slice(const char* str, char delimiter[], int limit) {
                 //pointer[l] = str[l];
             }
             printf("'\n");
-            printf("%p", pointer);
-            printf("%x", *pointer);
+            printf(pointer != NULL ? "b" : "a");
             pointer[length] = 0;
         }
 
