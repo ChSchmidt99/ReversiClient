@@ -61,5 +61,5 @@ int sliceLength(char** data) {
     int length = 0;
     while(data[length++] != 0) {}
 
-    return length;
+    return length - 1;
 }
