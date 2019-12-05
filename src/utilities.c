@@ -64,6 +64,7 @@ char** slice(const char* str, char delimiter[], int limit) {
             printf("copying rest..\n");
             char* pointer = result[delimiterC];
             for(unsigned long l = index; l < length; l++) {
+                printf("%c", str[l]);
                 pointer[l] = str[l];
             }
             pointer[length] = 0;
