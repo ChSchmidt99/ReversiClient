@@ -55,7 +55,7 @@ char** slice(const char* str, char delimiter[], int limit) {
             }
             result[delimiterC - 1] = token;
             printf("length of '%s' is %lu\n", token, strlen(token));
-            index += strlen(token);
+            index += strlen(token) + 1;
             token = strtok(NULL, delimiter);
         }
         printf("%lu > %lu > %i\n", length, index, limit);
