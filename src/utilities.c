@@ -51,7 +51,7 @@ char** slice(const char* str, char delimiter[], int limit) {
         exit (EXIT_FAILURE);
     }
     result[delimiterC] = token;
-    printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
+    //printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
     free(copy);
 
     return result;
