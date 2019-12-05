@@ -62,12 +62,12 @@ char** slice(const char* str, char delimiter[], int limit) {
         result = realloc(result, sizeof(char*) * (delimiterC + 1));
         if(token) {
             printf("copying rest..\n");
-            char* pointer = result[delimiterC];
+            //char* pointer = result[delimiterC];
             for(unsigned long l = index; l < length; l++) {
                 printf("%c", str[l]);
-                pointer[l] = str[l];
+                //pointer[l] = str[l];
             }
-            pointer[length] = 0;
+            //pointer[length] = 0;
         } else {
             result[delimiterC] = 0;
         }
