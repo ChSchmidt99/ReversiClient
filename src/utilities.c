@@ -48,7 +48,8 @@ char** slice(const char* str, char delimiter[], int limit) {
         panic("Cannot realloc to split string to char**\n");
         exit (EXIT_FAILURE);
     }
-    result[delimiterC] = 0;
+    printf("rest is %s\n", token);
+    result[delimiterC] = token;
     //free(copy);
 
     return result;
