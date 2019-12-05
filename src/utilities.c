@@ -23,20 +23,20 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
     return out;
 }
 
-int slice(const char* str, char delimiter[], char** result) {
+int slice(const char* str, char delimiter[], int limit, char** result) {
     char* copy = copyStringToNewMemoryAddr(str);
-    printf("slicing string '%s' ('%s') with delimiter '%s'\n", copy, str, delimiter);
+    printf("slicing string '%s' (old was '%s') with delimiter '%s'\n", copy, str, delimiter);
     char* token = strtok(copy, delimiter);
     int delimiterC = 0;
 
-    while(token) {
+    while(token && limit-- > 0) {
         result = realloc(result, sizeof(char*) * ++delimiterC);
 
         if(result == NULL) {
             panic("Cannot realloc to split string to char**\n");
             exit(EXIT_FAILURE);
         }
-        printf("%i will be %s", delimiterC - 1, token);
+        printf("%i will be %s\n", delimiterC - 1, token);
         result[delimiterC - 1] = token;
 
         token = strtok(NULL, delimiter);
