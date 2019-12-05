@@ -68,8 +68,8 @@ char** slice(const char* str, char delimiter[], int limit) {
                 //pointer[l] = str[l];
             }
             printf("'\n");
-            printf(pointer != NULL ? "b" : "a");
-            pointer[length] = 0;
+            printf("%x", *pointer);
+            //pointer[length] = 0;
         }
 
         result = realloc(result, sizeof(char*) * (delimiterC + 1));
