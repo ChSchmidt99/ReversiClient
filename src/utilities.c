@@ -43,6 +43,10 @@ int slice(const char* str, char delimiter[], int limit, char** result) {
     }
 
     result = realloc(result, sizeof(char*) * (delimiterC + 1));
+    if(result == NULL) {
+        panic("Cannot realloc to split string to char**\n");
+        exit (EXIT_FAILURE);
+    }
     result[delimiterC] = 0;
     free(copy);
 
