@@ -52,10 +52,3 @@ int slice(const char* str, char delimiter[], int limit, char** result) {
 
     return delimiterC;
 }
-
-int sliceLength(char** slice) {
-    int length = 0;
-    while(*slice[length++] != '\0') {}
-
-    return length;
-}
