@@ -7,11 +7,22 @@ void panic (char* message) {
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
+    printf("Copy in:\n");
+    printStringWithTerminator(str);
+
     char* newString = calloc((strlen(str) + 1),sizeof(char));
+
+    //TODO: STRLEN does not work properly
+    printf("strlen was: %lu\n",strlen(str));
+
     if (newString == NULL){
         perror("Failed to allocate memory");
     }
     strcpy(newString,str);
+
+    printf("Copy out:\n");
+    printStringWithTerminator(newString);
+
     return newString;
 }
 
@@ -23,10 +34,23 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
     return out;
 }
 
+void printStringWithTerminator(const char* str){
+    int length = strlen(str);
+    for (int i = 0; i <= length; i++){
+        if (str[i] == '\0')
+            printf("NULLTERM");
+        else         
+            printf("%c",str[i]);
+    }
+    printf("\n");
+}
+
 char** slice(const char* str, char *delimiter, size_t* lengthOut) {
+    
     char* copy = copyStringToNewMemoryAddr(str);
     char** result = NULL;
     char* token = strtok(copy, delimiter);
+
     *lengthOut = 0;
 
     while(token) {
