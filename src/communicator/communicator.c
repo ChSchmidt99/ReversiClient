@@ -53,7 +53,7 @@ char** getOtherPlayers(Connection* connection, int n){
 int getTotalPlayers(Connection* connection){
     //TODO: Wrap result in Servermessage
     ServerMessage* message = parseServerMessage(readServerMessage(connection));
-    if (message->type == Error)
+    if (message->isError == 1)
         return -1;
 
     //TODO: Properly parse number in parse Server Message
