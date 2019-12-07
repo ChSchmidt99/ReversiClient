@@ -4,6 +4,7 @@
 #include "./test_config.c"
 #include "./test_field.c"
 #include "./test_shared_memory.c"
+#include "./test_gamesequence.c"
 
  int tests_run = 0;
 
@@ -12,6 +13,7 @@
      mu_run_test_no_count(config_tests);
      mu_run_test_no_count(field_tests);
      mu_run_test_no_count(shared_memory_tests);
+     mu_run_test_no_count(gamesequence_tests);
    return 0;
  }
  

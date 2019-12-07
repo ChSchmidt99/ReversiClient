@@ -19,7 +19,7 @@ static char * test_Slice() {
     return 0;
 }
 
-static char * utilities_tests() {
+static char * gamesequence_tests() {
     mu_run_test(testConcatStringsToNewMemoryAddr);
     mu_run_test(test_Slice);
     return 0;
