@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "communicator/prolog.h"
 #include "communicator/servermessage.h"
@@ -11,26 +10,26 @@ void printAndFree(ServerMessage* message);
 PlayerInfo* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
     ServerMessage* message = getServerGreeting(connection);
-    if (message->type == Error)
+    if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
 
     sendClientVersion(connection, version);
 
     message = getVersionResponse(connection);
-    if (message->type == Error)
+    if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
 
     sendGameId(connection, gameId);
 
     message = getGameKind(connection);
-    if (message->type == Error)
+    if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
 
     message = getGameName(connection);
-    if (message->type == Error)
+    if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
 
@@ -38,7 +37,7 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
     //sendPlayerPreference(connection, playerPreference);
 
     message = getPlayerMeta(connection);
-    if (message->type == Error)
+    if (message->isError == 1)
         panic(message->clearText);
 
     Player* own = parseOwn(message);
@@ -51,7 +50,7 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
     printf("?\n");
     //TODO: Parse and display properly
     message = getEndplayers(connection);
-    if (message->type == Error)
+    if (message->isError == 1)
         panic(message->clearText);
     printAndFree(message);
     printf("??\n");
@@ -61,10 +60,10 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
 }
 
 Player* parseOwn(ServerMessage* message) {
-    size_t length = 0;
-    char** data = slice(message->clearText, " ",&length);
-    for(size_t i = 0; i < length; i++) {
-        printf("%zu > %s\n", i, data[i]);
+    char** data = slice(message->clearText, " ");
+    int length = sliceLength(data);
+    for(int i = 0; i < length; i++) {
+        printf("%i > %s\n", i, data[i]);
     }
 
     Player* player = malloc(sizeof(Player));
