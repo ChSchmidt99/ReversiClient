@@ -23,28 +23,24 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
     return out;
 }
 
-char** slice(const char* str, char delimiter[]) {
+char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     char* copy = copyStringToNewMemoryAddr(str);
     char** result = NULL;
     char* token = strtok(copy, delimiter);
-    int delimiterC = 0;
+    *lengthOut = 0;
 
     while(token) {
-        result = realloc(result, sizeof(char*) * ++delimiterC);
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
 
         if(result == NULL) 
             panic("Cannot realloc to split string to char**\n");
         
 
-        result[delimiterC - 1] = token;
+        result[*lengthOut - 1] = token;
 
         token = strtok(NULL, delimiter);
     }
-
-    result = realloc(result, sizeof(char*) * (delimiterC + 1));
-    result[delimiterC] = 0;
     free(copy);
-
     return result;
 }
 

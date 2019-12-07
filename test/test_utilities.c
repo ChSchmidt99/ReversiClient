@@ -11,8 +11,17 @@ static char * testConcatStringsToNewMemoryAddr() {
     return 0;
 }
 
+static char * test_Slice() {
+    size_t length = 0;
+    char** tokens = slice("Hallo ich bin ein toller test"," ",&length);
+    mu_assert("Should have 6 tokens", length == 6);
+    mu_assert("First Token should be Hallo", strcmp(tokens[0],"Hallo") == 0);
+    return 0;
+}
+
 static char * utilities_tests() {
     mu_run_test(testConcatStringsToNewMemoryAddr);
+    mu_run_test(test_Slice);
     return 0;
 }
  
