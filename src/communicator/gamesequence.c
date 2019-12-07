@@ -1,6 +1,12 @@
+/*
+
 #include "communicator/prolog.h"
+#include "communicator/servermessage.h"
 #include "utilities.h"
-#include "gamesequence_priv.h"
+
+#define OK_WAIT_COMMAND "OKWAIT"
+#define PLAY_COMMAND "PLAY"
+#define BOARD_SIZE 8
 
 void startGameLoop(Connection* connection){
     gameLoop(connection);
@@ -67,27 +73,11 @@ void receivedGameover(Connection* connection){
 
 char* getMove(){
     panic("Implement Me");
-    return "";
 }
 
 void receiveBoard(Connection* connection, char* boardBuffer[BOARD_SIZE]){
-    int rows;
-    int cols;
-    receiveBoardDimensions(connection,&rows,&cols);
-}
-
-void receiveBoardDimensions(Connection* connection, int *rows, int *cols){
-    //char* fieldDimensions = readServerMessage(connection);
-    //char* fieldDimensions = "FIELD 3,5\n";
-    size_t length1 = 0;
-    char** slicedDimensions = slice("FIELD 3,5\n"," ",&length1);
-    size_t length2 = 0;
-    char** dimensions = slice(slicedDimensions[1],",",&length2);
-    *cols = atoi(dimensions[0]);
-    *rows = atoi(dimensions[1]);
-    //free(fieldDimensions);
-    free(slicedDimensions);
-    free(dimensions);
+    char* message = readServerMessage(connection);
+    
 }
 
 void sendMove(Connection* connection, char* move){
@@ -99,3 +89,5 @@ void sendMove(Connection* connection, char* move){
 void writeBoardToSharedMemory(char* board[BOARD_SIZE]){
     panic("Implement Me");
 }
+
+*/
