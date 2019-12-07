@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-//TODO: wait still needed? not available on macOS
-//#include <wait.h>
-
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
@@ -59,6 +56,7 @@ int main(int argc, char *argv[]) {
 
         connectToServer(connection);
         initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
+        
         disconnectFromServer(connection);
         freeConnection(connection);
         free(gameId);

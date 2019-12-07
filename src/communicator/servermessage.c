@@ -3,9 +3,9 @@
 #include "servermessage_priv.h"
 #include "utilities.h"
 
-ServerMessage* newServerMessage(char* message, char* clearText, void* data, int isError){
+ServerMessage* newServerMessage(char* message, char* clearText, void* data, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
-    serverMessage->isError = isError;
+    serverMessage->type = type;
     serverMessage->clearText = copyStringToNewMemoryAddr(clearText);
     serverMessage->message = copyStringToNewMemoryAddr(message);
     serverMessage->data = data;
@@ -20,20 +20,25 @@ void freeServerMessage(ServerMessage* serverMessage){
 }
 
 ServerMessage* parseServerMessage(char* message){
-    int isError = unwrapError(message);
+    ServerMessageType type = getType(message);
     char* clearText = getClearText(message);
     void* data = getData(message);
-    return newServerMessage(message, clearText, data, isError);
+    return newServerMessage(message, clearText, data, type);
 }
 
-int unwrapError(char* message){
-    int isError = 0;
-    
+ServerMessageType getType(char* message){
+    if(isError(message))
+        return Error;
+
+    return Prolog;
+    //TODO: Implement Me
+}
+
+int isError(char* message){
     if (*message == '-')
-        isError = 1;
-    
-    message += 2;
-    return isError;
+        return 1;
+    else 
+        return 0;
 }
 
 char* getClearText(char* message){
