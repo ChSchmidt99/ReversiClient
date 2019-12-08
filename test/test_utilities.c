@@ -11,6 +11,14 @@ static char * testConcatStringsToNewMemoryAddr() {
     return 0;
 }
 
+static char * test_copyStringToNewMemoryAddr() {
+    char* baseString = "3,2";
+    char* newString = copyStringToNewMemoryAddr(baseString);
+    mu_assert("Strings should be Equal", strcmp(baseString,newString) == 0);
+    free(newString);
+    return 0;
+}
+
 static char * test_Slice() {
     size_t length = 0;
     char** tokens = slice("Hallo ich bin ein toller test"," ",&length);
@@ -19,8 +27,9 @@ static char * test_Slice() {
     return 0;
 }
 
-static char * gamesequence_tests() {
+static char * utilities_tests() {
     mu_run_test(testConcatStringsToNewMemoryAddr);
+    mu_run_test(test_copyStringToNewMemoryAddr);
     mu_run_test(test_Slice);
     return 0;
 }

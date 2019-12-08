@@ -7,22 +7,12 @@ void panic (char* message) {
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
-    printf("Copy in:\n");
-    printStringWithTerminator(str);
-
-    char* newString = calloc((strlen(str) + 1),sizeof(char));
-
-    //TODO: STRLEN does not work properly
-    printf("strlen was: %lu\n",strlen(str));
-
+    
+    char* newString = malloc((strlen(str) + 1) * sizeof(char));    
     if (newString == NULL){
         perror("Failed to allocate memory");
     }
     strcpy(newString,str);
-
-    printf("Copy out:\n");
-    printStringWithTerminator(newString);
-
     return newString;
 }
 
