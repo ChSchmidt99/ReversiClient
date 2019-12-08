@@ -7,7 +7,8 @@ void panic (char* message) {
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
-    char* newString = malloc(sizeof(char) * (strlen(str) + 1));
+    
+    char* newString = malloc((strlen(str) + 1) * sizeof(char));    
     if (newString == NULL){
         perror("Failed to allocate memory");
     }
@@ -23,73 +24,44 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
     return out;
 }
 
-char** slice(const char* str, char delimiter[], int limit) {
-    char* copy = copyStringToNewMemoryAddr(str);
-    printf("slicing string '%s' with delimiter '%s'\n", copy, delimiter);
-    char* token = strtok(copy, delimiter);
-    int delimiterC = 0;
-    char** result = NULL;
-    if(limit == -1) {}
-
-    unsigned long length = strlen(str);
-    unsigned long index = 0;
-    if(limit == -1) {
-        while(token) {
-            result = realloc(result, sizeof(char*) * ++delimiterC);
-
-            if(result == NULL) {
-                panic("Cannot realloc to split string to char**\n");
-                exit(EXIT_FAILURE);
-            }
-            result[delimiterC - 1] = token;
-            index += strlen(token) + 1;
-            token = strtok(NULL, delimiter);
-        }
-
-        result = realloc(result, sizeof(char*) * (delimiterC + 1));
-        if(result == NULL) {
-            panic("Cannot realloc to split string to char**\n");
-            exit (EXIT_FAILURE);
-        }
-        result[delimiterC] = 0;
-    } else {
-        while(token && limit-- > 0) {
-            result = realloc(result, sizeof(char*) * ++delimiterC);
-
-            if(result == NULL) {
-                panic("Cannot realloc to split string to char**\n");
-                exit(EXIT_FAILURE);
-            }
-            result[delimiterC - 1] = token;
-            printf("length of '%s' is %lu\n", token, strlen(token));
-            index += strlen(token) + 1;
-            token = strtok(NULL, delimiter);
-        }
-        printf("%lu > %lu > %i\n", length, index, limit);
-        if(token) {
-            result = realloc(result, sizeof(char*) * (++delimiterC));
-            printf("copying rest to %p\n'", result);
-            //char* pointer = result[delimiterC - 1];
-            for(unsigned long l = index; l < length; l++) {
-                printf("%c", str[l]);
-                //pointer[l] = str[l];
-            }
-            printf("'\n");
-            //pointer[length] = 0;
-        }
-
-        result = realloc(result, sizeof(char*) * (delimiterC + 1));
-        result[delimiterC] = 0;
+void printStringWithTerminator(const char* str){
+    int length = strlen(str);
+    for (int i = 0; i <= length; i++){
+        if (str[i] == '\0')
+            printf("NULLTERM");
+        else         
+            printf("%c",str[i]);
     }
-    //printf("%s ----- >>>>>\n", strtok(NULL, delimiter));
-    //free(copy);
+    printf("\n");
+}
 
+//Fixed Slice :) 
+char** slice(const char* str, char *delimiter, size_t* lengthOut) {
+    
+    char* copy = copyStringToNewMemoryAddr(str);
+    char** result = NULL;
+    char* token = strtok(copy, delimiter);
+
+    *lengthOut = 0;
+
+    while(token) {
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
+
+        if(result == NULL) 
+            panic("Cannot realloc to split string to char**\n");
+        
+
+        result[*lengthOut - 1] = token;
+
+        token = strtok(NULL, delimiter);
+    }
+    free(copy);
     return result;
 }
 
-int sliceLength(char** data) {
+int sliceLength(char** slice) {
     int length = 0;
-    while(data[length++] != 0) {}
+    while(*slice[length++] != '\0') {}
 
-    return length - 1;
+    return length;
 }
