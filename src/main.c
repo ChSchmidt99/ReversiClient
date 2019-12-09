@@ -57,13 +57,11 @@ int main(int argc, char *argv[]) {
         freeParams(params);
 
         connectToServer(connection);
+
         GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
-        printf("Gamekind: %i\n",gameInstance->gameKind);
-        printf("Own name: %s\n",gameInstance->ownPlayer->name);
-        printf("Opponen name: %s\n",gameInstance->opponents[0]->name);
-        printf("Game name: %s\n",gameInstance->gameName);
-        
+        printGameInstanceDetails(gameInstance);
         freeGameInstance(gameInstance);
+
         disconnectFromServer(connection);
         freeConnection(connection);
         free(gameId);

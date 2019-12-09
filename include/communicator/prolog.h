@@ -12,5 +12,7 @@
     } GameInstance;
     
     GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference);
+    void printGameInstanceDetails(GameInstance* gameInstance);
+    char* gameKindString(GameKind gameKind);
     void freeGameInstance(GameInstance* instance);
 #endif

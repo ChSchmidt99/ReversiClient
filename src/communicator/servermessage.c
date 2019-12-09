@@ -4,82 +4,48 @@
 #include "utilities.h"
 #include <string.h>
 
-ServerMessage* initServerMessage(char* messageReference, char* clearText, ServerMessageType type){
+#define MOVE_COMMAND "MOVE"
+#define MOVEOK_COMMAND "MOVEOK"
+#define WAIT_COMMAND "WAIT"
+#define GAMEOVER_COMMAND "GAMEOVER"
+
+
+ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
     serverMessage->type = type;
-    serverMessage->clearText = clearText;
     serverMessage->messageReference = messageReference;
     return serverMessage;
 }
 
 void freeServerMessage(ServerMessage* serverMessage){
     free(serverMessage->messageReference);
-    free(serverMessage->clearText);
     free(serverMessage);
 }
 
 ServerMessage* parseServerMessage(char* message){
     ServerMessageType type = getType(message);
-    char* clearText = getClearText(message);
-    return initServerMessage(message, clearText, type);
-}
-
-
-char** splitMessage(char* message) {
-    // reserve memory
-    int sizeOfArray = 3;
-    int maxSizeOfSubString = 100;
-    char ** messageArray = malloc(sizeOfArray * sizeof(char*));
-    for (int i = 0 ; i < sizeOfArray; ++i)
-        messageArray[i] = malloc(maxSizeOfSubString * sizeof(char));
-    // split the message in substrings, for exampe '+' 'WAIT' 'maximale Zugzeit'
-    char ch;
-    int spaceCounter = 0;
-    char subString[100];
-    char *pointer = subString;
-    int pointerCounter = 0;
-    //fill first substring ( + or -)
-    pointer[0] = message[0];
-    strcpy(messageArray[0], subString);
-    memset(subString,0,sizeof(subString));
-    //fill second and third substring
-    for (int i = 2 ; i < strlen(message); ++i) {
-        ch = message[i];
-        if (ch == ' ') {
-        	spaceCounter++;
-        }
-        pointer[pointerCounter++] = ch;
-        if (spaceCounter == 1){
-        		strcpy(messageArray[1], subString);
-        		memset(subString,0,sizeof(subString));
-        		pointerCounter = 0;
-        		spaceCounter++;
-        	}
-    }
-    strcpy(messageArray[2], subString);
-    return messageArray;
+    return initServerMessage(message, type);
 }
 
 ServerMessageType getType(const char* message){
-    if (message[0]=='-') return Error;
-    else {
-        char** splittedMessage = splitMessage(message);
-        char type[] = splittedMessage[1];
-        if(type == "WAIT") return Wait;
-        if(type == "MOVE") return Move;
-        if(type == "GAMEOVER") return Gameover;
-        if(type == "MOVEOK") return MoveOk;
-        
-    }
-  
-
-  
-ServerMessageType getType(const char* message){
-    if(isError(message))
+    if (isError(message)) 
         return Error;
+    
+    size_t length = 0;
+    char** splittedMessage = slice(message," ",&length);
+    char* typeString = splittedMessage[1];
+    ServerMessageType out = Prolog;
+    if(strcmp(typeString, WAIT_COMMAND) == 0) 
+        out = Wait;
+    if(strcmp(typeString, GAMEOVER_COMMAND)) 
+        out = Gameover;
+    if(strcmp(typeString, MOVE_COMMAND)) 
+        out = Move;
+    if(strcmp(typeString, MOVEOK_COMMAND)) 
+        out = MoveOk;
 
-    return Prolog;
-    //TODO: Implement Me
+    freeTokens(splittedMessage);
+    return out;
 }
 
 int isError(const char* message){
@@ -87,13 +53,4 @@ int isError(const char* message){
         return 1;
     else 
         return 0;
-}
-
-/*
-    vielleicht eine bibliothek oder etwas ähnliches mit vordefinierten texten schreiben und ähnlich wie bei getType den 
-    dementsprechenden Eintrag zurückgeben.
-*/
-char* getClearText(const char* message){
-    char** splittedMessage = splitMessage(message);
-    return splittedMessage[3];
 }

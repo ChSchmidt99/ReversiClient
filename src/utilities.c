@@ -42,7 +42,7 @@ void freeArrayWithContents(void** arr, size_t length){
     free(arr);
 }
     
-char** slice(char* str, char *delimiter, size_t* lengthOut) {
+char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     
     char* copy = copyStringToNewMemoryAddr(str);
 

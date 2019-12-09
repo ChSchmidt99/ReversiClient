@@ -6,7 +6,7 @@
 #include "utilities.h"
 
 void printAndFree(char* message);
-void printGameKind(GameKind gameKind);
+void printPlayerMeta(PlayerMeta* meta);
 GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName);
 
 //TODO: Splitup and clean function
@@ -25,7 +25,6 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
     sendGameId(connection, gameId);
 
     GameKind gameKind = getGameKind(connection);
-    printGameKind(gameKind);
 
     char* gameName = getGameName(connection);
 
@@ -34,7 +33,6 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
     PlayerMeta* ownMeta = getPlayerMeta(connection);
 
     int totalPlayers = getTotalPlayers(connection);
-
     PlayerMeta* opponents[totalPlayers];
     for (int i = 0; i < totalPlayers - 1; i++){
         PlayerMeta* otherPlayer = getOtherPlayer(connection);
@@ -44,7 +42,7 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
     if (!nextMessageIsEndplayers(connection))
         panic("Expected ENDPLAYERS");
 
-    return initGameInstance(ownMeta,gameKind,totalPlayers,opponents, gameName);
+    return initGameInstance(ownMeta,gameKind,totalPlayers - 1,opponents, gameName);
 }
 
 GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName){
@@ -71,12 +69,34 @@ void freeGameInstance(GameInstance* instance){
     free(instance);
 }
 
-void printGameKind(GameKind gameKind){
-    if (gameKind == gamekind_Reversi)
-        printf("GameKind is Reversi\n");
-    else 
-        printf("GameKind is Unkown\n");
+void printGameInstanceDetails(GameInstance* gameInstance){
+    printf("Game Name: %s\n",gameInstance->gameName);
+    char* gameKindStr = gameKindString(gameInstance->gameKind);
+    printf("Game Kind: %s\n",gameKindStr);
+    free(gameKindStr);
+    printf("Player Info: \n");
+    printPlayerMeta(gameInstance->ownPlayer);
+    printf("Number of Opponents: %zu\n",gameInstance->opponentCount);
+    printf("Opponents Info: \n");
+    for (size_t i = 0; i < gameInstance->opponentCount; i++)
+        printPlayerMeta(gameInstance->opponents[i]);
 }
+
+void printPlayerMeta(PlayerMeta* meta){
+    printf("Player '%s' has number: %i ",meta->name, meta->number);
+    if (meta->isReady)
+        printf("Ready\n");
+    else
+        printf("Not Ready\n");
+}
+
+char* gameKindString(GameKind gameKind){
+    if (gameKind == gamekind_Reversi)
+        return copyStringToNewMemoryAddr("Reversi");
+    else 
+        return copyStringToNewMemoryAddr("Unknown");
+}
+
 
 void printAndFree(char* message){
     printf("%s\n",message);

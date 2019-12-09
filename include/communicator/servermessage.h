@@ -11,7 +11,6 @@ typedef enum _ServerMessageType {
 } ServerMessageType;
 
 typedef struct _ServerMessage {
-    char* clearText;
     char* messageReference;
     ServerMessageType type;
 } ServerMessage;

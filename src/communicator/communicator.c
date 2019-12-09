@@ -6,10 +6,9 @@
 char* getServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
-        panic(message->clearText);
+        panic(message->messageReference);
     
-    //TODO: Use Cleartext once imlemented
-    char* out = copyStringToNewMemoryAddr(message->messageReference); 
+    char* out = copyStringToNewMemoryAddr(message->messageReference + 2); 
     freeServerMessage(message);
     return out;
 }
@@ -26,7 +25,7 @@ int hasAcceptedVersion(Connection* connection){
 GameKind getGameKind(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
-        panic(message->clearText);
+        panic(message->messageReference);
     GameKind out = parseGameKind(message->messageReference);
     freeServerMessage(message);
     return out;
@@ -43,9 +42,8 @@ GameKind parseGameKind(char* message){
 char* getGameName(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
-        panic(message->clearText);
-    //TODO: Use Cleartext once imlemented
-    char* out = copyStringToNewMemoryAddr(message->messageReference);
+        panic(message->messageReference);
+    char* out = copyStringToNewMemoryAddr(message->messageReference + 2);
     freeServerMessage(message);
     return out;
 }
@@ -53,8 +51,7 @@ char* getGameName(Connection* connection){
 PlayerMeta* getPlayerMeta(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
-        panic(message->clearText);
-    //TODO: Use Cleartext once imlemented
+        panic(message->messageReference);
     PlayerMeta* out = parsePlayerMeta(message->messageReference);
     freeServerMessage(message);
     return out;
@@ -82,8 +79,7 @@ char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount){
 PlayerMeta* getOtherPlayer(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
-        panic(message->clearText);
-    //TODO: Use Cleartext once imlemented
+        panic(message->messageReference);
     PlayerMeta* out = parseOtherPlayerMeta(message->messageReference);
     freeServerMessage(message);
     return out;
@@ -99,8 +95,8 @@ PlayerMeta* parseOtherPlayerMeta(char* message){
 
     int number = atoi(tokens[1]);
     char* name = getNameForOtherPlayersTokens(tokens,length);
-    //TODO: Parse "isReady"
-    PlayerMeta* out = newPlayerMeta(number,name, 1);
+    int isReady = atoi(tokens[length - 1]);
+    PlayerMeta* out = newPlayerMeta(number,name, isReady);
     freeTokens(tokens);
     return out;
 }
@@ -128,7 +124,7 @@ int getTotalPlayers(Connection* connection){
 int nextMessageIsEndplayers(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
-        panic(message->clearText);
+        panic(message->messageReference);
     int result = 0;
     if (message->type == Error)
         panic(message->messageReference);

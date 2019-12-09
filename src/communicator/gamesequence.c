@@ -23,7 +23,7 @@ ServerMessage* receiveMessage(Connection* connection){
 void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage){
     switch (serverMessage->type){
     case Error:
-        printf("Gor Error: %s\n",serverMessage->clearText);
+        printf("Gor Error: %s\n",serverMessage->messageReference);
         return;
     case Wait:
         receivedWait(connection);
