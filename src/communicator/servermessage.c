@@ -34,7 +34,7 @@ ServerMessageType getType(const char* message){
     //TODO: Implement Me
 }
 
-int isError(char* message){
+int isError(const char* message){
     if (*message == '-')
         return 1;
     else 
@@ -47,5 +47,5 @@ int isError(char* message){
 */
 char* getClearText(const char* message){
     //TODO: Implement Me!
-    return message;
+    return "";
 }

@@ -72,6 +72,7 @@ Player* parseOwn(ServerMessage* message) {
 }
 
 void printAndFree(ServerMessage* message){
-    printServerMessage(message);
+    //TODO: Print Clear Text
+    printf("%s\n",message->messageReference);
     freeServerMessage(message);
 }

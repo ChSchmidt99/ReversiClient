@@ -95,8 +95,10 @@ char** receiveBoard(Connection* connection, size_t* lengthOut){
     readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,endField);
     
     //TODO: Properly handle error
+    /*
     if (strcmp(endField,ENDFILED_COMMAND) != 0)
         panic(endField);
+    */
 
     *lengthOut = rows;
     return board;

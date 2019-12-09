@@ -59,7 +59,7 @@ void disconnectFromServer(Connection* connection){
 //TODO: Test readLineFromServer
 char* readLineFromServer(Connection* connection){
     ssize_t length = 0;
-    char currentChar;
+    char currentChar = 'a';
     char* result = NULL;
     while(currentChar != '\0'){
         ssize_t readLength = read(connection->socket,&currentChar,1);
@@ -81,7 +81,7 @@ char* readLineFromServer(Connection* connection){
 
 //TODO: Maybe return Error Code and don't panic, but lets see about that
 //Depreciated, use readLineFromServer!
-char* readServerMessage(Connection* connection, size_t buffSize, char buffer[buffSize]){
+char* readServerMessage(Connection* connection, ssize_t buffSize, char buffer[buffSize]){
     if (connection->socket == -1)
         panic("Not connectet to server");
     
