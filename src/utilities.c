@@ -41,10 +41,11 @@ void freeArrayWithContents(void** arr, size_t length){
     }
     free(arr);
 }
-
-char** slice(const char* str, char *delimiter, size_t* lengthOut) {
+    
+char** slice(char* str, char *delimiter, size_t* lengthOut) {
     
     char* copy = copyStringToNewMemoryAddr(str);
+
     char** result = NULL;
     char* token = strtok(copy, delimiter);
 
@@ -64,6 +65,11 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     return result;
 }
 
+void freeTokens(char** tokens){
+    free(tokens[0]);
+    free(tokens);
+}
+
 char* joinTokens(char** tokens, size_t length, char* delimiter){
     size_t newLength = 1;
     for (size_t i = 0; i < length; i++){
@@ -77,11 +83,4 @@ char* joinTokens(char** tokens, size_t length, char* delimiter){
             strcat(out, delimiter);
     }
     return out;
-}
-
-int sliceLength(char** slice) {
-    int length = 0;
-    while(*slice[length++] != '\0') {}
-
-    return length;
 }

@@ -81,8 +81,8 @@ PlayerMeta* parsePlayerMeta(char* message){
         panic("unexpected playermeta string, expected 4 tokens");
 
     int number = atoi(tokens[2]);
-    char* name = getNameFromPlayerMetaTokens(tokens,length);
-    freeArrayWithContents((void**)tokens,length);
+    char* name = copyStringToNewMemoryAddr(getNameFromPlayerMetaTokens(tokens,length));
+    freeTokens(tokens);
     return newPlayerMeta(number,name);
 }
 

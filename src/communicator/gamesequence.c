@@ -114,8 +114,8 @@ void receiveBoardDimensions(Connection* connection, int *rows, int *cols){
     *cols = atoi(dimensions[0]);
     *rows = atoi(dimensions[1]);
     free(fieldDimensions);
-    freeArrayWithContents((void**)fieldDimensionTokens, fieldDimensionTokenCount);
-    freeArrayWithContents((void**)dimensions, dimensionCount);
+    freeTokens(fieldDimensionTokens);
+    freeTokens(dimensions);
 }
 
 void sendMove(Connection* connection, char* move){
