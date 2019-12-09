@@ -23,6 +23,9 @@ ServerMessage* parseServerMessage(char* message){
     return initServerMessage(message, clearText, type);
 }
 
+/*
+    vielleicht mit strcmp die "message" mit den möglichen Nachrichten vergleichen und demnach den Typ zurückgeben.
+*/
 ServerMessageType getType(const char* message){
     if(isError(message))
         return Error;
@@ -38,6 +41,10 @@ int isError(char* message){
         return 0;
 }
 
+/*
+    vielleicht eine bibliothek oder etwas ähnliches mit vordefinierten texten schreiben und ähnlich wie bei getType den 
+    dementsprechenden Eintrag zurückgeben.
+*/
 char* getClearText(const char* message){
     //TODO: Implement Me!
     return message;
