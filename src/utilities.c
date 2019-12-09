@@ -58,6 +58,11 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     return result;
 }
 
+void freeTokens(char** tokens){
+    free(tokens[0]);
+    free(tokens);
+}
+
 int sliceLength(char** slice) {
     int length = 0;
     while(*slice[length++] != '\0') {}
