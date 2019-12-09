@@ -61,8 +61,22 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
 
         token = strtok(NULL, delimiter);
     }
-    free(copy);
     return result;
+}
+
+char* joinTokens(char** tokens, size_t length, char* delimiter){
+    size_t newLength = 1;
+    for (size_t i = 0; i < length; i++){
+        newLength += strlen(tokens[i]) + strlen(delimiter);
+    }
+    newLength -= strlen(delimiter);
+    char* out = malloc(sizeof(char) * newLength);
+    for (size_t i = 0; i < length; i++){
+        strcat(out, tokens[i]);
+        if (i  != length - 1)
+            strcat(out, delimiter);
+    }
+    return out;
 }
 
 int sliceLength(char** slice) {

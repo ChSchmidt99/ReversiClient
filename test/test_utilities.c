@@ -35,11 +35,29 @@ static char* test_freeArray(){
     return 0;
 }
 
+static char* test_joinTokens(){
+    char* strs[3] = {"Hallo","schöne","Welt"};
+    char* result = joinTokens(strs,3," ");
+    mu_assert("Joined String did not match expected string", strcmp(result,"Hallo schöne Welt") == 0);
+    free(result);
+    return 0;
+}
+
+static char* test_joinTokens_single_token(){
+    char* strs[1] = {"Hallo"};
+    char* result = joinTokens(strs,1," ");
+    mu_assert("Joined String did not match expected string", strcmp(result,"Hallo") == 0);
+    free(result);
+    return 0;
+}
+
 static char * utilities_tests() {
     mu_run_test(testConcatStringsToNewMemoryAddr);
     mu_run_test(test_copyStringToNewMemoryAddr);
     mu_run_test(test_Slice);
     mu_run_test(test_freeArray);
+    mu_run_test(test_joinTokens);
+    mu_run_test(test_joinTokens_single_token);
     return 0;
 }
  

@@ -10,6 +10,7 @@ char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char
 
 void printStringWithTerminator(const char* str);
 char** slice(const char* str, char *delimiter, size_t* lengthOut);
+char* joinTokens(char** tokens, size_t length, char* delimiter);
 int sliceLength(char** slice);
 void freeArrayWithContents(void** arr, size_t length);
 

@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(thinker > 0) {
+        /*
         printf("[PARENT/%i] Started connector child\n", thinker);
 
         // start the thinker process
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]) {
         }
 
         printf("Connector died, exiting..\n");
+        */
     } else {
         printf("[CHILD/CONNECTOR] Starting connector..\n");
         // start the connector process

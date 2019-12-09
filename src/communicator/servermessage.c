@@ -47,5 +47,6 @@ int isError(const char* message){
 */
 char* getClearText(const char* message){
     //TODO: Implement Me!
-    return "";
+    char* text = malloc(sizeof(char) * 5);
+    return text;
 }

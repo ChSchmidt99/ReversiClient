@@ -5,15 +5,22 @@
 #include "communicator/connection.h"
 #include "communicator/servermessage.h"
 
+typedef struct _PlayerMeta {
+    int number;
+    char* name;
+} PlayerMeta;
+
 //TODO: Maybe use communicator struct instead of connection
-ServerMessage* getServerGreeting(Connection* connection);
-ServerMessage* getVersionResponse(Connection* connection);
-ServerMessage* getGameKind(Connection* connection);
-ServerMessage* getGameName(Connection* connection);
-ServerMessage* getPlayerMeta(Connection* connection);
+char* getServerGreeting(Connection* connection);
+char* getVersionResponse(Connection* connection);
+char* getGameKind(Connection* connection);
+char* getGameName(Connection* connection);
+PlayerMeta* getPlayerMeta(Connection* connection);
 int getTotalPlayers(Connection* connection);
-ServerMessage* getEndplayers(Connection* connection);
-char** getOtherPlayers(Connection* connection, int n);
+char* getOtherPlayer(Connection* connection);
+int nextMessageIsEndplayers(Connection* connection);
+
+void freePlayerMeta(PlayerMeta* meta);
 
 void sendClientVersion(Connection* connection, const char* version);
 void sendGameId(Connection* connection, const char* gameID);
@@ -23,6 +30,6 @@ void formatAndSend(Connection* connection, char* data, const char* firstParam, c
 
 void send(Connection* connection, char* data, bool freeData);
 
-ServerMessage* receive(Connection* connection);
+ServerMessage* receiveServerMessage(Connection* connection);
 
 #endif 
