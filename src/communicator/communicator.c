@@ -1,24 +1,8 @@
-#include <string.h>
-#include <stdbool.h>
-
-#include "communicator/communicator.h"
-#include "communicator/connection.h"
-#include "utilities.h"
-
-#define ENDPLAYERS_COMMAND "+ ENDPLAYERS"
-#define VERSION "VERSION"
-#define GAMEID "ID"
-#define PLAYERPREFERENCE "PLAYER"
+#include "communicator_priv.h"
 
 //TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
 //TODO: use readLine instead of readMessage
-
-void logMessage(char* message);
-PlayerMeta* newPlayerMeta(int number, char* name);
-PlayerMeta* parsePlayerMeta(char* message);
-char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount);
-
 char* getServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
@@ -30,24 +14,30 @@ char* getServerGreeting(Connection* connection){
     return out;
 }
 
-char* getVersionResponse(Connection* connection){
+int hasAcceptedVersion(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    int result = 1;
+    if (message->type == Error)
+        result = 0;
+    freeServerMessage(message);
+    return 1;
+}
+
+GameKind getGameKind(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->clearText);
-    //TODO: Use Cleartext once imlemented
-    char* out = copyStringToNewMemoryAddr(message->messageReference);
+    GameKind out = parseGameKind(message->messageReference);
     freeServerMessage(message);
     return out;
 }
 
-char* getGameKind(Connection* connection){
-    ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->clearText);
-    //TODO: Use Cleartext once imlemented
-    char* out = copyStringToNewMemoryAddr(message->messageReference);
-    freeServerMessage(message);
-    return out;
+GameKind parseGameKind(char* message){
+    if (strcmp(message,REVERSI_GAMEKIND) == 0){
+        return gamekind_Reversi;
+    } else {
+        return gamekind_Unkown;
+    }
 }
 
 char* getGameName(Connection* connection){
@@ -73,31 +63,57 @@ PlayerMeta* getPlayerMeta(Connection* connection){
 PlayerMeta* parsePlayerMeta(char* message){
     size_t length = 0;
     char** tokens = slice(message," ",&length);
+    
     //TODO: find better way to do this!
-    printf("Message to parse: %s\n",message);
-    printf("Tokens: %zu\n",length);
-
     if (length < 4)
         panic("unexpected playermeta string, expected 4 tokens");
 
     int number = atoi(tokens[2]);
-    char* name = copyStringToNewMemoryAddr(getNameFromPlayerMetaTokens(tokens,length));
+    char* name = getNameFromPlayerMetaTokens(tokens,length);
+    PlayerMeta* out = newPlayerMeta(number,name,1);
     freeTokens(tokens);
-    return newPlayerMeta(number,name);
+    return out;
 }
 
 char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount){
     return joinTokens(&tokens[3],tokenCount - 3, " ");
 }
 
-char* getOtherPlayer(Connection* connection){
+PlayerMeta* getOtherPlayer(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->clearText);
     //TODO: Use Cleartext once imlemented
-    char* out = copyStringToNewMemoryAddr(message->messageReference);
+    PlayerMeta* out = parseOtherPlayerMeta(message->messageReference);
     freeServerMessage(message);
     return out;
+}
+
+PlayerMeta* parseOtherPlayerMeta(char* message){
+    size_t length = 0;
+    char** tokens = slice(message," ",&length);
+    
+    //TODO: find better way to do this!
+    if (length < 4)
+        panic("unexpected playermeta string, expected 4 tokens");
+
+    int number = atoi(tokens[1]);
+    char* name = getNameForOtherPlayersTokens(tokens,length);
+    //TODO: Parse "isReady"
+    PlayerMeta* out = newPlayerMeta(number,name, 1);
+    freeTokens(tokens);
+    return out;
+}
+
+char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount){
+    size_t nameTokenCount = tokenCount - 3;
+    char* nameTokens[nameTokenCount]; 
+    size_t index = 0;
+    for (size_t i = 2; i < tokenCount - 1; i++){
+        nameTokens[index] = tokens[i];
+        index++;
+    }
+    return joinTokens(nameTokens,nameTokenCount," ");
 }
 
 int getTotalPlayers(Connection* connection){
@@ -157,10 +173,11 @@ ServerMessage* receiveServerMessage(Connection* connection) {
     return parseServerMessage(readLineFromServer(connection));
 }
 
-PlayerMeta* newPlayerMeta(int number, char* name){
+PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
     PlayerMeta* meta = malloc(sizeof(PlayerMeta));
     meta->name = copyStringToNewMemoryAddr(name);
     meta->number = number;
+    meta->isReady = isReady;
     return meta;
 }
 

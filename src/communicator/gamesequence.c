@@ -2,6 +2,7 @@
 #include "utilities.h"
 #include "gamesequence_priv.h"
 
+//TODO: Always unwrap messages and remove + before command
 #define ENDFILED_COMMAND "+ ENDFIELD"
 
 void startGameLoop(Connection* connection){

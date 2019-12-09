@@ -2,6 +2,7 @@
 #define CONNECTION_H
 
 #include <stdlib.h>
+#include <sys/types.h>
 
 #define DEFAULT_MESSAGE_BUFFER_SIZE 512
 

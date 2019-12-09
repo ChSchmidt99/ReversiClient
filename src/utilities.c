@@ -76,7 +76,7 @@ char* joinTokens(char** tokens, size_t length, char* delimiter){
         newLength += strlen(tokens[i]) + strlen(delimiter);
     }
     newLength -= strlen(delimiter);
-    char* out = malloc(sizeof(char) * newLength);
+    char* out = calloc(newLength, sizeof(char));
     for (size_t i = 0; i < length; i++){
         strcat(out, tokens[i]);
         if (i  != length - 1)

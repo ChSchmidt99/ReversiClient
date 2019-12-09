@@ -6,41 +6,76 @@
 #include "utilities.h"
 
 void printAndFree(char* message);
+void printGameKind(GameKind gameKind);
+GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName);
 
 //TODO: Splitup and clean function
-void initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
+GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
     char* message = getServerGreeting(connection);
     printAndFree(message);
 
     sendClientVersion(connection, version);
 
-    message = getVersionResponse(connection);
-    printAndFree(message);
-
+    if (!hasAcceptedVersion(connection))
+        panic("Server Did not accept Client Version");
+    else 
+        printf("Server Accepted Client Version\n");
+    
     sendGameId(connection, gameId);
 
-    message = getGameKind(connection);
-    printAndFree(message);
+    GameKind gameKind = getGameKind(connection);
+    printGameKind(gameKind);
 
-    message = getGameName(connection);
-    printAndFree(message);
+    char* gameName = getGameName(connection);
 
     sendPlayerPreference(connection, playerPreference);
 
-    PlayerMeta* meta = getPlayerMeta(connection);
-    printf("Player Number: %i\n", meta->number);
-    printf("Player Name: %s\n",meta->name);
-    freePlayerMeta(meta);
+    PlayerMeta* ownMeta = getPlayerMeta(connection);
 
     int totalPlayers = getTotalPlayers(connection);
+
+    PlayerMeta* opponents[totalPlayers];
     for (int i = 0; i < totalPlayers - 1; i++){
-        message = getOtherPlayer(connection);
-        printAndFree(message);
+        PlayerMeta* otherPlayer = getOtherPlayer(connection);
+        opponents[i] = otherPlayer;
     }
 
     if (!nextMessageIsEndplayers(connection))
         panic("Expected ENDPLAYERS");
+
+    return initGameInstance(ownMeta,gameKind,totalPlayers,opponents, gameName);
+}
+
+GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName){
+    GameInstance* newInstance = malloc(sizeof(GameInstance) + sizeof(PlayerMeta*) * opponentCount);
+    newInstance->gameKind = gameKind;
+    newInstance->ownPlayer = ownPlayer;
+    newInstance->opponentCount = opponentCount;
+    newInstance->gameName = gameName;
+    for (size_t i = 0; i < opponentCount; i++){
+        newInstance->opponents[i] = opponents[i];
+    }
+    return newInstance;
+}
+
+void freeGameInstance(GameInstance* instance){
+    //TODO: Check if pointers are freed sufficientally
+    /*
+    for (size_t i = 0; i < instance->opponentCount; i++){
+        freePlayerMeta(instance->opponents[i]);
+    }
+    */
+    free(instance->gameName);
+    free(instance->ownPlayer);
+    free(instance);
+}
+
+void printGameKind(GameKind gameKind){
+    if (gameKind == gamekind_Reversi)
+        printf("GameKind is Reversi\n");
+    else 
+        printf("GameKind is Unkown\n");
 }
 
 void printAndFree(char* message){
