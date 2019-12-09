@@ -55,7 +55,6 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
 
         token = strtok(NULL, delimiter);
     }
-    free(copy);
     return result;
 }
 
