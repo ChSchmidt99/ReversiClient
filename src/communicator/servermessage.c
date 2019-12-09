@@ -3,18 +3,16 @@
 #include "servermessage_priv.h"
 #include "utilities.h"
 
-ServerMessage* newServerMessage(char* message, char* clearText, void* data, ServerMessageType type){
+ServerMessage* initServerMessage(char* messageReference, char* clearText, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
     serverMessage->type = type;
-    serverMessage->clearText = copyStringToNewMemoryAddr(clearText);
-    serverMessage->message = copyStringToNewMemoryAddr(message);
-    serverMessage->data = data;
+    serverMessage->clearText = clearText;
+    serverMessage->messageReference = messageReference;
     return serverMessage;
 }
 
 void freeServerMessage(ServerMessage* serverMessage){
-    free(serverMessage->message);
-    free(serverMessage->data);
+    free(serverMessage->messageReference);
     free(serverMessage->clearText);
     free(serverMessage);
 }
@@ -22,11 +20,10 @@ void freeServerMessage(ServerMessage* serverMessage){
 ServerMessage* parseServerMessage(char* message){
     ServerMessageType type = getType(message);
     char* clearText = getClearText(message);
-    void* data = getData(message);
-    return newServerMessage(message, clearText, data, type);
+    return initServerMessage(message, clearText, type);
 }
 
-ServerMessageType getType(char* message){
+ServerMessageType getType(const char* message){
     if(isError(message))
         return Error;
 
@@ -41,17 +38,7 @@ int isError(char* message){
         return 0;
 }
 
-char* getClearText(char* message){
+char* getClearText(const char* message){
     //TODO: Implement Me!
     return message;
-}
-
-void* getData(char* message){
-    //TODO: Implement Me!
-    return message;
-}
-
-void printServerMessage(ServerMessage* serverMessage){
-    //TODO: Implement Me!
-    printf("%s",serverMessage->clearText);
 }

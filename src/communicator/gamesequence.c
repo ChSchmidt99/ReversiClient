@@ -2,6 +2,8 @@
 #include "utilities.h"
 #include "gamesequence_priv.h"
 
+#define ENDFILED_COMMAND "+ ENDFIELD"
+
 void startGameLoop(Connection* connection){
     gameLoop(connection);
 }
@@ -12,7 +14,8 @@ void gameLoop(Connection* connection){
 }
 
 ServerMessage* receiveMessage(Connection* connection){
-    char* message = readServerMessage(connection);
+    char* message = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
+    readServerMessage(connection, DEFAULT_MESSAGE_BUFFER_SIZE, message);
     return parseServerMessage(message);
 }
 
@@ -38,14 +41,14 @@ void interpretAndFreeServerMessage(Connection* connection, ServerMessage* server
         receivedMoveOk(connection);
         return;
     default:
-        printf("Got unexpected Servermessage: %s\n",serverMessage->message);
+        printf("Got unexpected Servermessage: %s\n",serverMessage->messageReference);
     }
 }
 
 void receivedMove(Connection* connection){
-    char* board[BOARD_SIZE];
-    receiveBoard(connection, board);
-    writeBoardToSharedMemory(board);
+    size_t boardSize = 0;
+    char** board = receiveBoard(connection, &boardSize);
+    writeBoardToSharedMemory(board, boardSize);
     char* move = getMove();
     sendMove(connection,move);
     free(move);
@@ -57,7 +60,7 @@ void receivedMoveOk(Connection* connection){
 }
 
 void receivedWait(Connection* connection){
-    writeMessageToServer(connection, OK_WAIT_COMMAND);
+    writeLineToServer(connection, OK_WAIT_COMMAND);
     gameLoop(connection);
 }
 
@@ -70,32 +73,55 @@ char* getMove(){
     return "";
 }
 
-void receiveBoard(Connection* connection, char* boardBuffer[BOARD_SIZE]){
+//Use proper array instead of double ptr
+char** receiveBoard(Connection* connection, size_t* lengthOut){
     int rows;
     int cols;
     receiveBoardDimensions(connection,&rows,&cols);
+    
+    char** board = malloc(sizeof(char*) * rows);
+    for(int i = 0; i < rows; i++){
+        char* row = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
+        readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,row);
+        //TODO: Properly handle error
+        if (row[0] == '-')
+            panic(row);
+        row += 2;
+        //TODO: resize row arr size, because it is way to big
+        board[i] = row;
+    }
+
+    char* endField = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
+    readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,endField);
+    
+    //TODO: Properly handle error
+    if (strcmp(endField,ENDFILED_COMMAND) != 0)
+        panic(endField);
+
+    *lengthOut = rows;
+    return board;
 }
 
 void receiveBoardDimensions(Connection* connection, int *rows, int *cols){
-    //char* fieldDimensions = readServerMessage(connection);
-    //char* fieldDimensions = "FIELD 3,5\n";
-    size_t length1 = 0;
-    char** slicedDimensions = slice("FIELD 3,5\n"," ",&length1);
-    size_t length2 = 0;
-    char** dimensions = slice(slicedDimensions[1],",",&length2);
+    char* fieldDimensions = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
+    readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,fieldDimensions);
+    size_t fieldDimensionTokenCount = 0;
+    char** fieldDimensionTokens = slice(fieldDimensions," ",&fieldDimensionTokenCount);
+    size_t dimensionCount = 0;
+    char** dimensions = slice(fieldDimensionTokens[1],",",&dimensionCount);
     *cols = atoi(dimensions[0]);
     *rows = atoi(dimensions[1]);
-    //free(fieldDimensions);
-    free(slicedDimensions);
-    free(dimensions);
+    free(fieldDimensions);
+    freeArrayWithContents((void**)fieldDimensionTokens, fieldDimensionTokenCount);
+    freeArrayWithContents((void**)dimensions, dimensionCount);
 }
 
 void sendMove(Connection* connection, char* move){
     char* moveString = concatStringToNewMemoryAddr(PLAY_COMMAND,move," ");
-    writeMessageToServer(connection,moveString);
+    writeLineToServer(connection,moveString);
     free(moveString);
 }
 
-void writeBoardToSharedMemory(char* board[BOARD_SIZE]){
+void writeBoardToSharedMemory(char** board, size_t boardSize){
     panic("Implement Me");
 }

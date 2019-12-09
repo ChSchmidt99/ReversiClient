@@ -9,8 +9,6 @@
 #include "utilities.h"
 #include "communicator/connection.h"
 
-#define BUFFSIZE 512
-
 struct addrinfo* getSocketAddr(const char* hostname, const char* port);
 
 struct _Connection {
@@ -58,22 +56,45 @@ void disconnectFromServer(Connection* connection){
     connection->socket = -1;
 }
 
-char* readServerMessage(Connection* connection){
+//TODO: Test readLineFromServer
+char* readLineFromServer(Connection* connection){
+    ssize_t length = 0;
+    char currentChar;
+    char* result = NULL;
+    while(currentChar != '\0'){
+        ssize_t readLength = read(connection->socket,&currentChar,1);
+        
+        if (readLength == -1){
+            panic("Failed to read From Server");
+        } else if (readLength == 0 || currentChar == '\n'){
+            currentChar = '\0';
+        }
+        
+        result = realloc(result, sizeof(char) * ++length);
+        if(result == NULL) 
+            panic("Failed to realloc");
+
+        result[length - 1] = currentChar;
+    } 
+    return result;
+}
+
+//TODO: Maybe return Error Code and don't panic, but lets see about that
+//Depreciated, use readLineFromServer!
+char* readServerMessage(Connection* connection, size_t buffSize, char buffer[buffSize]){
     if (connection->socket == -1)
         panic("Not connectet to server");
     
-    //TODO: Get buff size dynamically
-    char* buffer = malloc(sizeof(char) * BUFFSIZE);
-    ssize_t len = read(connection->socket, buffer, BUFFSIZE - 1);
+    ssize_t len = read(connection->socket, buffer, buffSize - 1);
 
-    if (len == BUFFSIZE - 1)
-        panic("Message bigger than buffer, case not yet impemented!");
+    if (len == buffSize - 1)
+        panic("Could not read ServerMessage, buffer was too small!");
 
     buffer[len] = '\0';
     return buffer;
 }
 
-void writeMessageToServer(Connection* connection, char* message){
+void writeLineToServer(Connection* connection, char* message){
     if (connection->socket == -1)
         panic("Not connectet to server");
     

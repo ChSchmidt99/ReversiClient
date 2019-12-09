@@ -35,6 +35,13 @@ void printStringWithTerminator(const char* str){
     printf("\n");
 }
 
+void freeArrayWithContents(void** arr, size_t length){
+    for (size_t i = 0; i < length; i++){
+        free(arr[i]);
+    }
+    free(arr);
+}
+
 char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     
     char* copy = copyStringToNewMemoryAddr(str);

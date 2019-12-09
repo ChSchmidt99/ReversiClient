@@ -12,16 +12,10 @@ typedef enum _ServerMessageType {
 
 typedef struct _ServerMessage {
     char* clearText;
-    char* message;
-    void* data;
+    char* messageReference;
     ServerMessageType type;
 } ServerMessage;
 
-ServerMessage* newServerMessage(char* message, char* clearText, void* data, ServerMessageType type);
-void freeServerMessage(ServerMessage* serverMessage);
-
-//TODO: Implement Me
 ServerMessage* parseServerMessage(char* message);
-void printServerMessage(ServerMessage* serverMessage);
-
+void freeServerMessage(ServerMessage* serverMessage);
 #endif

@@ -27,10 +27,19 @@ static char * test_Slice() {
     return 0;
 }
 
+static char* test_freeArray(){
+    char** testArr = malloc(sizeof(char**) * 2);
+    testArr[0] = malloc(sizeof(char) * 5);
+    testArr[1] = malloc(sizeof(char) * 5);
+    freeArrayWithContents((void**)testArr,2);
+    return 0;
+}
+
 static char * utilities_tests() {
     mu_run_test(testConcatStringsToNewMemoryAddr);
     mu_run_test(test_copyStringToNewMemoryAddr);
     mu_run_test(test_Slice);
+    mu_run_test(test_freeArray);
     return 0;
 }
  
