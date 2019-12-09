@@ -2,6 +2,7 @@
 #include "utilities.h"
 #include "gamesequence_priv.h"
 
+//TODO: Always unwrap messages and remove + before command
 #define ENDFILED_COMMAND "+ ENDFIELD"
 
 void startGameLoop(Connection* connection){
@@ -95,8 +96,10 @@ char** receiveBoard(Connection* connection, size_t* lengthOut){
     readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,endField);
     
     //TODO: Properly handle error
+    /*
     if (strcmp(endField,ENDFILED_COMMAND) != 0)
         panic(endField);
+    */
 
     *lengthOut = rows;
     return board;
@@ -112,8 +115,8 @@ void receiveBoardDimensions(Connection* connection, int *rows, int *cols){
     *cols = atoi(dimensions[0]);
     *rows = atoi(dimensions[1]);
     free(fieldDimensions);
-    freeArrayWithContents((void**)fieldDimensionTokens, fieldDimensionTokenCount);
-    freeArrayWithContents((void**)dimensions, dimensionCount);
+    freeTokens(fieldDimensionTokens);
+    freeTokens(dimensions);
 }
 
 void sendMove(Connection* connection, char* move){

@@ -24,6 +24,7 @@ ServerMessage* parseServerMessage(char* message){
     return initServerMessage(message, clearText, type);
 }
 
+
 char** splitMessage(char* message) {
     // reserve memory
     int sizeOfArray = 3;
@@ -70,8 +71,28 @@ ServerMessageType getType(const char* message){
         if(type == "MOVEOK") return MoveOk;
         
     }
+  
+
+  
+ServerMessageType getType(const char* message){
+    if(isError(message))
+        return Error;
+
+    return Prolog;
+    //TODO: Implement Me
 }
 
+int isError(const char* message){
+    if (*message == '-')
+        return 1;
+    else 
+        return 0;
+}
+
+/*
+    vielleicht eine bibliothek oder etwas ähnliches mit vordefinierten texten schreiben und ähnlich wie bei getType den 
+    dementsprechenden Eintrag zurückgeben.
+*/
 char* getClearText(const char* message){
     char** splittedMessage = splitMessage(message);
     return splittedMessage[3];

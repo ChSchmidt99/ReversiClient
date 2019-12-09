@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(thinker > 0) {
+        /*
         printf("[PARENT/%i] Started connector child\n", thinker);
 
         // start the thinker process
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]) {
         }
 
         printf("Connector died, exiting..\n");
+        */
     } else {
         printf("[CHILD/CONNECTOR] Starting connector..\n");
         // start the connector process
@@ -55,8 +57,13 @@ int main(int argc, char *argv[]) {
         freeParams(params);
 
         connectToServer(connection);
-        initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
+        GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
+        printf("Gamekind: %i\n",gameInstance->gameKind);
+        printf("Own name: %s\n",gameInstance->ownPlayer->name);
+        printf("Opponen name: %s\n",gameInstance->opponents[0]->name);
+        printf("Game name: %s\n",gameInstance->gameName);
         
+        freeGameInstance(gameInstance);
         disconnectFromServer(connection);
         freeConnection(connection);
         free(gameId);

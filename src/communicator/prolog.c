@@ -5,73 +5,80 @@
 #include "communicator/servermessage.h"
 #include "utilities.h"
 
-void printAndFree(ServerMessage* message);
+void printAndFree(char* message);
+void printGameKind(GameKind gameKind);
+GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName);
 
 //TODO: Splitup and clean function
-PlayerInfo* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
+GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
-    ServerMessage* message = getServerGreeting(connection);
-    if (message->type == Error)
-        panic(message->clearText);
+    char* message = getServerGreeting(connection);
     printAndFree(message);
 
     sendClientVersion(connection, version);
 
-    message = getVersionResponse(connection);
-    if (message->type == Error)
-        panic(message->clearText);
-    printAndFree(message);
-
+    if (!hasAcceptedVersion(connection))
+        panic("Server Did not accept Client Version");
+    else 
+        printf("Server Accepted Client Version\n");
+    
     sendGameId(connection, gameId);
 
-    message = getGameKind(connection);
-    if (message->type == Error)
-        panic(message->clearText);
-    printAndFree(message);
+    GameKind gameKind = getGameKind(connection);
+    printGameKind(gameKind);
 
-    message = getGameName(connection);
-    if (message->type == Error)
-        panic(message->clearText);
-    printAndFree(message);
+    char* gameName = getGameName(connection);
 
-    formatAndSend(connection, "PLAYER", playerPreference, NULL, false);
-    //sendPlayerPreference(connection, playerPreference);
+    sendPlayerPreference(connection, playerPreference);
 
-    message = getPlayerMeta(connection);
-    if (message->type == Error)
-        panic(message->clearText);
+    PlayerMeta* ownMeta = getPlayerMeta(connection);
 
-    Player* own = parseOwn(message);
-    if(own != NULL) {
+    int totalPlayers = getTotalPlayers(connection);
 
+    PlayerMeta* opponents[totalPlayers];
+    for (int i = 0; i < totalPlayers - 1; i++){
+        PlayerMeta* otherPlayer = getOtherPlayer(connection);
+        opponents[i] = otherPlayer;
     }
 
-    printAndFree(message);
+    if (!nextMessageIsEndplayers(connection))
+        panic("Expected ENDPLAYERS");
 
-    printf("?\n");
-    //TODO: Parse and display properly
-    message = getEndplayers(connection);
-    if (message->type == Error)
-        panic(message->clearText);
-    printAndFree(message);
-    printf("??\n");
-
-    PlayerInfo *info = malloc(sizeof(PlayerInfo));
-    return info;
+    return initGameInstance(ownMeta,gameKind,totalPlayers,opponents, gameName);
 }
 
-Player* parseOwn(ServerMessage* message) {
-    size_t length = 0;
-    char** data = slice(message->clearText, " ",&length);
-    for(size_t i = 0; i < length; i++) {
-        printf("%zu > %s\n", i, data[i]);
+GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName){
+    GameInstance* newInstance = malloc(sizeof(GameInstance) + sizeof(PlayerMeta*) * opponentCount);
+    newInstance->gameKind = gameKind;
+    newInstance->ownPlayer = ownPlayer;
+    newInstance->opponentCount = opponentCount;
+    newInstance->gameName = gameName;
+    for (size_t i = 0; i < opponentCount; i++){
+        newInstance->opponents[i] = opponents[i];
     }
-
-    Player* player = malloc(sizeof(Player));
-    return player;
+    return newInstance;
 }
 
-void printAndFree(ServerMessage* message){
-    printServerMessage(message);
-    freeServerMessage(message);
+void freeGameInstance(GameInstance* instance){
+    //TODO: Check if pointers are freed sufficientally
+    /*
+    for (size_t i = 0; i < instance->opponentCount; i++){
+        freePlayerMeta(instance->opponents[i]);
+    }
+    */
+    free(instance->gameName);
+    free(instance->ownPlayer);
+    free(instance);
+}
+
+void printGameKind(GameKind gameKind){
+    if (gameKind == gamekind_Reversi)
+        printf("GameKind is Reversi\n");
+    else 
+        printf("GameKind is Unkown\n");
+}
+
+void printAndFree(char* message){
+    printf("%s\n",message);
+    free(message);
 }

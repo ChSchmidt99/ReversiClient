@@ -21,9 +21,11 @@ static char * test_copyStringToNewMemoryAddr() {
 
 static char * test_Slice() {
     size_t length = 0;
-    char** tokens = slice("Hallo ich bin ein toller test"," ",&length);
+    char* in = "Hallo ich bin ein toller test";
+    char** tokens = slice(in," ",&length);
     mu_assert("Should have 6 tokens", length == 6);
     mu_assert("First Token should be Hallo", strcmp(tokens[0],"Hallo") == 0);
+    freeTokens(tokens);
     return 0;
 }
 
@@ -35,11 +37,29 @@ static char* test_freeArray(){
     return 0;
 }
 
+static char* test_joinTokens(){
+    char* strs[3] = {"Hallo","schöne","Welt"};
+    char* result = joinTokens(strs,3," ");
+    mu_assert("Joined String did not match expected string", strcmp(result,"Hallo schöne Welt") == 0);
+    free(result);
+    return 0;
+}
+
+static char* test_joinTokens_single_token(){
+    char* strs[1] = {"Hallo"};
+    char* result = joinTokens(strs,1," ");
+    mu_assert("Joined String did not match expected string", strcmp(result,"Hallo") == 0);
+    free(result);
+    return 0;
+}
+
 static char * utilities_tests() {
     mu_run_test(testConcatStringsToNewMemoryAddr);
     mu_run_test(test_copyStringToNewMemoryAddr);
     mu_run_test(test_Slice);
     mu_run_test(test_freeArray);
+    mu_run_test(test_joinTokens);
+    mu_run_test(test_joinTokens_single_token);
     return 0;
 }
  

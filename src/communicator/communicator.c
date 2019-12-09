@@ -1,71 +1,142 @@
-#include <string.h>
-#include <stdbool.h>
-
-#include "communicator/communicator.h"
-#include "communicator/connection.h"
-#include "utilities.h"
-
-#define ENDPLAYERS "+ ENDPLAYERS\n"
-#define VERSION "VERSION"
-#define GAMEID "ID"
-#define PLAYERPREFERENCE "PLAYER"
+#include "communicator_priv.h"
 
 //TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
 //TODO: use readLine instead of readMessage
-
-void logMessage(char* message);
-
-ServerMessage* getServerGreeting(Connection* connection){
-    return receive(connection);
+char* getServerGreeting(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error)
+        panic(message->clearText);
+    
+    //TODO: Use Cleartext once imlemented
+    char* out = copyStringToNewMemoryAddr(message->messageReference); 
+    freeServerMessage(message);
+    return out;
 }
 
-ServerMessage* getVersionResponse(Connection* connection){
-    return receive(connection);
+int hasAcceptedVersion(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    int result = 1;
+    if (message->type == Error)
+        result = 0;
+    freeServerMessage(message);
+    return 1;
 }
 
-ServerMessage* getGameKind(Connection* connection){
-    return receive(connection);
+GameKind getGameKind(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error)
+        panic(message->clearText);
+    GameKind out = parseGameKind(message->messageReference);
+    freeServerMessage(message);
+    return out;
 }
 
-ServerMessage* getGameName(Connection* connection){
-    return receive(connection);
-}
-
-ServerMessage* getPlayerMeta(Connection* connection){
-    return receive(connection);
-}
-
-char** getOtherPlayers(Connection* connection, int n){
-    //TODO: Mode parsing to Server Message
-    char** names = malloc(sizeof(char*)*n);
-    for (int i = 0; i < n; i++){
-        char* player = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-        readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,player);
-        if (*player == '+'){
-            printf("Got Player: %s",player);
-            names[i] = player; 
-        } else {
-            panic(player);
-        }
+GameKind parseGameKind(char* message){
+    if (strcmp(message,REVERSI_GAMEKIND) == 0){
+        return gamekind_Reversi;
+    } else {
+        return gamekind_Unkown;
     }
-    return names;
+}
+
+char* getGameName(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error)
+        panic(message->clearText);
+    //TODO: Use Cleartext once imlemented
+    char* out = copyStringToNewMemoryAddr(message->messageReference);
+    freeServerMessage(message);
+    return out;
+}
+
+PlayerMeta* getPlayerMeta(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error)
+        panic(message->clearText);
+    //TODO: Use Cleartext once imlemented
+    PlayerMeta* out = parsePlayerMeta(message->messageReference);
+    freeServerMessage(message);
+    return out;
+}
+
+PlayerMeta* parsePlayerMeta(char* message){
+    size_t length = 0;
+    char** tokens = slice(message," ",&length);
+    
+    //TODO: find better way to do this!
+    if (length < 4)
+        panic("unexpected playermeta string, expected 4 tokens");
+
+    int number = atoi(tokens[2]);
+    char* name = getNameFromPlayerMetaTokens(tokens,length);
+    PlayerMeta* out = newPlayerMeta(number,name,1);
+    freeTokens(tokens);
+    return out;
+}
+
+char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount){
+    return joinTokens(&tokens[3],tokenCount - 3, " ");
+}
+
+PlayerMeta* getOtherPlayer(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error)
+        panic(message->clearText);
+    //TODO: Use Cleartext once imlemented
+    PlayerMeta* out = parseOtherPlayerMeta(message->messageReference);
+    freeServerMessage(message);
+    return out;
+}
+
+PlayerMeta* parseOtherPlayerMeta(char* message){
+    size_t length = 0;
+    char** tokens = slice(message," ",&length);
+    
+    //TODO: find better way to do this!
+    if (length < 4)
+        panic("unexpected playermeta string, expected 4 tokens");
+
+    int number = atoi(tokens[1]);
+    char* name = getNameForOtherPlayersTokens(tokens,length);
+    //TODO: Parse "isReady"
+    PlayerMeta* out = newPlayerMeta(number,name, 1);
+    freeTokens(tokens);
+    return out;
+}
+
+char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount){
+    size_t nameTokenCount = tokenCount - 3;
+    char* nameTokens[nameTokenCount]; 
+    size_t index = 0;
+    for (size_t i = 2; i < tokenCount - 1; i++){
+        nameTokens[index] = tokens[i];
+        index++;
+    }
+    return joinTokens(nameTokens,nameTokenCount," ");
 }
 
 int getTotalPlayers(Connection* connection){
-    //TODO: Wrap result in Servermessage
-    char* messageBuffer = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-    ServerMessage* message = parseServerMessage(readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,messageBuffer));
+    ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         return -1;
 
-    //TODO: Properly parse number in parse Server Message
-    char ASCInum = message->clearText[6];
+    char ASCInum = message->messageReference[8];
     return ASCInum - '0';
 }
 
-ServerMessage* getEndplayers(Connection* connection){
-    return receive(connection);
+int nextMessageIsEndplayers(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error)
+        panic(message->clearText);
+    int result = 0;
+    if (message->type == Error)
+        panic(message->messageReference);
+    else if (strcmp(message->messageReference, ENDPLAYERS_COMMAND) == 0)
+        result = 1;
+
+    freeServerMessage(message);
+    return result;
 }
 
 void sendClientVersion(Connection* connection, const char* version){
@@ -98,40 +169,19 @@ void logMessage(char* message){
     printf("Sending: '%s'\n",message);
 }
 
-void send(Connection* connection, char* data, bool freeData) {
-    logMessage(data);
-    writeLineToServer(connection, data);
-    if(freeData)
-        free(data);
+ServerMessage* receiveServerMessage(Connection* connection) {
+    return parseServerMessage(readLineFromServer(connection));
 }
 
-void formatAndSend(Connection* connection, char* data, const char* firstParam, const char* secondParam, bool freeData) {
-    if(firstParam == NULL && secondParam == NULL) {
-        send(connection, data, freeData);
-        return;
-    }
-    char* message;
-    if(firstParam != NULL) {
-        message = concatStringToNewMemoryAddr(data, firstParam, " ");
-        if(freeData)
-            free(data);
-    } else {
-        message = data;
-    }
-
-    char* finalMessage;
-    if(secondParam != NULL) {
-        finalMessage = concatStringToNewMemoryAddr(message, secondParam, " ");
-        if(firstParam != NULL || freeData)
-            free(message);
-    } else {
-        finalMessage = message;
-    }
-
-    send(connection, finalMessage, true);
+PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
+    PlayerMeta* meta = malloc(sizeof(PlayerMeta));
+    meta->name = copyStringToNewMemoryAddr(name);
+    meta->number = number;
+    meta->isReady = isReady;
+    return meta;
 }
 
-ServerMessage* receive(Connection* connection) {
-    char* message = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-    return parseServerMessage(readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,message));
+void freePlayerMeta(PlayerMeta* meta){
+    free(meta->name);
+    free(meta);
 }
