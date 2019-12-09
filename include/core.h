@@ -12,5 +12,6 @@
         int isReady;
     } PlayerMeta;
 
-
+    PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
+    void freePlayerMeta(PlayerMeta* meta);
 #endif

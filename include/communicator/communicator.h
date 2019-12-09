@@ -7,13 +7,13 @@
 #include "core.h"
 
 //TODO: Maybe use communicator struct instead of connection
-char* getServerGreeting(Connection* connection);
+char* receiveServerGreeting(Connection* connection);
 int hasAcceptedVersion(Connection* connection);
-GameKind getGameKind(Connection* connection);
-char* getGameName(Connection* connection);
-PlayerMeta* getPlayerMeta(Connection* connection);
-int getTotalPlayers(Connection* connection);
-PlayerMeta* getOtherPlayer(Connection* connection);
+GameKind receiveGameKind(Connection* connection);
+char* receiveGameName(Connection* connection);
+PlayerMeta* receivePlayerMeta(Connection* connection);
+int reveiveTotalPlayers(Connection* connection);
+PlayerMeta* receiveOtherPlayer(Connection* connection);
 int nextMessageIsEndplayers(Connection* connection);
 
 void freePlayerMeta(PlayerMeta* meta);

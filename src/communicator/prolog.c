@@ -12,7 +12,7 @@ GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t 
 //TODO: Splitup and clean function
 GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
-    char* message = getServerGreeting(connection);
+    char* message = receiveServerGreeting(connection);
     printAndFree(message);
 
     sendClientVersion(connection, version);
@@ -24,18 +24,18 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
     
     sendGameId(connection, gameId);
 
-    GameKind gameKind = getGameKind(connection);
+    GameKind gameKind = receiveGameKind(connection);
 
-    char* gameName = getGameName(connection);
+    char* gameName = receiveGameName(connection);
 
     sendPlayerPreference(connection, playerPreference);
 
-    PlayerMeta* ownMeta = getPlayerMeta(connection);
+    PlayerMeta* ownMeta = receivePlayerMeta(connection);
 
-    int totalPlayers = getTotalPlayers(connection);
+    int totalPlayers = reveiveTotalPlayers(connection);
     PlayerMeta* opponents[totalPlayers];
     for (int i = 0; i < totalPlayers - 1; i++){
-        PlayerMeta* otherPlayer = getOtherPlayer(connection);
+        PlayerMeta* otherPlayer = receiveOtherPlayer(connection);
         opponents[i] = otherPlayer;
     }
 

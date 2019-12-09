@@ -3,7 +3,7 @@
 //TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
 //TODO: use readLine instead of readMessage
-char* getServerGreeting(Connection* connection){
+char* receiveServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->messageReference);
@@ -22,7 +22,7 @@ int hasAcceptedVersion(Connection* connection){
     return 1;
 }
 
-GameKind getGameKind(Connection* connection){
+GameKind receiveGameKind(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->messageReference);
@@ -39,7 +39,7 @@ GameKind parseGameKind(char* message){
     }
 }
 
-char* getGameName(Connection* connection){
+char* receiveGameName(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->messageReference);
@@ -48,7 +48,7 @@ char* getGameName(Connection* connection){
     return out;
 }
 
-PlayerMeta* getPlayerMeta(Connection* connection){
+PlayerMeta* receivePlayerMeta(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->messageReference);
@@ -76,7 +76,7 @@ char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount){
     return joinTokens(&tokens[3],tokenCount - 3, " ");
 }
 
-PlayerMeta* getOtherPlayer(Connection* connection){
+PlayerMeta* receiveOtherPlayer(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->messageReference);
@@ -112,7 +112,7 @@ char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount){
     return joinTokens(nameTokens,nameTokenCount," ");
 }
 
-int getTotalPlayers(Connection* connection){
+int reveiveTotalPlayers(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         return -1;
@@ -159,17 +159,4 @@ void sendPlayerPreference(Connection* connection, const char* preference){
         writeLineToServer(connection, message);
         free(message);
     }
-}
-
-PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
-    PlayerMeta* meta = malloc(sizeof(PlayerMeta));
-    meta->name = copyStringToNewMemoryAddr(name);
-    meta->number = number;
-    meta->isReady = isReady;
-    return meta;
-}
-
-void freePlayerMeta(PlayerMeta* meta){
-    free(meta->name);
-    free(meta);
 }
