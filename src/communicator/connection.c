@@ -56,6 +56,10 @@ void disconnectFromServer(Connection* connection){
     connection->socket = -1;
 }
 
+ServerMessage* receiveServerMessage(Connection* connection) {
+    return parseServerMessage(readLineFromServer(connection));
+}
+
 //TODO: Test readLineFromServer
 char* readLineFromServer(Connection* connection){
     ssize_t length = 0;

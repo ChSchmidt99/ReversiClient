@@ -8,7 +8,7 @@
 #define MOVEOK_COMMAND "MOVEOK"
 #define WAIT_COMMAND "WAIT"
 #define GAMEOVER_COMMAND "GAMEOVER"
-
+#define ENDFIELD_COMMAND "ENDFIELD"
 
 ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
@@ -32,17 +32,18 @@ ServerMessageType getType(const char* message){
         return Error;
     
     size_t length = 0;
-    char** splittedMessage = slice(message," ",&length);
-    char* typeString = splittedMessage[1];
+    char** splittedMessage = slice(message + 2," ",&length);
     ServerMessageType out = Prolog;
-    if(strcmp(typeString, WAIT_COMMAND) == 0) 
+    if(strcmp(splittedMessage[0], WAIT_COMMAND) == 0) 
         out = Wait;
-    if(strcmp(typeString, GAMEOVER_COMMAND)) 
+    if(strcmp(splittedMessage[0], GAMEOVER_COMMAND) == 0) 
         out = Gameover;
-    if(strcmp(typeString, MOVE_COMMAND)) 
+    if(strcmp(splittedMessage[0], MOVE_COMMAND) == 0) 
         out = Move;
-    if(strcmp(typeString, MOVEOK_COMMAND)) 
+    if(strcmp(splittedMessage[0], MOVEOK_COMMAND) == 0) 
         out = MoveOk;
+    if(strcmp(splittedMessage[0], ENDFIELD_COMMAND) == 0) 
+        out = Endfield;
 
     freeTokens(splittedMessage);
     return out;

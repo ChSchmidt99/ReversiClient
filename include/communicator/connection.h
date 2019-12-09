@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
+#include "servermessage.h"
 
 #define DEFAULT_MESSAGE_BUFFER_SIZE 512
 
@@ -13,6 +14,8 @@ void freeConnection(Connection* connection);
 
 void connectToServer(Connection* connection);
 void disconnectFromServer(Connection* connectoion);
+
+ServerMessage* receiveServerMessage(Connection* connection);
 
 //Depreciated, use readLineFromServer instead!
 char* readServerMessage(Connection* connection, ssize_t buffSize, char buffer[buffSize]);

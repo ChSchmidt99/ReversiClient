@@ -2,22 +2,14 @@
 #include "utilities.h"
 #include "gamesequence_priv.h"
 
-//TODO: Always unwrap messages and remove + before command
-#define ENDFILED_COMMAND "+ ENDFIELD"
-
 void startGameLoop(Connection* connection){
+    logMessage("Started Game Loop",1);
     gameLoop(connection);
 }
 
 void gameLoop(Connection* connection){
-    ServerMessage* message = receiveMessage(connection);
+    ServerMessage* message = receiveServerMessage(connection);
     interpretAndFreeServerMessage(connection,message);
-}
-
-ServerMessage* receiveMessage(Connection* connection){
-    char* message = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-    readServerMessage(connection, DEFAULT_MESSAGE_BUFFER_SIZE, message);
-    return parseServerMessage(message);
 }
 
 void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage){
@@ -47,8 +39,15 @@ void interpretAndFreeServerMessage(Connection* connection, ServerMessage* server
 }
 
 void receivedMove(Connection* connection){
+    logMessage("Received Move Command",1);
+    
     size_t boardSize = 0;
     char** board = receiveBoard(connection, &boardSize);
+
+    printf("Received Board:\n");
+    for (size_t i = 0; i < boardSize; i++)
+        printf("%s\n",board[i]);
+
     writeBoardToSharedMemory(board, boardSize);
     char* move = getMove();
     sendMove(connection,move);
@@ -57,15 +56,18 @@ void receivedMove(Connection* connection){
 }
 
 void receivedMoveOk(Connection* connection){
+    logMessage("Received MoveOk Command",1);
     gameLoop(connection);
 }
 
 void receivedWait(Connection* connection){
+    logMessage("Received Wait Command",1);
     writeLineToServer(connection, OK_WAIT_COMMAND);
     gameLoop(connection);
 }
 
 void receivedGameover(Connection* connection){
+    logMessage("Received GameOver Command",1);
     panic("Implement Me");
 }
 
@@ -76,45 +78,46 @@ char* getMove(){
 
 //Use proper array instead of double ptr
 char** receiveBoard(Connection* connection, size_t* lengthOut){
+    logMessage("Receiving Board...\n",1);
+    
     int rows;
     int cols;
     receiveBoardDimensions(connection,&rows,&cols);
-    
     char** board = malloc(sizeof(char*) * rows);
     for(int i = 0; i < rows; i++){
-        char* row = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-        readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,row);
-        //TODO: Properly handle error
-        if (row[0] == '-')
-            panic(row);
-        row += 2;
-        //TODO: resize row arr size, because it is way to big
-        board[i] = row;
+        //TODO: Replace receiveServerMessage with safelyReceiveServerMessage, which unwraps Error
+        ServerMessage* message = receiveServerMessage(connection);
+        if(message->type == Error)
+            panic(message->messageReference);
+            
+        board[i] = copyStringToNewMemoryAddr(message->messageReference + 2);
+        freeServerMessage(message);
     }
 
-    char* endField = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-    readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,endField);
-    
-    //TODO: Properly handle error
-    /*
-    if (strcmp(endField,ENDFILED_COMMAND) != 0)
-        panic(endField);
-    */
+    ServerMessage* message = receiveServerMessage(connection);
+    if(message->type == Error)
+        panic(message->messageReference);
+    else if(message->type != Endfield)
+        panic("Expected Endfield!");
 
+    freeServerMessage(message);
     *lengthOut = rows;
+
+    logMessage("Received Board\n",1);
     return board;
 }
 
 void receiveBoardDimensions(Connection* connection, int *rows, int *cols){
-    char* fieldDimensions = malloc(sizeof(char) * DEFAULT_MESSAGE_BUFFER_SIZE);
-    readServerMessage(connection,DEFAULT_MESSAGE_BUFFER_SIZE,fieldDimensions);
+    ServerMessage* message = receiveServerMessage(connection);
+    if(message->type == Error)
+        panic(message->messageReference);
     size_t fieldDimensionTokenCount = 0;
-    char** fieldDimensionTokens = slice(fieldDimensions," ",&fieldDimensionTokenCount);
+    char** fieldDimensionTokens = slice(message->messageReference + 2," ",&fieldDimensionTokenCount);
     size_t dimensionCount = 0;
     char** dimensions = slice(fieldDimensionTokens[1],",",&dimensionCount);
     *cols = atoi(dimensions[0]);
     *rows = atoi(dimensions[1]);
-    free(fieldDimensions);
+    freeServerMessage(message);
     freeTokens(fieldDimensionTokens);
     freeTokens(dimensions);
 }

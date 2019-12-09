@@ -14,6 +14,7 @@
 
     SharedMemory* createSharedMemory();
     SharedData* initSharedMemory(SharedMemory* sharedMemory, char* gameName, int playerNumber, int numberOfPlayers, int prozessIds[2]);
+    
     int clearSharedData(SharedMemory* sharedMemory);
     
     void setGameName(SharedData* data, char* gameName);

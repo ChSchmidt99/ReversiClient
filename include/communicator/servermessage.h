@@ -7,7 +7,8 @@ typedef enum _ServerMessageType {
     Wait = 2,
     Move = 3,
     Gameover = 4,
-    MoveOk = 5
+    MoveOk = 5,
+    Endfield = 6
 } ServerMessageType;
 
 typedef struct _ServerMessage {

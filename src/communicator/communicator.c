@@ -137,36 +137,28 @@ int nextMessageIsEndplayers(Connection* connection){
 
 void sendClientVersion(Connection* connection, const char* version){
     char* message = concatStringToNewMemoryAddr(VERSION,version," ");
-    logMessage(message);
+    printf("Sending: '%s'\n",message);
     writeLineToServer(connection, message);
     free(message);
 }
 
 void sendGameId(Connection* connection, const char* gameID){
     char* message = concatStringToNewMemoryAddr(GAMEID,gameID," ");
-    logMessage(message);
+    printf("Sending: '%s'\n",message);
     writeLineToServer(connection, message);
     free(message);
 }
 
 void sendPlayerPreference(Connection* connection, const char* preference){
     if (preference == NULL){
-        logMessage(PLAYERPREFERENCE);
+        printf("Sending: '%s'\n",PLAYERPREFERENCE);
         writeLineToServer(connection, PLAYERPREFERENCE);
     } else {
         char* message = concatStringToNewMemoryAddr(PLAYERPREFERENCE,preference," ");
-        logMessage(message);
+        printf("Sending: '%s'\n",message);
         writeLineToServer(connection, message);
         free(message);
     }
-}
-
-void logMessage(char* message){
-    printf("Sending: '%s'\n",message);
-}
-
-ServerMessage* receiveServerMessage(Connection* connection) {
-    return parseServerMessage(readLineFromServer(connection));
 }
 
 PlayerMeta* newPlayerMeta(int number, char* name, int isReady){

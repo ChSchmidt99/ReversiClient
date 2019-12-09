@@ -1,3 +1,4 @@
+#include "communicator/gamesequence.h"
 #include "communicator/servermessage.h"
 #include "communicator/connection.h"
 
@@ -5,7 +6,6 @@
 #define PLAY_COMMAND "PLAY"
 #define BOARD_SIZE 8
 
-void startGameLoop(Connection* connection);
 void gameLoop(Connection* connection);
 ServerMessage* receiveMessage(Connection* connection);
 void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage);

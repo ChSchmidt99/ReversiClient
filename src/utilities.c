@@ -1,9 +1,15 @@
 #include "utilities.h"
 #include <string.h>
 
+//TODO: Clear shared memories at termination!
 void panic (char* message) {
     perror(message);
     exit (EXIT_FAILURE);
+}
+
+void logMessage(char* message, int level){
+    if (level <= LOG_LEVEL)
+        printf("%s\n",message);
 }
 
 char* copyStringToNewMemoryAddr(const char* str){

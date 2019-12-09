@@ -11,7 +11,6 @@
 //TODO: Only use Reversi as GAMEKIND and split up at function call
 #define REVERSI_GAMEKIND "+ PLAYING Reversi"
 
-void logMessage(char* message);
 PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
 PlayerMeta* parsePlayerMeta(char* message);
 
