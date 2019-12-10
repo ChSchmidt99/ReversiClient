@@ -1,20 +1,17 @@
 #include "minunit.h"
-#include "shareddataaccess/shareddataaccess.h"
+#include "shareddataaccess/boarddataaccess.h"
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
 
-#define TEST_GAME_NAME_STRING "Test Game Name"
-#define TEST_PLAYER_NUMBER 1
-#define TEST_NUM_OF_PLAYERS 2
+#define BOARD_SIZE_SHM 8
 
 int boardsAreEqual(size_t boardSize, char board1[][boardSize],char board2[][boardSize]);
 
 static char* test_set_and_get_board(){
-    SharedMemory* sharedMem = createSharedMemory();
-    
-    char testBoard[][8] = {
+    BoardSHM* sharedMem = createBoardSHM(BOARD_SIZE_SHM);
+    char testBoard[][BOARD_SIZE_SHM] = {
         {'*','*','*','*','*','*','*','*'},
         {'*','W','*','*','B','*','*','*'},
         {'*','*','B','W','W','W','*','*'},
@@ -30,15 +27,19 @@ static char* test_set_and_get_board(){
         panic("Failed to fork");
     } else if (pID == 0){
         //Child
-        setBoard(sharedMem,testBoard);
+        setBoard(sharedMem,BOARD_SIZE_SHM,testBoard);
+        detachBoardSHM(sharedMem);
         exit(EXIT_SUCCESS);
     } else {
         //Parent
         wait(NULL);
-        char (*board)[8] = getBoard(sharedMem);
-        mu_assert("test_set_and_get_board failed",boardsAreEqual(8,testBoard,board));
+        size_t boardSizeOut = 0;
+        char (*board)[BOARD_SIZE_SHM] = getBoard(sharedMem,&boardSizeOut);
+        mu_assert("test_set_and_get_board failed, boards were not equal",boardsAreEqual(BOARD_SIZE_SHM,testBoard,board));
+        mu_assert("test_set_and_get_board failed, boardSize out was wrong", boardSizeOut == BOARD_SIZE_SHM);
+        detachBoardSHM(sharedMem);
     }
-    clearSharedData(sharedMem);
+    clearBoardSHM(sharedMem);
     return 0;
 }
 
@@ -52,7 +53,7 @@ int boardsAreEqual(size_t boardSize, char board1[][boardSize],char board2[][boar
     return 1;
 }
 
-static char * shared_memory_tests() {
+static char * board_data_access_tests() {
     mu_run_test(test_set_and_get_board);
     return 0;
 }

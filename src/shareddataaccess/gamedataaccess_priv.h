@@ -1,4 +1,4 @@
-#include "shareddataaccess/shareddataaccess.h"
+#include "shareddataaccess/gamedataaccess.h"
 
 //TODO: Make dynamic
 #define NAME_BUFFER_SIZE 256
@@ -16,15 +16,14 @@ typedef struct {
     SharedPlayerInfo ownInfo;
     size_t opponentCount;
     SharedPlayerInfo opponents[MAX_OPPONENTS];
-    char board[GAME_BOARD_SIZE * GAME_BOARD_SIZE];
-} SharedDataAccess;
+} SharedGameData;
 
 
-typedef struct _SharedMemory {
-    SharedDataAccess* sharedData;
+typedef struct _GameDataSHM {
+    SharedGameData* sharedData;
     int shmId;
-} SharedMemory;
+} GameDataSHM;
 
-SharedMemory* newSharedMemory(SharedDataAccess* shmData, int shmId);
-void freeSharedMemory(SharedMemory* shm);
+GameDataSHM* newGameDataSHM(SharedGameData* shmData, int shmId);
+void freeGameDataSHM(GameDataSHM* shm);
 void setPlayerMeta(SharedPlayerInfo* dest,PlayerMeta* src);

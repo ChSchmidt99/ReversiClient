@@ -2,7 +2,7 @@
 #include "config.h"
 #include "communicator/connection.h"
 #include "communicator/prolog.h"
-#include "shareddataaccess/shareddataaccess.h"
+#include "shareddataaccess/gamedataaccess.h"
 #include "thinker/thinker.h"
 #include "utilities.h"
 #include "communicator/gamesequence.h"
@@ -14,13 +14,13 @@
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
-int parentProcess(int argc, char *argv[],SharedMemory* sharedMem);
-int childProcess(int argc, char *argv[],SharedMemory* sharedMem);
+int parentProcess(int argc, char *argv[],GameDataSHM* sharedMem);
+int childProcess(int argc, char *argv[],GameDataSHM* sharedMem);
 
 int main(int argc, char *argv[]) {
     pid_t processID;
     
-    SharedMemory* sharedMem = createSharedMemory();
+    GameDataSHM* sharedMem = createGameDataSHM();
 
     /*
     int fd[2];
@@ -37,10 +37,10 @@ int main(int argc, char *argv[]) {
         return childProcess(argc,argv,sharedMem);
     }
 
-    clearSharedData(sharedMem);
+    clearGameDataSHM(sharedMem);
 }
 
-int parentProcess(int argc, char *argv[], SharedMemory* sharedMem){
+int parentProcess(int argc, char *argv[], GameDataSHM* sharedMem){
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
         printf("GameId must be set!\n");
@@ -76,7 +76,7 @@ int parentProcess(int argc, char *argv[], SharedMemory* sharedMem){
     return EXIT_SUCCESS;
 }
 
-int childProcess(int argc, char *argv[], SharedMemory* sharedMem){
+int childProcess(int argc, char *argv[], GameDataSHM* sharedMem){
     return EXIT_SUCCESS;
     /*
     printf("[PARENT/%i] Started connector child\n", thinker);

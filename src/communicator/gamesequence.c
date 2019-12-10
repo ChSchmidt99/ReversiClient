@@ -3,17 +3,18 @@
 #include "gamesequence_priv.h"
 #include <string.h>
 
-void startGameLoop(Connection* connection, SharedMemory* sharedMem){
+void startGameLoop(Connection* connection, GameDataSHM* sharedMem){
     logMessage("Started Game Loop",1);
     gameLoop(connection, sharedMem);
 }
 
-void gameLoop(Connection* connection, SharedMemory* sharedMem){
+void gameLoop(Connection* connection, GameDataSHM* sharedMem){
     ServerMessage* message = receiveServerMessage(connection);
     interpretAndFreeServerMessage(connection,message, sharedMem);
 }
 
-void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage, SharedMemory* sharedMem){
+//TODO: Add quit
+void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage, GameDataSHM* sharedMem){
     switch (serverMessage->type){
     case Error:
         printf("Gor Error: %s\n",serverMessage->messageReference);
@@ -39,7 +40,7 @@ void interpretAndFreeServerMessage(Connection* connection, ServerMessage* server
     }
 }
 
-void receivedMove(Connection* connection, SharedMemory* sharedMem){
+void receivedMove(Connection* connection, GameDataSHM* sharedMem){
     logMessage("Received Move Command",1);
     
     size_t boardSize = 0;
@@ -56,23 +57,26 @@ void receivedMove(Connection* connection, SharedMemory* sharedMem){
     gameLoop(connection, sharedMem);
 }
 
-void receivedMoveOk(Connection* connection, SharedMemory* sharedMem){
+void receivedMoveOk(Connection* connection, GameDataSHM* sharedMem){
     logMessage("Received MoveOk Command",1);
     gameLoop(connection,sharedMem);
 }
 
-void receivedWait(Connection* connection, SharedMemory* sharedMem){
+void receivedWait(Connection* connection, GameDataSHM* sharedMem){
     logMessage("Received Wait Command",1);
     writeLineToServer(connection, OK_WAIT_COMMAND);
     gameLoop(connection,sharedMem);
 }
 
-void receivedGameover(Connection* connection, SharedMemory* sharedMem){
+void receivedGameover(Connection* connection, GameDataSHM* sharedMem){
     logMessage("Received GameOver Command",1);
     panic("Implement Me");
 }
 
 char* getMove(){
+
+
+
     panic("Implement Me");
     return "";
 }
@@ -104,7 +108,6 @@ char** receiveBoard(Connection* connection, size_t* lengthOut){
     freeServerMessage(message);
     *lengthOut = rows;
 
-    logMessage("Received Board\n",1);
     return board;
 }
 
@@ -130,10 +133,10 @@ void sendMove(Connection* connection, char* move){
 }
 
 //TODO: Move communication functions to communicator and only keep logic in module
-void writeBoardToSharedMemory(char** board, size_t boardSize, SharedMemory* sharedMem){
+void writeBoardToSharedMemory(char** board, size_t boardSize, GameDataSHM* sharedMem){
     char convertedBoard[boardSize][boardSize];
     convertBoard(board,boardSize,convertedBoard);
-    setBoard(sharedMem,convertedBoard);
+    //setBoard(sharedMem,convertedBoard);
 }
 
 void convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]){
