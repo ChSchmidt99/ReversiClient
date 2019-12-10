@@ -5,7 +5,7 @@
 
 typedef struct _ProcessInfo {
     pid_t child, parent;
-    int *fd;
+    int fd[2];
 } ProcessInfo;
 
 ProcessInfo* createProcessInfo();

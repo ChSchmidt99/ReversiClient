@@ -9,20 +9,20 @@ ProcessInfo* createProcessInfo() {
         panic("Could not create a pipe");
 
     ProcessInfo* info = malloc(sizeof(ProcessInfo));
-    //info->fd[0] = fd[0];
-    //info->fd[1] = fd[1];
-    //info->child = -1;
-    //info->parent = -1;
+    info->fd[0] = fd[0];
+    info->fd[1] = fd[1];
+    info->child = -1;
+    info->parent = -1;
 
     return info;
 }
 
 void setProcChild(ProcessInfo* info, pid_t pid) {
-    info->child = pid;
+    //info->child = pid;
 }
 
 void setProcParent(ProcessInfo* info, pid_t pid) {
-    info->parent = pid;
+    //info->parent = pid;
 }
 
 pid_t getProcChild(ProcessInfo* info) {
