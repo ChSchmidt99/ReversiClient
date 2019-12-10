@@ -37,8 +37,7 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
         panic(message->clearText);
     printAndFree(message);
 
-    formatAndSend(connection, "PLAYER", playerPreference, NULL, false);
-    //sendPlayerPreference(connection, playerPreference);
+    sendPlayerPreference(connection, playerPreference);
 
     message = getPlayerMeta(connection);
     if (message->isError == 1)
