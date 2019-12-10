@@ -69,7 +69,7 @@ char** sliceLimit(const char* str, char *delimiter, size_t* lengthOut, int limit
 
     if(token && index < length) {
         result = realloc(result, sizeof(char*) * ++(*lengthOut));
-        result[*lengthOut - 1] = str + index;
+        result[*lengthOut - 1] = copy + index;
     }
     return result;
 }

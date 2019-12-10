@@ -22,9 +22,19 @@ static char * test_copyStringToNewMemoryAddr() {
 static char * test_Slice() {
     size_t length = 0;
     char* in = "Hallo ich bin ein toller test";
-    char** tokens = slice(in," ",&length, -1);
+    char** tokens = slice(in," ",&length);
     mu_assert("test_Slice failed, Should have 6 tokens", length == 6);
     mu_assert("test_Slice failed, First Token should be Hallo", strcmp(tokens[0],"Hallo") == 0);
+    freeTokens(tokens);
+    return 0;
+}
+
+static char * test_SliceLimit() {
+    size_t length = 0;
+    char* in = "Hallo ich bin ein toller test";
+    char** tokens = sliceLimit(in, " ", &length, 3);
+    mu_assert("test_SliceLimit failed, Should have 3 tokens", length == 3);
+    mu_assert("test_SliceLimit failed, Last Token should be 'bin ein toller test'", strcmp(tokens[2], "bin ein toller test") == 0);
     freeTokens(tokens);
     return 0;
 }
@@ -68,6 +78,7 @@ static char * utilities_tests() {
     mu_run_test(test_joinTokens);
     mu_run_test(test_joinTokens_single_token);
     mu_run_test(test_remove_delimiter);
+    mu_run_test(test_SliceLimit);
     return 0;
 }
  
