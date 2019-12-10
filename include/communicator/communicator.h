@@ -16,8 +16,15 @@ int reveiveTotalPlayers(Connection* connection);
 PlayerMeta* receiveOtherPlayer(Connection* connection);
 int nextMessageIsEndplayers(Connection* connection);
 
+char** receiveBoard(Connection* connection, size_t rows);
+void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols);
+
+int waitForFirstMove(Connection* connection);
+
 void freePlayerMeta(PlayerMeta* meta);
 
+void sendMove(Connection* connection, char* move);
+void sendOkWait(Connection* connection);
 void sendClientVersion(Connection* connection, const char* version);
 void sendGameId(Connection* connection, const char* gameID);
 void sendPlayerPreference(Connection* connection, const char* preference);

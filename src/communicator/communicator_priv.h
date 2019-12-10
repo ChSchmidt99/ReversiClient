@@ -8,6 +8,9 @@
 #define VERSION "VERSION"
 #define GAMEID "ID"
 #define PLAYERPREFERENCE "PLAYER"
+#define OK_WAIT_COMMAND "OKWAIT"
+#define PLAY_COMMAND "PLAY"
+
 //TODO: Only use Reversi as GAMEKIND and split up at function call
 #define REVERSI_GAMEKIND "+ PLAYING Reversi"
 

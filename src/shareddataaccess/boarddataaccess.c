@@ -64,3 +64,7 @@ char (*getBoard(BoardSHM* shm, size_t *boardSizeOut))[]{
     }
     return board;
 }
+
+size_t getBoardSize(BoardSHM* shm){
+    return shm->boardSize;
+}

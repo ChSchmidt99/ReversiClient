@@ -3,11 +3,13 @@
     #include "communicator/communicator.h"
     #include "info/info.h"
 
+    //TODO: Use rows and cols instead of boardSize
     typedef struct _GameInstance {
         PlayerMeta* ownPlayer;
         GameKind gameKind;
-        size_t opponentCount;
+        size_t boardSize;
         char* gameName;
+        size_t opponentCount;
         PlayerMeta* opponents[];
     } GameInstance;
     

@@ -9,6 +9,7 @@
 #define WAIT_COMMAND "WAIT"
 #define GAMEOVER_COMMAND "GAMEOVER"
 #define ENDFIELD_COMMAND "ENDFIELD"
+#define QUIT_COMMAND "QUIT"
 
 ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
@@ -44,6 +45,8 @@ ServerMessageType getType(const char* message){
         out = MoveOk;
     if(strcmp(splittedMessage[0], ENDFIELD_COMMAND) == 0) 
         out = Endfield;
+    if(strcmp(splittedMessage[0], QUIT_COMMAND) == 0) 
+        out = Quit;
 
     freeTokens(splittedMessage);
     return out;

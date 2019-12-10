@@ -135,6 +135,75 @@ int nextMessageIsEndplayers(Connection* connection){
     return result;
 }
 
+int waitForFirstMove(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if(message->type == Error){
+        panic(message->messageReference);
+    } else if(message->type == Quit){
+        return -1;
+    } else if (message->type == Wait){
+        sendOkWait(connection);
+        return waitForFirstMove(connection);
+    } else if (message->type == Move){
+        //TODO: Parse move time
+        return 1;
+    } else {
+        panic("Unexpected Command received");
+    }
+    return -1;
+}
+
+void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
+    ServerMessage* message = receiveServerMessage(connection);
+    if(message->type == Error)
+        panic(message->messageReference);
+    
+    size_t fieldDimensionTokenCount = 0;
+    char** fieldDimensionTokens = slice(message->messageReference + 2," ",&fieldDimensionTokenCount);
+    size_t dimensionCount = 0;
+    char** dimensions = slice(fieldDimensionTokens[1],",",&dimensionCount);
+    *cols = atoi(dimensions[0]);
+    *rows = atoi(dimensions[1]);
+    freeServerMessage(message);
+    freeTokens(fieldDimensionTokens);
+    freeTokens(dimensions);
+}
+
+//Use proper array instead of double ptr
+char** receiveBoard(Connection* connection, size_t rows){
+    logMessage("Receiving Board...\n",1);
+    char** board = malloc(sizeof(char*) * rows);
+    for(size_t i = 0; i < rows; i++){
+        //TODO: Replace receiveServerMessage with safelyReceiveServerMessage, which unwraps Error
+        ServerMessage* message = receiveServerMessage(connection);
+        if(message->type == Error)
+            panic(message->messageReference);
+            
+        board[i] = copyStringToNewMemoryAddr(message->messageReference + 2);
+        freeServerMessage(message);
+    }
+
+    ServerMessage* message = receiveServerMessage(connection);
+    if(message->type == Error)
+        panic(message->messageReference);
+    else if(message->type != Endfield)
+        panic("Expected Endfield!");
+
+    freeServerMessage(message);
+    return board;
+}
+
+void sendOkWait(Connection* connection){
+    printf("Sending: '%s'\n",OK_WAIT_COMMAND);
+    writeLineToServer(connection, OK_WAIT_COMMAND);
+}
+
+void sendMove(Connection* connection, char* move){
+    char* moveString = concatStringToNewMemoryAddr(PLAY_COMMAND,move," ");
+    writeLineToServer(connection,moveString);
+    free(moveString);
+}
+
 void sendClientVersion(Connection* connection, const char* version){
     char* message = concatStringToNewMemoryAddr(VERSION,version," ");
     printf("Sending: '%s'\n",message);

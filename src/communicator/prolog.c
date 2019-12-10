@@ -7,7 +7,7 @@
 
 void printAndFree(char* message);
 void printPlayerMeta(PlayerMeta* meta);
-GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName);
+GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount],size_t boardSize, char* gameName);
 
 //TODO: Splitup and clean function
 GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
@@ -42,15 +42,25 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
     if (!nextMessageIsEndplayers(connection))
         panic("Expected ENDPLAYERS");
 
-    return initGameInstance(ownMeta,gameKind,totalPlayers - 1,opponents, gameName);
+
+    int moveTime = waitForFirstMove(connection);
+    if (moveTime == -1)
+        panic("Failed to wait for first Move");
+
+    size_t rows = 0;
+    size_t cols = 0;
+    receiveBoardDimensions(connection,&rows,&cols);
+
+    return initGameInstance(ownMeta,gameKind,totalPlayers - 1,opponents, rows, gameName);
 }
 
-GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName){
+GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount],size_t boardSize, char* gameName){
     GameInstance* newInstance = malloc(sizeof(GameInstance) + sizeof(PlayerMeta*) * opponentCount);
     newInstance->gameKind = gameKind;
     newInstance->ownPlayer = ownPlayer;
     newInstance->opponentCount = opponentCount;
     newInstance->gameName = gameName;
+    newInstance->boardSize = boardSize;
     for (size_t i = 0; i < opponentCount; i++){
         newInstance->opponents[i] = opponents[i];
     }
@@ -80,6 +90,8 @@ void printGameInstanceDetails(GameInstance* gameInstance){
     printf("Opponents Info: \n");
     for (size_t i = 0; i < gameInstance->opponentCount; i++)
         printPlayerMeta(gameInstance->opponents[i]);
+
+    printf("BoardSize: %zu\n",gameInstance->boardSize);
 }
 
 void printPlayerMeta(PlayerMeta* meta){
