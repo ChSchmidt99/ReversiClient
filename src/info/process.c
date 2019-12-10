@@ -11,8 +11,8 @@ ProcessInfo* createProcessInfo() {
     ProcessInfo* info = malloc(sizeof(ProcessInfo));
     info->fd[0] = fd[0];
     info->fd[1] = fd[1];
-    info->child = -1;
-    info->parent = -1;
+    *info->child = -1;
+    *info->parent = -1;
 
     return info;
 }
