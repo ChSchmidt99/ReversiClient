@@ -10,7 +10,10 @@ ProcessInfo* createProcessInfo() {
 
     ProcessInfo* info = malloc(sizeof(ProcessInfo));
     info->fd[0] = fd[0];
-    printf("%i", info->fd[0]);
+    info->fd[1] = fd[1];
+    printf("%i %i", info->fd[0], info->fd[1]);
+    pid_t* p = info->parent;
+    printf("%p is pointer with val %i", p, *p);
     //info->fd[1] = fd[1];
     //*info->child = 0;
     //*info->parent = -1;
