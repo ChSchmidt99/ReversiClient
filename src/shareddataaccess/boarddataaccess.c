@@ -20,11 +20,11 @@ void freeBoardSHM(BoardSHM* shm){
 BoardSHM* createBoardSHM(size_t boardSize){
     int shmId = shmget(IPC_PRIVATE,sizeof(char) * boardSize * boardSize,IPC_CREAT | 0666);
     if (shmId == -1)
-        return NULL;
+        panic("Failed to get SHM");
 
     char* board = shmat(shmId,0,0);
     if (board == (char*)-1)
-        return NULL;
+        panic("Failed to attach shm");
     
     return newBoardSHM(shmId, boardSize, board);
 }

@@ -10,15 +10,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
 Connection* initiateConnectionSequence(int argc, char *argv[]);
-
-int parentProcess(int argc, char *argv[], Connection* connection, BoardSHM* boardSHM);
-int childProcess(int argc, char *argv[],BoardSHM* boardSHM);
 
 int main(int argc, char *argv[]) {
     
@@ -32,40 +30,53 @@ int main(int argc, char *argv[]) {
     Connection* connection = initiateConnectionSequence(argc,argv);
     GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
     printGameInstanceDetails(gameInstance);
-
-    //GameDataSHM* sharedGameMem = createGameDataSHM();
-    BoardSHM* boardSHM = createBoardSHM(gameInstance->boardSize);    
-
     freeGameInstance(gameInstance);
 
-    pid_t processID;
+    //TODO: Move to better spot!
+    
+    
+    int moveTime = waitForFirstMove(connection);
+    if (moveTime == -1)
+        panic("Failed to wait for first Move");
 
-    if((processID = fork()) < 0) {
-        panic("Failed to fork");
-    } else if (processID == 0){
-        return parentProcess(argc,argv,connection, boardSHM);
-    } else {
-        return childProcess(argc,argv,boardSHM);
-    }
+    size_t rows = 0;
+    size_t cols = 0;
+    receiveBoardDimensions(connection,&rows,&cols);
 
-    /*
-    int fd[2];
-    if(pipe(fd) < 0) {
-        panic("Failed to create pipe");
-    }
-    */
+    //TODO: Use rows and cols instead of size
+    BoardSHM* boardSHM = createBoardSHM(rows);
 
+    //startGameLoop(connection, boardSHM, moveTime);
+        
     disconnectFromServer(connection);
     freeConnection(connection);
     free(gameId);
     free(playerPreference);
-   
+
+    //pid_t processID;
+
+    /*
+    if((processID = fork()) < 0) {
+        panic("Failed to fork");
+    } else if (processID == 0){
+        //Parend
+        wait(NULL);
+    } else {
+        //Child
+        startGameLoop(connection, boardSHM, moveTime);
+        disconnectFromServer(connection);
+        freeConnection(connection);
+        free(gameId);
+        free(playerPreference);
+        exit(EXIT_SUCCESS);
+    }
+    */
+
+    
     if (detachBoardSHM(boardSHM) == -1)
         panic("Failed to detach boardSHM");
     if (clearBoardSHM(boardSHM) == -1)
         panic("Failed to clear boardSHM");
-    //detachGameDataSHM(sharedGameMem);
-    //clearGameDataSHM(sharedGameMem);
 }
 
 Connection* initiateConnectionSequence(int argc, char *argv[]){
@@ -80,31 +91,4 @@ Connection* initiateConnectionSequence(int argc, char *argv[]){
     freeParams(params);
     connectToServer(connection);
     return connection;
-}
-
-int parentProcess(int argc, char *argv[], Connection* connection, BoardSHM* boardSHM){
-    
-    startGameLoop(connection, boardSHM);
-
-    printf("[CONNECTOR] Finished prolog, exiting..\n");
-    //kill(thinker, SIGKILL);
-    return EXIT_SUCCESS;
-}
-
-int childProcess(int argc, char *argv[], BoardSHM* boardSHM){
-    return EXIT_SUCCESS;
-    /*
-    printf("[PARENT/%i] Started connector child\n", thinker);
-
-    // start the thinker process
-    printf("[PARENT] Starting thinker..\n");
-    tick(NULL, fd);
-
-    if((waitpid (thinker, NULL, 0)) < 0) {
-        perror ("Error waiting for child processes to die");
-        exit (EXIT_FAILURE);
-    }
-
-    printf("Connector died, exiting..\n");
-    */
 }

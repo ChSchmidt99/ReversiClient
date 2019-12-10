@@ -19,6 +19,7 @@ int nextMessageIsEndplayers(Connection* connection);
 char** receiveBoard(Connection* connection, size_t rows);
 void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols);
 
+int waitForMove(Connection* connection);
 int waitForFirstMove(Connection* connection);
 
 void freePlayerMeta(PlayerMeta* meta);

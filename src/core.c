@@ -14,3 +14,10 @@ void freePlayerMeta(PlayerMeta* meta){
     free(meta->name);
     free(meta);
 }
+
+char* gameKindString(GameKind gameKind){
+    if (gameKind == gamekind_Reversi)
+        return copyStringToNewMemoryAddr("Reversi");
+    else 
+        return copyStringToNewMemoryAddr("Unknown");
+}

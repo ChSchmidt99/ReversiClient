@@ -14,4 +14,5 @@
 
     PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
     void freePlayerMeta(PlayerMeta* meta);
+    char* gameKindString(GameKind gameKind);
 #endif

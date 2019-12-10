@@ -52,6 +52,20 @@ ServerMessageType getType(const char* message){
     return out;
 }
 
+int parseMoveTime(ServerMessage* message){
+    if (message->type != Move)
+        panic("message was not of type move!");
+
+    size_t length = 0;
+    char** tokens = slice(message->messageReference," ",&length);
+    if (length < 3)
+        panic("Unexpected token count!");
+    
+    int moveTime = atoi(tokens[2]);
+    freeTokens(tokens);
+    return moveTime;
+}
+
 int isError(const char* message){
     if (*message == '-')
         return 1;

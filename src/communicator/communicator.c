@@ -135,22 +135,48 @@ int nextMessageIsEndplayers(Connection* connection){
     return result;
 }
 
+//TODO: needed?
+/*
+int waitForMove(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    switch (message->type){
+        case Error:
+            panic(message->messageReference);
+        case Wait:{
+            sendOkWait(connection);
+            freeServerMessage(message);
+            return waitForMove(connection);
+        }
+        case Move:{
+            int moveTime = parseMoveTime(message);
+            freeServerMessage(message);
+            return moveTime;
+        }
+        default:
+            panic("Unexpected type");
+    }
+}
+*/
+
+//TODO: Cleanup
 int waitForFirstMove(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
+    int moveTime = -1;
     if(message->type == Error){
         panic(message->messageReference);
     } else if(message->type == Quit){
-        return -1;
+        
     } else if (message->type == Wait){
         sendOkWait(connection);
+        freeServerMessage(message);
         return waitForFirstMove(connection);
     } else if (message->type == Move){
-        //TODO: Parse move time
-        return 1;
+        moveTime = parseMoveTime(message);
     } else {
         panic("Unexpected Command received");
     }
-    return -1;
+    freeServerMessage(message);
+    return moveTime;
 }
 
 void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){

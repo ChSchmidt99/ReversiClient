@@ -19,4 +19,6 @@ typedef struct _ServerMessage {
 
 ServerMessage* parseServerMessage(char* message);
 void freeServerMessage(ServerMessage* serverMessage);
+int parseMoveTime(ServerMessage* message);
+
 #endif
