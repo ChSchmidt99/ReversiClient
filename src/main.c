@@ -9,38 +9,37 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-
+#include <wait.h>
+#include "info/process.h"
 
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
-int parentProcess(int argc, char *argv[],SharedMemory* sharedMem);
-int childProcess(int argc, char *argv[],SharedMemory* sharedMem);
+int parentProcess(int argc, char *argv[],SharedMemory* sharedMem, ProcessInfo* procInfo);
+int childProcess(int argc, char *argv[],SharedMemory* sharedMem, ProcessInfo* procInfo);
 
 int main(int argc, char *argv[]) {
     pid_t processID;
+    pid_t parentId = getpid();
     
     SharedMemory* sharedMem = createSharedMemory();
-
-    /*
-    int fd[2];
-    if(pipe(fd) < 0) {
-        panic("Failed to create pipe");
-    }
-    */
+    ProcessInfo* processInfo = createProcessInfo();
+    setParent(processInfo, parentId);
 
     if((processID = fork()) < 0) {
         panic("Failed to fork");
-    } else if (processID == 0){
-        return parentProcess(argc,argv,sharedMem);
+    } else if (processID > 0){
+        setChild(processInfo, processID);
+
+        return parentProcess(argc,argv,sharedMem, processInfo);
     } else {
-        return childProcess(argc,argv,sharedMem);
+        return childProcess(argc,argv,sharedMem, processInfo);
     }
 
     clearSharedData(sharedMem);
 }
 
-int parentProcess(int argc, char *argv[], SharedMemory* sharedMem){
+int childProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* procInfo){
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
         printf("GameId must be set!\n");
@@ -76,20 +75,13 @@ int parentProcess(int argc, char *argv[], SharedMemory* sharedMem){
     return EXIT_SUCCESS;
 }
 
-int childProcess(int argc, char *argv[], SharedMemory* sharedMem){
-    return EXIT_SUCCESS;
-    /*
-    printf("[PARENT/%i] Started connector child\n", thinker);
-
+int parentProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* procInfo){
     // start the thinker process
-    printf("[PARENT] Starting thinker..\n");
-    tick(NULL, fd);
+    tick(sharedMem, procInfo);
 
-    if((waitpid (thinker, NULL, 0)) < 0) {
+    if((waitpid (getChild(procInfo), NULL, 0)) < 0) {
         perror ("Error waiting for child processes to die");
         exit (EXIT_FAILURE);
     }
-
-    printf("Connector died, exiting..\n");
-    */
+    return EXIT_SUCCESS;
 }

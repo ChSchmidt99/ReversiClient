@@ -1,0 +1,34 @@
+#include "info/process.h"
+#include "utilities.h"
+#include <stdlib.h>
+#include <unistd.h>
+
+ProcessInfo* createProcessInfo() {
+    int fd[2];
+    if(pipe(fd) < 0)
+        panic("Could not create a pipe");
+
+    ProcessInfo* info = malloc(sizeof(int*) * 2 + sizeof(pid_t));
+    info->fd[0] = fd[0];
+    info->fd[1] = fd[1];
+    info->child = -1;
+    info->parent = -1;
+
+    return info;
+}
+
+void setChild(ProcessInfo* info, pid_t pid) {
+    info->child = pid;
+}
+
+void setParent(ProcessInfo* info, pid_t pid) {
+    info->parent = pid;
+}
+
+int readFileDescriptor(ProcessInfo* info) {
+    return info->fd[0];
+}
+
+int writeFileDescriptor(ProcessInfo* info) {
+    return info->fd[1];
+}
