@@ -77,15 +77,17 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
         else
             printf("test2\n");
 
-        if(token) {
+        if(token && index < length) {
             printf("copying %lu chars.." , length - index);
             result = realloc(result, sizeof(char*) * ++(*lengthOut));
+            char* pointer = result[*lengthOut - 1];
             unsigned int i = 0;
+            printf(" to %p", pointer);
             for(unsigned long l = index; l < length; l++, i++) {
                 printf("%c", str[index]);
-                result[*lengthOut - 1][l - index] = str[index];
+                //result[*lengthOut - 1][l - index] = str[index];
             }
-            result[*lengthOut - 1][i] = '\0';
+            //result[*lengthOut - 1][i] = '\0';
         }
         return result;
     }
