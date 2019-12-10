@@ -96,10 +96,10 @@ void logMessage(char* message){
 }
 
 void send(Connection* connection, char* data, bool freeData) {
-    logMessage(data);
     writeMessageToServer(connection, data);
     if(freeData)
         free(data);
+    logMessage(data);
 }
 
 void formatAndSend(Connection* connection, char* data, const char* firstParam, const char* secondParam, bool freeData) {
