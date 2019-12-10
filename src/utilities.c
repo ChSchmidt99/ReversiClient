@@ -66,7 +66,8 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
             result[*lengthOut - 1] = token;
             index += strlen(token) + 1;
             token = strtok(NULL, delimiter);
-            printf("added %s to char**", result[*lengthOut - 1]);
+            printf("%s\n", token);
+            printf("added %s to char**\n", result[*lengthOut - 1]);
         }
         if(token) {
             printf("copying %lu chars.." , length - index);
