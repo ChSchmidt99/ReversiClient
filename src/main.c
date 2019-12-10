@@ -25,13 +25,13 @@ int main(int argc, char *argv[]) {
     SharedMemory* sharedMem = createSharedMemory();
     ProcessInfo* processInfo = createProcessInfo();
     printf("Setting process parent to %i\n", parentId);
-    setProcParent(processInfo, &parentId);
+    //setProcParent(processInfo, &parentId);
     printf("ff\n");
 
     if((processID = fork()) < 0) {
         panic("Failed to fork");
     } else if (processID > 0){
-        setProcChild(processInfo, &processID);
+        //setProcChild(processInfo, &processID);
 
         return parentProcess(argc,argv,sharedMem, processInfo);
     } else {
