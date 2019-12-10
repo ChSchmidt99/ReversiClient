@@ -17,20 +17,20 @@ ProcessInfo* createProcessInfo() {
     return info;
 }
 
-void setProcChild(ProcessInfo* info, pid_t pid) {
-    //info->child = pid;
+void setProcChild(ProcessInfo* info, const pid_t* pid) {
+    *info->child = *pid;
 }
 
-void setProcParent(ProcessInfo* info, pid_t pid) {
-    //info->parent = pid;
+void setProcParent(ProcessInfo* info, const pid_t* pid) {
+    *info->parent = *pid;
 }
 
 pid_t getProcChild(ProcessInfo* info) {
-    return info->child;
+    return *info->child;
 }
 
 pid_t getProcParent(ProcessInfo* info) {
-    return info->parent;
+    return *info->parent;
 }
 
 int readFileDescriptor(ProcessInfo* info) {

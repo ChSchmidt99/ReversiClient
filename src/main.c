@@ -24,12 +24,12 @@ int main(int argc, char *argv[]) {
     
     SharedMemory* sharedMem = createSharedMemory();
     ProcessInfo* processInfo = createProcessInfo();
-    setProcParent(processInfo, parentId);
+    setProcParent(processInfo, &parentId);
 
     if((processID = fork()) < 0) {
         panic("Failed to fork");
     } else if (processID > 0){
-        setProcChild(processInfo, processID);
+        setProcChild(processInfo, &processID);
 
         return parentProcess(argc,argv,sharedMem, processInfo);
     } else {
