@@ -81,7 +81,6 @@ char** slice(char* str, char *delimiter, size_t* lengthOut, int limit) {
             printf("copying %lu chars.." , length - index);
             result = realloc(result, sizeof(char*) * ++(*lengthOut));
             char* pointer = result[*lengthOut - 1];
-            unsigned int i = 0;
             printf(" to %p\n", pointer);
 
             //char* substr = malloc(sizeof(char) * (length - index) + 1);
