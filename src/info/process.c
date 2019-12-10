@@ -11,14 +11,18 @@ ProcessInfo* createProcessInfo() {
     ProcessInfo* info = malloc(sizeof(ProcessInfo));
     info->fd[0] = fd[0];
     info->fd[1] = fd[1];
-    printf("%i %i", info->fd[0], info->fd[1]);
-    pid_t* p = info->parent;
-    printf("%p is pointer with val %i", p, *p);
-    //info->fd[1] = fd[1];
-    //*info->child = 0;
-    //*info->parent = -1;
+    info->parent = malloc(sizeof(pid_t*));
+    info->child = malloc(sizeof(pid_t*));
+    *info->child = 0;
+    *info->parent = -1;
 
     return info;
+}
+
+void freeProcessInfo(ProcessInfo* procInfo) {
+    free(procInfo->parent);
+    free(procInfo->child);
+    free(procInfo);
 }
 
 void setProcChild(ProcessInfo* info, const pid_t* pid) {

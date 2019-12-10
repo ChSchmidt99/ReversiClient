@@ -4,11 +4,14 @@
 #include <sys/types.h>
 
 typedef struct _ProcessInfo {
-    pid_t *child, *parent;
+    pid_t* child;
+    pid_t* parent;
     int fd[2];
 } ProcessInfo;
 
 ProcessInfo* createProcessInfo();
+
+void freeProcessInfo(ProcessInfo* info);
 
 void setProcChild(ProcessInfo* info, const pid_t* pid);
 
