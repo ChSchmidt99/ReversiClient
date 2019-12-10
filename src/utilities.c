@@ -66,13 +66,17 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
             result[*lengthOut - 1] = token;
             index += strlen(token) + 1;
             token = strtok(NULL, delimiter);
+            printf("added %s to char**", result[*lengthOut - 1]);
         }
         if(token) {
+            printf("copying %lu chars.." , length - index);
             result = realloc(result, sizeof(char*) * ++(*lengthOut));
-            for(unsigned long l = index; l < length; l++) {
+            unsigned int i = 0;
+            for(unsigned long l = index; l < length; l++, i++) {
+                printf("%c", str[index]);
                 result[*lengthOut - 1][l - index] = str[index];
             }
-            result[*lengthOut - 1][length] = '\0';
+            result[*lengthOut - 1][i] = '\0';
         }
         return result;
     }
