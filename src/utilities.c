@@ -64,10 +64,10 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
                 panic("Cannot realloc to split string to char**\n");
 
             result[*lengthOut - 1] = token;
-            index += strlen(token) + 1;
-            token = strtok(NULL, delimiter);
             printf("%s\n", token);
             printf("added %s to char**\n", result[*lengthOut - 1]);
+            index += strlen(token) + 1;
+            token = strtok(NULL, delimiter);
         }
         if(token) {
             printf("copying %lu chars.." , length - index);
