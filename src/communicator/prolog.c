@@ -64,7 +64,7 @@ PlayerInfo* initiateProlog(Connection* connection, const char* version, const ch
 
 Player* parseOwn(ServerMessage* message) {
     size_t length = 0;
-    char** data  = slice(message->clearText, " ", &length, 3);
+    char** data  = slice(message->clearText, " ", &length, -1);
     for(size_t i = 0; i < length; i++) {
         printf("%zu > '%s'\n", i, data[i]);
     }
