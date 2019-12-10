@@ -71,6 +71,21 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     return result;
 }
 
+char* newStringWithoutDelimiter(const char* str, char delimiter){
+    char* out = NULL;
+    size_t length = 0;
+    for (size_t i = 0; i < strlen(str); i++){
+        if (str[i] != delimiter){
+            out = realloc(out, sizeof(char) * ++length);
+            out[length - 1] = str[i];
+        }
+    }
+
+    out = realloc(out, sizeof(char) * ++length);
+    out[length - 1] = '\0';
+    return out;
+}
+
 void freeTokens(char** tokens){
     free(tokens[0]);
     free(tokens);
