@@ -7,8 +7,8 @@
 
 void startGameLoop(Connection* connection, BoardSHM* boardSHM, int moveTime){
     logMessage("Started Game Loop",1);
-    //executeMoveSequence(connection,boardSHM, moveTime);
-    //gameLoop(connection,boardSHM);
+    executeMoveSequence(connection,boardSHM, moveTime);
+    gameLoop(connection,boardSHM);
 }
 
 void gameLoop(Connection* connection, BoardSHM* boardSHM){
@@ -81,8 +81,12 @@ void receivedGameover(Connection* connection, BoardSHM* boardSHM){
 }
 
 char* getMove(){
-    panic("Implement Me");
-    return "";
+    //TODO: Implement Me
+    char* move = malloc(sizeof(char) * 3);
+    move[0] = 'C';
+    move[1] = '5';
+    move[2] = '\0';
+    return move;
 }
 
 void writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM){
@@ -114,6 +118,11 @@ void executeMoveSequence(Connection* connection, BoardSHM* boardSHM, int moveTim
     }
 
     writeBoardToSharedMemory(stringBoard, boardSize, boardSHM);
+    
+    sendThinking(connection);
+    if (!receiveOkThink(connection))
+        panic("Did not receive OKTHINK!");
+    
     char* move = getMove();
     sendMove(connection,move);
     free(move);

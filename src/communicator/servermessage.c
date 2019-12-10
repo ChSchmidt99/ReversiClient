@@ -10,6 +10,7 @@
 #define GAMEOVER_COMMAND "GAMEOVER"
 #define ENDFIELD_COMMAND "ENDFIELD"
 #define QUIT_COMMAND "QUIT"
+#define OK_THINK_COMMAND "OKTHINK"
 
 ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
@@ -47,6 +48,8 @@ ServerMessageType getType(const char* message){
         out = Endfield;
     if(strcmp(splittedMessage[0], QUIT_COMMAND) == 0) 
         out = Quit;
+    if(strcmp(splittedMessage[0], OK_THINK_COMMAND) == 0) 
+        out = OkThink;
 
     freeTokens(splittedMessage);
     return out;

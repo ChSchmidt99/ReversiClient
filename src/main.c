@@ -34,7 +34,6 @@ int main(int argc, char *argv[]) {
 
     //TODO: Move to better spot!
     
-    
     int moveTime = waitForFirstMove(connection);
     if (moveTime == -1)
         panic("Failed to wait for first Move");
@@ -46,7 +45,7 @@ int main(int argc, char *argv[]) {
     //TODO: Use rows and cols instead of size
     BoardSHM* boardSHM = createBoardSHM(rows);
 
-    //startGameLoop(connection, boardSHM, moveTime);
+    startGameLoop(connection, boardSHM, moveTime);
         
     disconnectFromServer(connection);
     freeConnection(connection);
@@ -54,7 +53,6 @@ int main(int argc, char *argv[]) {
     free(playerPreference);
 
     //pid_t processID;
-
     /*
     if((processID = fork()) < 0) {
         panic("Failed to fork");

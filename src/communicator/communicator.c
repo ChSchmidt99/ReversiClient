@@ -2,7 +2,6 @@
 
 //TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
-//TODO: use readLine instead of readMessage
 char* receiveServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
@@ -135,32 +134,12 @@ int nextMessageIsEndplayers(Connection* connection){
     return result;
 }
 
-//TODO: needed?
-/*
-int waitForMove(Connection* connection){
-    ServerMessage* message = receiveServerMessage(connection);
-    switch (message->type){
-        case Error:
-            panic(message->messageReference);
-        case Wait:{
-            sendOkWait(connection);
-            freeServerMessage(message);
-            return waitForMove(connection);
-        }
-        case Move:{
-            int moveTime = parseMoveTime(message);
-            freeServerMessage(message);
-            return moveTime;
-        }
-        default:
-            panic("Unexpected type");
-    }
-}
-*/
-
 //TODO: Cleanup
 int waitForFirstMove(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
+
+    printf("Received: %s\n",message->messageReference);
+
     int moveTime = -1;
     if(message->type == Error){
         panic(message->messageReference);
@@ -219,12 +198,29 @@ char** receiveBoard(Connection* connection, size_t rows){
     return board;
 }
 
+int receiveOkThink(Connection* connection){
+    printf("Received OkThink\n");
+    ServerMessage* message = receiveServerMessage(connection);
+    int result = 0;
+    if (message->type == OkThink)
+        result = 1;
+        
+    freeServerMessage(message);
+    return result;
+}
+
 void sendOkWait(Connection* connection){
     printf("Sending: '%s'\n",OK_WAIT_COMMAND);
     writeLineToServer(connection, OK_WAIT_COMMAND);
 }
 
+void sendThinking(Connection* connection){
+    printf("Sending: '%s'\n",THINKING_COMMAND);
+    writeLineToServer(connection, THINKING_COMMAND);
+}
+
 void sendMove(Connection* connection, char* move){
+    printf("Sending Move: %s\n",move);
     char* moveString = concatStringToNewMemoryAddr(PLAY_COMMAND,move," ");
     writeLineToServer(connection,moveString);
     free(moveString);
