@@ -19,9 +19,9 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
 
     if (!hasAcceptedVersion(connection))
         panic("Server Did not accept Client Version");
-    else 
+    else
         printf("Server Accepted Client Version\n");
-    
+
     sendGameId(connection, gameId);
 
     GameKind gameKind = receiveGameKind(connection);
@@ -93,7 +93,7 @@ void printPlayerMeta(PlayerMeta* meta){
 char* gameKindString(GameKind gameKind){
     if (gameKind == gamekind_Reversi)
         return copyStringToNewMemoryAddr("Reversi");
-    else 
+    else
         return copyStringToNewMemoryAddr("Unknown");
 }
 

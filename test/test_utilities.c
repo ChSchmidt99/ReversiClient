@@ -22,7 +22,7 @@ static char * test_copyStringToNewMemoryAddr() {
 static char * test_Slice() {
     size_t length = 0;
     char* in = "Hallo ich bin ein toller test";
-    char** tokens = slice(in," ",&length);
+    char** tokens = slice(in," ",&length, -1);
     mu_assert("Should have 6 tokens", length == 6);
     mu_assert("First Token should be Hallo", strcmp(tokens[0],"Hallo") == 0);
     freeTokens(tokens);
