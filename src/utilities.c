@@ -83,12 +83,6 @@ char** slice(char* str, char *delimiter, size_t* lengthOut, int limit) {
             char* pointer = result[*lengthOut - 1];
             printf(" to %p\n", pointer);
 
-            //char* substr = malloc(sizeof(char) * (length - index) + 1);
-            /*for(unsigned long l = index; l < length; l++, i++) {
-                printf("%c", str[index]);
-                substr[l - index] = str[l];
-            }*/
-            //substr[length] = '\0';
             result[*lengthOut - 1] = str + index;
         }
         return result;
