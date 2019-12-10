@@ -30,6 +30,12 @@ int main(int argc, char *argv[]) {
 
     Connection* connection = initiateConnectionSequence(argc,argv);
     GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
+    if (gameInstance == (GameInstance*)-1){
+        printf("Failed Prolog!");
+        teardownConnection(connection);
+        return EXIT_FAILURE;
+    }
+    
     printGameInstanceDetails(gameInstance);
     free(gameId);
     free(playerPreference);
@@ -48,7 +54,6 @@ int main(int argc, char *argv[]) {
         teardownConnection(connection);
         return EXIT_FAILURE;
     }
-    
     
     //TODO: Use rows and cols instead of size
     BoardSHM* boardSHM = createBoardSHM(rows);
@@ -97,6 +102,7 @@ Connection* initiateConnectionSequence(int argc, char *argv[]){
 
     Connection* connection = newConnection(params->hostName,params->portNumber);
     freeParams(params);
-    connectToServer(connection);
+    if (connectToServer(connection) == -1)
+        panic("Failed to connect to server");
     return connection;
 }

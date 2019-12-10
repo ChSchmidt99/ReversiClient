@@ -128,6 +128,8 @@ int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, int moveTime
     printf("executeMoveSequence");
     size_t boardSize = getBoardSize(boardSHM);
     char** stringBoard = receiveBoard(connection,boardSize);
+    if (stringBoard == (char**) -1)
+        return -1;
     
     printf("Time For Move: %i\n",moveTime);
 

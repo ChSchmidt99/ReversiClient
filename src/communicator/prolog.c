@@ -13,6 +13,9 @@ GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t 
 GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
     char* message = receiveServerGreeting(connection);
+    if (message == (char*)-1)
+        return (GameInstance*) -1;
+
     printAndFree(message);
 
     sendClientVersion(connection, version);
@@ -25,22 +28,33 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
     sendGameId(connection, gameId);
 
     GameKind gameKind = receiveGameKind(connection);
+    if (gameKind == (GameKind) -1)
+        return (GameInstance*) -1;
 
     char* gameName = receiveGameName(connection);
+    if (gameName == (char*) -1)
+        return (GameInstance*) -1;
 
     sendPlayerPreference(connection, playerPreference);
 
     PlayerMeta* ownMeta = receivePlayerMeta(connection);
+    if (ownMeta == (PlayerMeta*) -1)
+        return (GameInstance*) -1;
 
     int totalPlayers = reveiveTotalPlayers(connection);
+    if (totalPlayers == -1)
+        return (GameInstance*) -1;
+
     PlayerMeta* opponents[totalPlayers];
     for (int i = 0; i < totalPlayers - 1; i++){
         PlayerMeta* otherPlayer = receiveOtherPlayer(connection);
+        if (otherPlayer == (PlayerMeta*) -1)
+            return (GameInstance*) -1;
         opponents[i] = otherPlayer;
     }
 
     if (!nextMessageIsEndplayers(connection))
-        panic("Expected ENDPLAYERS");
+        return (GameInstance*) -1;
 
     return initGameInstance(ownMeta,gameKind,totalPlayers - 1,opponents,gameName);
 }
