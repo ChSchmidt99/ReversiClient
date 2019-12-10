@@ -66,8 +66,11 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
             result[*lengthOut - 1] = token;
             printf("%s\n", token);
             printf("added %s to char**\n", result[*lengthOut - 1]);
+            printf("a");
             index += strlen(token) + 1;
+            printf("a");
             token = strtok(NULL, delimiter);
+            printf("a");
         }
         printf(token != 0 ? "ja" : "ni\n");
         printf(token != 0 ? "ja" : "ni\n");
