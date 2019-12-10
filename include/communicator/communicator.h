@@ -17,7 +17,7 @@ PlayerMeta* receiveOtherPlayer(Connection* connection);
 int nextMessageIsEndplayers(Connection* connection);
 
 char** receiveBoard(Connection* connection, size_t rows);
-void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols);
+int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols);
 
 int receiveOkThink(Connection* connection);
 

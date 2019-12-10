@@ -158,10 +158,12 @@ int waitForFirstMove(Connection* connection){
     return moveTime;
 }
 
-void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
+int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     ServerMessage* message = receiveServerMessage(connection);
-    if(message->type == Error)
-        panic(message->messageReference);
+    if(message->type == Error){
+        printf("%s\n",message->messageReference);
+        return -1;
+    }
     
     size_t fieldDimensionTokenCount = 0;
     char** fieldDimensionTokens = slice(message->messageReference + 2," ",&fieldDimensionTokenCount);
@@ -172,6 +174,7 @@ void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     freeServerMessage(message);
     freeTokens(fieldDimensionTokens);
     freeTokens(dimensions);
+    return 0;
 }
 
 //Use proper array instead of double ptr

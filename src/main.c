@@ -17,6 +17,7 @@
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
 Connection* initiateConnectionSequence(int argc, char *argv[]);
+void teardownConnection(Connection* connection);
 
 int main(int argc, char *argv[]) {
     
@@ -30,27 +31,30 @@ int main(int argc, char *argv[]) {
     Connection* connection = initiateConnectionSequence(argc,argv);
     GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
     printGameInstanceDetails(gameInstance);
+    free(gameId);
+    free(playerPreference);
     freeGameInstance(gameInstance);
 
     //TODO: Move to better spot!
-    
     int moveTime = waitForFirstMove(connection);
-    if (moveTime == -1)
-        panic("Failed to wait for first Move");
-
+    if (moveTime == -1){
+        printf("Failed to wait for first Move!");
+        teardownConnection(connection);
+        return EXIT_FAILURE;
+    }
     size_t rows = 0;
     size_t cols = 0;
-    receiveBoardDimensions(connection,&rows,&cols);
-
+    if (receiveBoardDimensions(connection,&rows,&cols) != -1){
+        teardownConnection(connection);
+        return EXIT_FAILURE;
+    }
+    
+    
     //TODO: Use rows and cols instead of size
     BoardSHM* boardSHM = createBoardSHM(rows);
 
-    startGameLoop(connection, boardSHM, moveTime);
-        
-    disconnectFromServer(connection);
-    freeConnection(connection);
-    free(gameId);
-    free(playerPreference);
+    if (startGameLoop(connection, boardSHM, moveTime) == -1)
+        printf("Terminated with Error!");
 
     //pid_t processID;
     /*
@@ -70,11 +74,17 @@ int main(int argc, char *argv[]) {
     }
     */
 
-    
+    disconnectFromServer(connection);
+    freeConnection(connection);
     if (detachBoardSHM(boardSHM) == -1)
         panic("Failed to detach boardSHM");
     if (clearBoardSHM(boardSHM) == -1)
         panic("Failed to clear boardSHM");
+}
+
+void teardownConnection(Connection* connection){
+    disconnectFromServer(connection);
+    freeConnection(connection);
 }
 
 Connection* initiateConnectionSequence(int argc, char *argv[]){
