@@ -15,9 +15,8 @@ char* receiveServerGreeting(Connection* connection){
 
 int hasAcceptedVersion(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    int result = 1;
     if (message->type == Error)
-        result = 0;
+        return 0;
     freeServerMessage(message);
     return 1;
 }
