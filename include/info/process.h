@@ -10,13 +10,13 @@ typedef struct _ProcessInfo {
 
 ProcessInfo* createProcessInfo();
 
-void setChild(ProcessInfo* info, pid_t pid);
+void setProcChild(ProcessInfo* info, pid_t pid);
 
-void setParent(ProcessInfo* info, pid_t pid);
+void setProcParent(ProcessInfo* info, pid_t pid);
 
-pid_t getChild(ProcessInfo* info);
+pid_t getProcChild(ProcessInfo* info);
 
-pid_t getParent(ProcessInfo* info);
+pid_t getProcParent(ProcessInfo* info);
 
 int readFileDescriptor(ProcessInfo* info);
 

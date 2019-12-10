@@ -24,12 +24,12 @@ int main(int argc, char *argv[]) {
     
     SharedMemory* sharedMem = createSharedMemory();
     ProcessInfo* processInfo = createProcessInfo();
-    setParent(processInfo, parentId);
+    setProcParent(processInfo, parentId);
 
     if((processID = fork()) < 0) {
         panic("Failed to fork");
     } else if (processID > 0){
-        setChild(processInfo, processID);
+        setProcChild(processInfo, processID);
 
         return parentProcess(argc,argv,sharedMem, processInfo);
     } else {
@@ -79,7 +79,7 @@ int parentProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* 
     // start the thinker process
     tick(sharedMem, procInfo);
 
-    if((waitpid (getChild(procInfo), NULL, 0)) < 0) {
+    if((waitpid (getProcChild(procInfo), NULL, 0)) < 0) {
         perror ("Error waiting for child processes to die");
         exit (EXIT_FAILURE);
     }

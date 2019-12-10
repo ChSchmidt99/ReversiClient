@@ -17,19 +17,19 @@ ProcessInfo* createProcessInfo() {
     return info;
 }
 
-void setChild(ProcessInfo* info, pid_t pid) {
+void setProcChild(ProcessInfo* info, pid_t pid) {
     info->child = pid;
 }
 
-void setParent(ProcessInfo* info, pid_t pid) {
+void setProcParent(ProcessInfo* info, pid_t pid) {
     info->parent = pid;
 }
 
-pid_t getChild(ProcessInfo* info) {
+pid_t getProcChild(ProcessInfo* info) {
     return info->child;
 }
 
-pid_t getParent(ProcessInfo* info) {
+pid_t getProcParent(ProcessInfo* info) {
     return info->parent;
 }
 
