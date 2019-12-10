@@ -14,13 +14,9 @@ void setChild(ProcessInfo* info, pid_t pid);
 
 void setParent(ProcessInfo* info, pid_t pid);
 
-pid_t getChild(ProcessInfo* info) {
-    return info->child;
-}
+pid_t getChild(ProcessInfo* info);
 
-pid_t getParent(ProcessInfo* info) {
-    return info->parent;
-}
+pid_t getParent(ProcessInfo* info);
 
 int readFileDescriptor(ProcessInfo* info);
 
