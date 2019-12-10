@@ -8,9 +8,9 @@ ProcessInfo* createProcessInfo() {
     if(pipe(fd) < 0)
         panic("Could not create a pipe");
 
-    ProcessInfo* info = malloc(sizeof(ProcessInfo) + sizeof(pid_t*) * 2);
-    info->fd[0] = fd[0];
-    info->fd[1] = fd[1];
+    ProcessInfo* info = malloc(sizeof(ProcessInfo));
+    //info->fd[0] = fd[0];
+    //info->fd[1] = fd[1];
     *info->child = -1;
     *info->parent = -1;
 
