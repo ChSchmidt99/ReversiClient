@@ -12,7 +12,7 @@ ProcessInfo* createProcessInfo() {
     printf("%lu", sizeof(ProcessInfo));
     //info->fd[0] = fd[0];
     //info->fd[1] = fd[1];
-    *info->child = 0;
+    //*info->child = 0;
     //*info->parent = -1;
 
     return info;
