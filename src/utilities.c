@@ -69,6 +69,7 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
             index += strlen(token) + 1;
             token = strtok(NULL, delimiter);
         }
+        printf(token != 0 ? "ja" : "ni");
         if(token) {
             printf("copying %lu chars.." , length - index);
             result = realloc(result, sizeof(char*) * ++(*lengthOut));
