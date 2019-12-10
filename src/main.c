@@ -2,6 +2,7 @@
 #include "config.h"
 #include "communicator/connection.h"
 #include "communicator/prolog.h"
+#include "shareddataaccess/shareddataaccess.h"
 #include "thinker/thinker.h"
 #include "utilities.h"
 #include "communicator/gamesequence.h"
@@ -13,12 +14,14 @@
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
-int parentProcess(int argc, char *argv[]);
-int childProcess(int argc, char *argv[]);
+int parentProcess(int argc, char *argv[],SharedMemory* sharedMem);
+int childProcess(int argc, char *argv[],SharedMemory* sharedMem);
 
 int main(int argc, char *argv[]) {
     pid_t processID;
     
+    SharedMemory* sharedMem = createSharedMemory();
+
     /*
     int fd[2];
     if(pipe(fd) < 0) {
@@ -29,13 +32,15 @@ int main(int argc, char *argv[]) {
     if((processID = fork()) < 0) {
         panic("Failed to fork");
     } else if (processID == 0){
-        return parentProcess(argc,argv);
+        return parentProcess(argc,argv,sharedMem);
     } else {
-        return childProcess(argc,argv);
+        return childProcess(argc,argv,sharedMem);
     }
+
+    clearSharedData(sharedMem);
 }
 
-int parentProcess(int argc, char *argv[]){
+int parentProcess(int argc, char *argv[], SharedMemory* sharedMem){
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
         printf("GameId must be set!\n");
@@ -57,7 +62,7 @@ int parentProcess(int argc, char *argv[]){
     GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
     printGameInstanceDetails(gameInstance);
     
-    startGameLoop(connection);
+    startGameLoop(connection, sharedMem);
 
     freeGameInstance(gameInstance);
 
@@ -71,7 +76,7 @@ int parentProcess(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 
-int childProcess(int argc, char *argv[]){
+int childProcess(int argc, char *argv[], SharedMemory* sharedMem){
     return EXIT_SUCCESS;
     /*
     printf("[PARENT/%i] Started connector child\n", thinker);

@@ -7,14 +7,14 @@ static char * testConcatStringsToNewMemoryAddr() {
     char* str1 = "Hallo";
     char* str2 = "Welt";
     char* newString = concatStringToNewMemoryAddr(str1,str2," ");
-    mu_assert("Strings Should be Equal", strcmp("Hallo Welt",newString) == 0);
+    mu_assert("testConcatStringsToNewMemoryAddr failed", strcmp("Hallo Welt",newString) == 0);
     return 0;
 }
 
 static char * test_copyStringToNewMemoryAddr() {
     char* baseString = "3,2";
     char* newString = copyStringToNewMemoryAddr(baseString);
-    mu_assert("Strings should be Equal", strcmp(baseString,newString) == 0);
+    mu_assert("test_copyStringToNewMemoryAddr failed", strcmp(baseString,newString) == 0);
     free(newString);
     return 0;
 }
@@ -23,8 +23,8 @@ static char * test_Slice() {
     size_t length = 0;
     char* in = "Hallo ich bin ein toller test";
     char** tokens = slice(in," ",&length, -1);
-    mu_assert("Should have 6 tokens", length == 6);
-    mu_assert("First Token should be Hallo", strcmp(tokens[0],"Hallo") == 0);
+    mu_assert("test_Slice failed, Should have 6 tokens", length == 6);
+    mu_assert("test_Slice failed, First Token should be Hallo", strcmp(tokens[0],"Hallo") == 0);
     freeTokens(tokens);
     return 0;
 }
@@ -40,7 +40,7 @@ static char* test_freeArray(){
 static char* test_joinTokens(){
     char* strs[3] = {"Hallo","schöne","Welt"};
     char* result = joinTokens(strs,3," ");
-    mu_assert("Joined String did not match expected string", strcmp(result,"Hallo schöne Welt") == 0);
+    mu_assert("test_joinTokens failed", strcmp(result,"Hallo schöne Welt") == 0);
     free(result);
     return 0;
 }
@@ -48,8 +48,15 @@ static char* test_joinTokens(){
 static char* test_joinTokens_single_token(){
     char* strs[1] = {"Hallo"};
     char* result = joinTokens(strs,1," ");
-    mu_assert("Joined String did not match expected string", strcmp(result,"Hallo") == 0);
+    mu_assert("test_joinTokens_single_token failed", strcmp(result,"Hallo") == 0);
     free(result);
+    return 0;
+}
+
+static char* test_remove_delimiter(){
+    char* newString = newStringWithoutDelimiter("Ich bin ein Test", ' ');
+    mu_assert("test_remove_delimiter failed",strcmp(newString,"IchbineinTest") == 0);
+    free(newString);
     return 0;
 }
 
@@ -60,6 +67,7 @@ static char * utilities_tests() {
     mu_run_test(test_freeArray);
     mu_run_test(test_joinTokens);
     mu_run_test(test_joinTokens_single_token);
+    mu_run_test(test_remove_delimiter);
     return 0;
 }
  

@@ -1,44 +1,45 @@
 #include "communicator/prolog.h"
 #include "utilities.h"
 #include "gamesequence_priv.h"
+#include <string.h>
 
-void startGameLoop(Connection* connection){
+void startGameLoop(Connection* connection, SharedMemory* sharedMem){
     logMessage("Started Game Loop",1);
-    gameLoop(connection);
+    gameLoop(connection, sharedMem);
 }
 
-void gameLoop(Connection* connection){
+void gameLoop(Connection* connection, SharedMemory* sharedMem){
     ServerMessage* message = receiveServerMessage(connection);
-    interpretAndFreeServerMessage(connection,message);
+    interpretAndFreeServerMessage(connection,message, sharedMem);
 }
 
-void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage){
+void interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage, SharedMemory* sharedMem){
     switch (serverMessage->type){
     case Error:
         printf("Gor Error: %s\n",serverMessage->messageReference);
         return;
     case Wait:
-        receivedWait(connection);
+        receivedWait(connection,sharedMem);
         return;
 
     case Gameover:
-        receivedGameover(connection);
+        receivedGameover(connection,sharedMem);
         return;
 
     case Move:
         //TODO: Get Move Time
-        receivedMove(connection);
+        receivedMove(connection,sharedMem);
         return;
 
     case MoveOk:
-        receivedMoveOk(connection);
+        receivedMoveOk(connection,sharedMem);
         return;
     default:
         printf("Got unexpected Servermessage: %s\n",serverMessage->messageReference);
     }
 }
 
-void receivedMove(Connection* connection){
+void receivedMove(Connection* connection, SharedMemory* sharedMem){
     logMessage("Received Move Command",1);
     
     size_t boardSize = 0;
@@ -48,25 +49,25 @@ void receivedMove(Connection* connection){
     for (size_t i = 0; i < boardSize; i++)
         printf("%s\n",board[i]);
 
-    writeBoardToSharedMemory(board, boardSize);
+    writeBoardToSharedMemory(board, boardSize, sharedMem);
     char* move = getMove();
     sendMove(connection,move);
     free(move);
-    gameLoop(connection);
+    gameLoop(connection, sharedMem);
 }
 
-void receivedMoveOk(Connection* connection){
+void receivedMoveOk(Connection* connection, SharedMemory* sharedMem){
     logMessage("Received MoveOk Command",1);
-    gameLoop(connection);
+    gameLoop(connection,sharedMem);
 }
 
-void receivedWait(Connection* connection){
+void receivedWait(Connection* connection, SharedMemory* sharedMem){
     logMessage("Received Wait Command",1);
     writeLineToServer(connection, OK_WAIT_COMMAND);
-    gameLoop(connection);
+    gameLoop(connection,sharedMem);
 }
 
-void receivedGameover(Connection* connection){
+void receivedGameover(Connection* connection, SharedMemory* sharedMem){
     logMessage("Received GameOver Command",1);
     panic("Implement Me");
 }
@@ -128,6 +129,20 @@ void sendMove(Connection* connection, char* move){
     free(moveString);
 }
 
-void writeBoardToSharedMemory(char** board, size_t boardSize){
-    panic("Implement Me");
+//TODO: Move communication functions to communicator and only keep logic in module
+void writeBoardToSharedMemory(char** board, size_t boardSize, SharedMemory* sharedMem){
+    char convertedBoard[boardSize][boardSize];
+    convertBoard(board,boardSize,convertedBoard);
+    setBoard(sharedMem,convertedBoard);
+}
+
+void convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]){
+    for (size_t i = 0; i < boardSize; i++){
+        char* row = newStringWithoutDelimiter(stringBoard[i],' ');
+        if (strlen(row) != boardSize + 1)
+            panic("Unexpected board row length\n");
+        for (size_t j = 0; j < boardSize; j++){
+            boardBuffer[i][j] = row[j + 1];
+        }
+    }
 }

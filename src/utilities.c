@@ -48,58 +48,74 @@ void freeArrayWithContents(void** arr, size_t length){
     free(arr);
 }
 
-char** slice(char* str, char *delimiter, size_t* lengthOut, int limit) {
+char** sliceLimit(const char* str, char *delimiter, site_t* lengthOut, int limit) {
+    char *copy = copyStringToNewMemoryAddr(str);
 
-    char* copy = copyStringToNewMemoryAddr(str);
-    char* token = strtok(copy, delimiter);
     char** result = NULL;
+    char* token = strtok(copy, delimiter);
 
-    *lengthOut = 0;
     unsigned long length = strlen(str);
     unsigned long index = 0;
-    if(limit == -1) {
-        while(token) {
-            result = realloc(result, sizeof(char*) * ++(*lengthOut));
+    while(token && limit-- > 0) {
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
 
-            if(result == NULL)
-                panic("Cannot realloc to split string to char**\n");
+        if(result == NULL)
+            panic("Cannot realloc to split string to char**\n");
 
-            result[*lengthOut - 1] = token;
-
-            token = strtok(NULL, delimiter);
-        }
-        return result;
-    } else {
-        while(token && limit-- > 0) {
-            result = realloc(result, sizeof(char*) * ++(*lengthOut));
-
-            if(result == NULL)
-                panic("Cannot realloc to split string to char**\n");
-
-            result[*lengthOut - 1] = token;
-            index += strlen(token) + 1;
-            token = strtok(NULL, delimiter);
-        }
-
-        if(token && index < length) {
-            result = realloc(result, sizeof(char*) * ++(*lengthOut));
-            result[*lengthOut - 1] = str + index;
-        }
-        return result;
+        result[*lengthOut - 1] = token;
+        index += strlen(token) + 1;
+        token = strtok(NULL, delimiter);
     }
+
+    if(token && index < length) {
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
+        result[*lengthOut - 1] = str + index;
+    }
+    return result;
+}
+    
+char** slice(const char* str, char *delimiter, size_t* lengthOut) {
+
+    char* copy = copyStringToNewMemoryAddr(str);
+
+    char** result = NULL;
+    char* token = strtok(copy, delimiter);
+
+    *lengthOut = 0;
+
+    while(token) {
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
+
+        if(result == NULL)
+            panic("Cannot realloc to split string to char**\n");
+
+
+        result[*lengthOut - 1] = token;
+
+        token = strtok(NULL, delimiter);
+    }
+    return result;
 }
 
+
+char* newStringWithoutDelimiter(const char* str, char delimiter){
+    char* out = NULL;
+    size_t length = 0;
+    for (size_t i = 0; i < strlen(str); i++){
+        if (str[i] != delimiter){
+            out = realloc(out, sizeof(char) * ++length);
+            out[length - 1] = str[i];
+        }
+    }
+
+    out = realloc(out, sizeof(char) * ++length);
+    out[length - 1] = '\0';
+    return out;
+}
 
 void freeTokens(char** tokens){
     free(tokens[0]);
     free(tokens);
-}
-
-int sliceLength(char** slice) {
-    int length = 0;
-    while(*slice[length++] != '\0') {}
-
-    return length;
 }
 
 char* joinTokens(char** tokens, size_t length, char* delimiter){

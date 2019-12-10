@@ -1,6 +1,9 @@
 #ifndef GAMESEQUENCE_H
 #define GAMESEQUENCE_H
 
-    void startGameLoop(Connection* connection);
+    #include "shareddataaccess/shareddataaccess.h"
+    #include "communicator/connection.h"
+
+    void startGameLoop(Connection* connection, SharedMemory* sharedMem);
 
 #endif
