@@ -51,7 +51,6 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
             if(result == NULL)
                 panic("Cannot realloc to split string to char**\n");
 
-
             result[*lengthOut - 1] = token;
 
             token = strtok(NULL, delimiter);
@@ -59,28 +58,21 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
         return result;
     } else {
         while(token && limit-- > 0) {
-            result = realloc(result, sizeof(char*) * ++delimiterC);
+            result = realloc(result, sizeof(char*) * ++(*lengthOut));
 
-            if(result == NULL) {
+            if(result == NULL)
                 panic("Cannot realloc to split string to char**\n");
-                exit(EXIT_FAILURE);
-            }
-            result[delimiterC - 1] = token;
-            printf("length of '%s' is %lu\n", token, strlen(token));
+
+            result[*lengthOut - 1] = token;
             index += strlen(token) + 1;
             token = strtok(NULL, delimiter);
         }
-        printf("%lu > %lu > %i\n", length, index, limit);
         if(token) {
-            result = realloc(result, sizeof(char*) * (++delimiterC));
-            printf("copying rest to %p\n'", result);
-            //char* pointer = result[delimiterC - 1];
+            result = realloc(result, sizeof(char*) * ++(*lengthOut));
             for(unsigned long l = index; l < length; l++) {
-                printf("%c", str[l]);
-                //pointer[l] = str[l];
+                result[*lengthOut - 1][l - index] = str[index];
             }
-            printf("'\n");
-            //pointer[length] = 0;
+            result[*lengthOut - 1][length] = '\0';
         }
         return result;
     }
