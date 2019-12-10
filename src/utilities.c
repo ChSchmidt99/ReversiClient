@@ -69,13 +69,14 @@ char** slice(const char* str, char delimiter[], int limit) {
         if(token) {
             result = realloc(result, sizeof(char*) * (++delimiterC));
             printf("copying rest to %p\n'", result);
-            //char* pointer = result[delimiterC - 1];
+            char* pointer = result[delimiterC - 1];
             for(unsigned long l = index; l < length; l++) {
                 printf("%c", str[l]);
-                //pointer[l] = str[l];
+                pointer[l - index] = str[l];
+                printf("%c (%c)\n", str[l], pointer[l - index]);
             }
             printf("'\n");
-            //pointer[length] = 0;
+            pointer[length] = 0;
         }
 
         result = realloc(result, sizeof(char*) * (delimiterC + 1));
