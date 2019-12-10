@@ -35,7 +35,7 @@ void printStringWithTerminator(const char* str){
     printf("\n");
 }
 
-char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
+char** slice(char* str, char *delimiter, size_t* lengthOut, int limit) {
 
     char* copy = copyStringToNewMemoryAddr(str);
     char* token = strtok(copy, delimiter);
@@ -82,15 +82,15 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut, int limit) {
             result = realloc(result, sizeof(char*) * ++(*lengthOut));
             char* pointer = result[*lengthOut - 1];
             unsigned int i = 0;
-            printf(" to %p", pointer);
+            printf(" to %p\n", pointer);
 
-            char* substr = malloc(sizeof(char) * (length - index) + 1);
-            for(unsigned long l = index; l < length; l++, i++) {
+            //char* substr = malloc(sizeof(char) * (length - index) + 1);
+            /*for(unsigned long l = index; l < length; l++, i++) {
                 printf("%c", str[index]);
                 substr[l - index] = str[l];
-            }
-            substr[length] = '\0';
-            result[*lengthOut - 1] = substr;
+            }*/
+            //substr[length] = '\0';
+            result[*lengthOut - 1] = str + index;
         }
         return result;
     }
