@@ -13,7 +13,7 @@ ProcessInfo* createProcessInfo() {
     info->fd[1] = fd[1];
     info->parent = malloc(sizeof(pid_t*));
     info->child = malloc(sizeof(pid_t*));
-    *info->child = 0;
+    *info->child = -1;
     *info->parent = -1;
 
     return info;
