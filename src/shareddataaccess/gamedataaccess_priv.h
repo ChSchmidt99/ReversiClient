@@ -15,6 +15,7 @@ typedef struct {
     pid_t thinkerPID;
     pid_t communicatorPID;
     int isThinking;
+    int moveTime;
     SharedPlayerInfo ownInfo;
     size_t opponentCount;
     SharedPlayerInfo opponents[MAX_OPPONENTS];
@@ -26,5 +27,4 @@ typedef struct _GameDataSHM {
 } GameDataSHM;
 
 GameDataSHM* newGameDataSHM(SharedGameData* shmData, int shmId);
-void freeGameDataSHM(GameDataSHM* shm);
 void setPlayerMeta(SharedPlayerInfo* dest,PlayerMeta* src);

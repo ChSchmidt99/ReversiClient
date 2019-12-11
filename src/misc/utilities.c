@@ -142,3 +142,10 @@ double fRand(double fMin, double fMax){
 int getRandomInt(int min, int max){
     return min + rand() % max;
 }
+
+void exitWithExitCode(int err){
+    if (err == -1)
+        exit(EXIT_FAILURE);
+    else 
+        exit(EXIT_SUCCESS);
+}

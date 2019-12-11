@@ -109,3 +109,11 @@ int getIsThinking(GameDataSHM* shm){
 void setIsThinking(GameDataSHM* shm, int val){
     shm->sharedData->isThinking = val;
 }
+
+int getMoveTime(GameDataSHM* shm){
+    return shm->sharedData->moveTime;
+}
+
+void setMoveTime(GameDataSHM* shm, int val){
+    shm->sharedData->moveTime = val;
+}

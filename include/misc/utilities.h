@@ -20,5 +20,6 @@ void freeTokens(char** tokens);
 char* joinTokens(char** tokens, size_t length, char* delimiter);
 void freeArrayWithContents(void** arr, size_t length);
 void logMessage(char* message, int level);
+void exitWithExitCode(int err);
 
 #endif
