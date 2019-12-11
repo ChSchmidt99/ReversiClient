@@ -4,7 +4,7 @@
 #include "thinker/thinker.h"
 #include "thinker/field.h"
 
-void tick(SharedMemory* shm, ProcessInfo* procInfo) {
+void tick(BoardSHM* boardSHM, ProcessInfo* procInfo) {
     close(readFileDescriptor(procInfo));
 
     sigset_t sigset;
@@ -20,7 +20,6 @@ void tick(SharedMemory* shm, ProcessInfo* procInfo) {
 
     printf("Got signal from communicator, waking up..\n");
     printf("Loading current board\n");
-    if(shm != NULL) {}
     /*
     Field* field = createField(8, 8);
     loadFieldFromSHM(field, shm);

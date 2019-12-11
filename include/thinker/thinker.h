@@ -4,9 +4,9 @@
 
 #include <signal.h>
 #include <stdio.h>
-#include "shareddataaccess/shareddataaccess.h"
+#include "shareddataaccess/boarddataaccess.h"
 #include "info/process.h"
 
-void tick(SharedMemory* shm, ProcessInfo* procInfo);
+void tick(BoardSHM* boardSHM, ProcessInfo* procInfo);
 
 #endif
