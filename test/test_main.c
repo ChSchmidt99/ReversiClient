@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../include/minunit.h"
+#include "misc/minunit.h"
 #include "./test_utilities.c"
 #include "./test_config.c"
 

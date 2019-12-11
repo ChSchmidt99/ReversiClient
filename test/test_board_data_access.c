@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "misc/minunit.h"
 #include "shareddataaccess/boarddataaccess.h"
 #include <unistd.h>
 #include <sys/wait.h>

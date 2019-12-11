@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "misc/minunit.h"
 #include "misc/config.h"
 #include <string.h>
 

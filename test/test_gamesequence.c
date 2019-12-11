@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "misc/minunit.h"
 #include <string.h>
 #include "../src/communicator/gamesequence_priv.h"
 
