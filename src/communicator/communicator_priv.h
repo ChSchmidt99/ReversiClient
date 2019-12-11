@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "communicator/connection.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 
 #define ENDPLAYERS_COMMAND "+ ENDPLAYERS"
 #define VERSION "VERSION"

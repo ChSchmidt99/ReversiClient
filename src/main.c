@@ -1,15 +1,16 @@
-#include "optionreader.h"
-#include "config.h"
+#include "misc/optionreader.h"
+#include "misc/config.h"
 #include "communicator/connection.h"
 #include "communicator/prolog.h"
 #include "shareddataaccess/gamedataaccess.h"
 #include "shareddataaccess/boarddataaccess.h"
 #include "thinker/thinker.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include "communicator/gamesequence.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <sys/wait.h>
 #include "info/process.h"
@@ -28,6 +29,9 @@ int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* co
 
 //TODO: Cach strc+c signal and execute teardown!
 int main(int argc, char *argv[]) {
+
+    srand(time(NULL));
+
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
         printf("GameId must be set!\n");
@@ -93,7 +97,6 @@ int main(int argc, char *argv[]) {
         exitCode = thinkerProcess(boardSHM, gameSHM, processInfo);
         teardownSHM(boardSHM, gameSHM);
     }
-
     return exitCode;
 }
 
@@ -147,12 +150,9 @@ int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInf
     }
 
     while (waitpid(*procInfo->child,NULL,0) == 0);
-
     deinitThinker();
     close(writeFileDescriptor(procInfo));
-
     printf("Returning Thinker Process!\n");
-
     return exitCode;
 }
 

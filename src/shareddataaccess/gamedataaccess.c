@@ -1,5 +1,5 @@
 #include "gamedataaccess_priv.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include "string.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>

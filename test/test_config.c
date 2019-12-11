@@ -1,5 +1,5 @@
 #include "minunit.h"
-#include "config.h"
+#include "misc/config.h"
 #include <string.h>
 
 #define WHITESPACE_CONFIG_FILE_PATH "./test/testWhiteSpaces.conf"

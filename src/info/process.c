@@ -1,5 +1,5 @@
 #include "info/process.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include <stdlib.h>
 #include <unistd.h>
 

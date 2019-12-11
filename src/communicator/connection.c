@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#include "utilities.h"
+#include "misc/utilities.h"
 #include "communicator/connection.h"
 
 struct addrinfo* getSocketAddr(const char* hostname, const char* port);

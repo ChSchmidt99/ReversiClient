@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "servermessage_priv.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include <string.h>
 
 #define MOVE_COMMAND "MOVE"

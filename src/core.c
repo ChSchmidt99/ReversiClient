@@ -1,5 +1,5 @@
 #include "core.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include <stdlib.h>
 
 PlayerMeta* newPlayerMeta(int number, char* name, int isReady){

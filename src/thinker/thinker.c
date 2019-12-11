@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#include "thinker/field.h"
-#include "utilities.h"
+#include "ai/mcst_api.h"
+#include "misc/utilities.h"
 
 //TODO: Move to core and centralize with communicator
 #define MOVE_BUFFER_SIZE 3
@@ -56,38 +56,23 @@ void handle_Signal(int signal){
 }
 
 void receivedThinkSignal(){
+    int isThinking = getIsThinking(thinker->gameSHM);
+    if (!isThinking)
+        return;
 
-    //TODO: Do thinking
-    /*
-    printf("Board in shared Mem: \n");
-    size_t boardSize;
-    char (*board)[boardSize] = getBoard(boardSharedMem, &boardSize);
-    printf("BoardSize: %zu\n",boardSize);
-    
-    for (size_t i = 0; i < boardSize; i++){
-        for (size_t j = 0; j < boardSize; j++){
-            printf("%c ",board[i][j]);
-        }
-        printf("\n");
-    }
-    */
-
-    printf("Thinker Received Think Signal\n");
-
-    //TODO: Check if isThinking is checked
-    //TODO: Replace by real move
-    
-    char buff[MOVE_BUFFER_SIZE] = {'E','3','\0'};
-    
-    /*
+    printf("Thinker thinking...");
+    size_t boardSize = getBoardSize(thinker->boardSHM);
+    char (*board)[boardSize] = getBoard(thinker->boardSHM);
     PlayerMeta* playerInfo = getOwnPlayerMeta(thinker->gameSHM);
-    if (playerInfo->number == 1){
-        buff[1] = '5'; 
-    }
-    */
+    
+    char playerSymbol = 'B';
+    if (playerInfo->number == 1)
+        playerSymbol = 'W';
 
-    printf("Writing move %s to Pipe with fd: %i ...\n",buff,writeFileDescriptor(thinker->processInfo));
-    ssize_t writtenSize = write(writeFileDescriptor(thinker->processInfo),buff,MOVE_BUFFER_SIZE);
+    char* move = CalculateNextMoveAIOptimizedThreads(board,playerSymbol,2,2);
+
+    printf("Writing move %s to Pipe with fd: %i ...\n",move,writeFileDescriptor(thinker->processInfo));
+    ssize_t writtenSize = write(writeFileDescriptor(thinker->processInfo),move,MOVE_BUFFER_SIZE);
     
     if (writtenSize != MOVE_BUFFER_SIZE){
         perror("Failed to write to Pipe!");
@@ -95,7 +80,9 @@ void receivedThinkSignal(){
         printf("Successfuly wrode to Pipe!\n");
     }
 
+    free(board);
+    freePlayerMeta(playerInfo);
+    free(move);
+    setIsThinking(thinker->gameSHM, 0);
     printf("Thinker Finished...\n");
-
-    //setIsThinking(thinker->gameSHM, 0);
 }

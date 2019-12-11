@@ -1,4 +1,4 @@
-#include "utilities.h"
+#include "misc/utilities.h"
 #include <string.h>
 
 //TODO: Clear shared memories at termination!
@@ -131,4 +131,14 @@ char* joinTokens(char** tokens, size_t length, char* delimiter){
             strcat(out, delimiter);
     }
     return out;
+}
+
+double fRand(double fMin, double fMax){
+    double f = (double)rand() / RAND_MAX;
+    return fMin + f * (fMax - fMin);
+}
+
+//TODO: Check if rand is seeded
+int getRandomInt(int min, int max){
+    return min + rand() % max;
 }

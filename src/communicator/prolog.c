@@ -3,7 +3,7 @@
 
 #include "communicator/prolog.h"
 #include "communicator/servermessage.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 
 void printAndFree(char* message);
 void printPlayerMeta(PlayerMeta* meta);

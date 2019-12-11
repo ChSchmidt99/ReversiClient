@@ -1,5 +1,5 @@
 #include "minunit.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>

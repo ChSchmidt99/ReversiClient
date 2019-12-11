@@ -1,7 +1,7 @@
 //TODO: Remove prolog references
 #include "communicator/prolog.h"
 #include "communicator/communicator.h"
-#include "utilities.h"
+#include "misc/utilities.h"
 #include "gamesequence_priv.h"
 #include <string.h>
 #include <signal.h>
@@ -76,6 +76,7 @@ int receivedMove(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSH
         return gameLoop(connection,boardSHM, gameSHM, pipeReadFD);
 }
 
+//TODO: Check if quit is caught everywhere!
 int receivedQuit(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD){
     logMessage("Quit received",1);
     return 0;

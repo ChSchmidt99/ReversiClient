@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h> 
-#include "optionreader.h"
-#include "utilities.h"
+#include "misc/optionreader.h"
+#include "misc/utilities.h"
 
 char* getOptionArg(int argc, char *argv[], const char option){
     char optStr[2] = {option,':'};

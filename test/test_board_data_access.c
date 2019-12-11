@@ -33,10 +33,9 @@ static char* test_set_and_get_board(){
     } else {
         //Parent
         wait(NULL);
-        size_t boardSizeOut = 0;
-        char (*board)[BOARD_SIZE_SHM] = getBoard(sharedMem,&boardSizeOut);
+        char (*board)[BOARD_SIZE_SHM] = getBoard(sharedMem);
         mu_assert("test_set_and_get_board failed, boards were not equal",boardsAreEqual(BOARD_SIZE_SHM,testBoard,board));
-        mu_assert("test_set_and_get_board failed, boardSize out was wrong", boardSizeOut == BOARD_SIZE_SHM);
+        free(board);
         detachBoardSHM(sharedMem);
     }
     clearBoardSHM(sharedMem);

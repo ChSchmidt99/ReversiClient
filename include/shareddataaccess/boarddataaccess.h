@@ -9,7 +9,7 @@
     int detachBoardSHM(BoardSHM* sharedMemory);
     int clearBoardSHM(BoardSHM* sharedMemory);
     void setBoard(BoardSHM* shm, size_t boardSize, char board[][boardSize]);
-    char (*getBoard(BoardSHM* shm, size_t *boardSizeOut))[];
+    char (*getBoard(BoardSHM* shm))[];
     size_t getBoardSize(BoardSHM* shm);
 
 #endif
