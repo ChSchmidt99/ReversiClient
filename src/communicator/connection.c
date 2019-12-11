@@ -31,29 +31,40 @@ void freeConnection(Connection* connection) {
     free(connection);
 }
 
-void connectToServer(Connection* connection){    
+int connectToServer(Connection* connection){    
     struct addrinfo* socketAddr = getSocketAddr(connection->hostname, connection->port);
-    if (socketAddr == NULL)
-        panic("failed to get address information");
-
-    int sock = socket(socketAddr->ai_family,socketAddr->ai_socktype,socketAddr->ai_protocol);
-    if (sock == -1) 
-        panic("failed to create socket");
+    if (socketAddr == NULL){
+        printf("failed to get address information");
+        return -1;
+    }
         
 
-    if (connect(sock,socketAddr->ai_addr,socketAddr->ai_addrlen) == -1) 
-        panic("failed to connect to socket");
+    int sock = socket(socketAddr->ai_family,socketAddr->ai_socktype,socketAddr->ai_protocol);
+    if (sock == -1){
+        printf("failed to create socket");
+        return -1;
+    }
+        
+
+    if (connect(sock,socketAddr->ai_addr,socketAddr->ai_addrlen) == -1){
+        printf("failed to connect to socket");
+        return -1;
+    }
         
     freeaddrinfo(socketAddr);
     connection->socket = sock;
+    return 0;
 }
 
-void disconnectFromServer(Connection* connection){
+int disconnectFromServer(Connection* connection){
     if (connection->socket != -1){
-        if (close(connection->socket) == -1)
-            panic("Failed To close Socket");
+        if (close(connection->socket) == -1){
+            printf("Failed To close Socket");
+            return -1;
+        }
     }
     connection->socket = -1;
+    return 0;
 }
 
 ServerMessage* receiveServerMessage(Connection* connection) {

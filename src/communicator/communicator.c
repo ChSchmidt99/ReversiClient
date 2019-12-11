@@ -2,29 +2,36 @@
 
 //TODO: Parse Server Messages and wrap responses in ServerMessageType
 //TODO: Cache if wrong response type
-//TODO: use readLine instead of readMessage
 char* receiveServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->messageReference);
-
-    char* out = copyStringToNewMemoryAddr(message->messageReference + 2);
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        return (char*) -1;
+    }
+    
+    char* out = copyStringToNewMemoryAddr(message->messageReference + 2); 
     freeServerMessage(message);
     return out;
 }
 
 int hasAcceptedVersion(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        return 0;
+    int result = 1;
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        result = 0;
+    }
     freeServerMessage(message);
     return 1;
 }
 
 GameKind receiveGameKind(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->messageReference);
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        return (GameKind)-1;
+    }
+        
     GameKind out = parseGameKind(message->messageReference);
     freeServerMessage(message);
     return out;
@@ -40,8 +47,10 @@ GameKind parseGameKind(char* message){
 
 char* receiveGameName(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->messageReference);
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        return (char*)-1;
+    }
     char* out = copyStringToNewMemoryAddr(message->messageReference + 2);
     freeServerMessage(message);
     return out;
@@ -49,8 +58,10 @@ char* receiveGameName(Connection* connection){
 
 PlayerMeta* receivePlayerMeta(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->messageReference);
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        return (PlayerMeta*) -1;
+    }
     PlayerMeta* out = parsePlayerMeta(message->messageReference);
     freeServerMessage(message);
     return out;
@@ -61,8 +72,10 @@ PlayerMeta* parsePlayerMeta(char* message){
     char** tokens = slice(message," ",&length);
 
     //TODO: find better way to do this!
-    if (length < 4)
-        panic("unexpected playermeta string, expected 4 tokens");
+    if (length < 4){
+        printf("unexpected playermeta string, expected 4 tokens");
+        return (PlayerMeta*)-1;
+    }
 
     int number = atoi(tokens[2]);
     char* name = getNameFromPlayerMetaTokens(tokens,length);
@@ -77,8 +90,10 @@ char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount){
 
 PlayerMeta* receiveOtherPlayer(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->messageReference);
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        return (PlayerMeta*)-1;
+    }
     PlayerMeta* out = parseOtherPlayerMeta(message->messageReference);
     freeServerMessage(message);
     return out;
@@ -89,8 +104,10 @@ PlayerMeta* parseOtherPlayerMeta(char* message){
     char** tokens = slice(message," ",&length);
 
     //TODO: find better way to do this!
-    if (length < 4)
-        panic("unexpected playermeta string, expected 4 tokens");
+    if (length < 4){
+        printf("unexpected playermeta string, expected 4 tokens");
+        return (PlayerMeta*)-1;
+    }
 
     int number = atoi(tokens[1]);
     char* name = getNameForOtherPlayersTokens(tokens,length);
@@ -113,8 +130,10 @@ char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount){
 
 int reveiveTotalPlayers(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
         return -1;
+    }
 
     char ASCInum = message->messageReference[8];
     return ASCInum - '0';
@@ -122,47 +141,27 @@ int reveiveTotalPlayers(Connection* connection){
 
 int nextMessageIsEndplayers(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    if (message->type == Error)
-        panic(message->messageReference);
+    if (message->type == Error){
+        printf("%s\n",message->messageReference);
+        return 0;
+    }
     int result = 0;
-    if (message->type == Error)
-        panic(message->messageReference);
-    else if (strcmp(message->messageReference, ENDPLAYERS_COMMAND) == 0)
+    if (strcmp(message->messageReference, ENDPLAYERS_COMMAND) == 0)
         result = 1;
 
     freeServerMessage(message);
     return result;
 }
 
-//TODO: needed?
-/*
-int waitForMove(Connection* connection){
-    ServerMessage* message = receiveServerMessage(connection);
-    switch (message->type){
-        case Error:
-            panic(message->messageReference);
-        case Wait:{
-            sendOkWait(connection);
-            freeServerMessage(message);
-            return waitForMove(connection);
-        }
-        case Move:{
-            int moveTime = parseMoveTime(message);
-            freeServerMessage(message);
-            return moveTime;
-        }
-        default:
-            panic("Unexpected type");
-    }
-}
-*/
-
 //TODO: Cleanup
 int waitForFirstMove(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
+
+    printf("Received: %s\n",message->messageReference);
+
     int moveTime = -1;
     if(message->type == Error){
-        panic(message->messageReference);
+        printf("%s\n",message->messageReference);
     } else if(message->type == Quit){
         
     } else if (message->type == Wait){
@@ -172,16 +171,18 @@ int waitForFirstMove(Connection* connection){
     } else if (message->type == Move){
         moveTime = parseMoveTime(message);
     } else {
-        panic("Unexpected Command received");
+        printf("Unexpected Command received");
     }
     freeServerMessage(message);
     return moveTime;
 }
 
-void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
+int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     ServerMessage* message = receiveServerMessage(connection);
-    if(message->type == Error)
-        panic(message->messageReference);
+    if(message->type == Error){
+        printf("%s\n",message->messageReference);
+        return -1;
+    }
     
     size_t fieldDimensionTokenCount = 0;
     char** fieldDimensionTokens = slice(message->messageReference + 2," ",&fieldDimensionTokenCount);
@@ -192,6 +193,7 @@ void receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     freeServerMessage(message);
     freeTokens(fieldDimensionTokens);
     freeTokens(dimensions);
+    return 0;
 }
 
 //Use proper array instead of double ptr
@@ -201,21 +203,38 @@ char** receiveBoard(Connection* connection, size_t rows){
     for(size_t i = 0; i < rows; i++){
         //TODO: Replace receiveServerMessage with safelyReceiveServerMessage, which unwraps Error
         ServerMessage* message = receiveServerMessage(connection);
-        if(message->type == Error)
-            panic(message->messageReference);
+        if(message->type == Error){
+            printf("%s\n",message->messageReference);
+            freeServerMessage(message);
+            return (char**) -1;
+        }
             
         board[i] = copyStringToNewMemoryAddr(message->messageReference + 2);
         freeServerMessage(message);
     }
 
     ServerMessage* message = receiveServerMessage(connection);
-    if(message->type == Error)
-        panic(message->messageReference);
-    else if(message->type != Endfield)
-        panic("Expected Endfield!");
-
+    if(message->type == Error){
+        printf("%s\n",message->messageReference);
+        board = (char**) -1;
+    }
+    else if(message->type != Endfield){
+        printf("Expected Endfield!");
+        board = (char**) -1;
+    }
     freeServerMessage(message);
     return board;
+}
+
+int receiveOkThink(Connection* connection){
+    printf("Received OkThink\n");
+    ServerMessage* message = receiveServerMessage(connection);
+    int result = 0;
+    if (message->type == OkThink)
+        result = 1;
+        
+    freeServerMessage(message);
+    return result;
 }
 
 void sendOkWait(Connection* connection){
@@ -223,7 +242,13 @@ void sendOkWait(Connection* connection){
     writeLineToServer(connection, OK_WAIT_COMMAND);
 }
 
+void sendThinking(Connection* connection){
+    printf("Sending: '%s'\n",THINKING_COMMAND);
+    writeLineToServer(connection, THINKING_COMMAND);
+}
+
 void sendMove(Connection* connection, char* move){
+    printf("Sending Move: %s\n",move);
     char* moveString = concatStringToNewMemoryAddr(PLAY_COMMAND,move," ");
     writeLineToServer(connection,moveString);
     free(moveString);
