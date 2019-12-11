@@ -23,7 +23,6 @@ GameDataSHM* createGameDataSHM(){
     SharedGameData* sharedData = shmat(shmId,0,0);
     if (sharedData == (SharedGameData*)-1)
         return NULL;
-    
     return newGameDataSHM(sharedData,shmId);
 }
 
@@ -101,4 +100,12 @@ void setPlayerMeta(SharedPlayerInfo* dest,PlayerMeta* src){
     strcpy(dest->name, src->name);
     dest->isReady = src->isReady;
     dest->playerNumber = src->number;
+}
+
+int getIsThinking(GameDataSHM* shm){
+    return shm->sharedData->isThinking;
+}
+
+void setIsThinking(GameDataSHM* shm, int val){
+    shm->sharedData->isThinking = val;
 }

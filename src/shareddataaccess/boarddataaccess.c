@@ -55,13 +55,13 @@ void setBoard(BoardSHM* shm, size_t boardSize, char board[][boardSize]){
     }
 }
 char (*getBoard(BoardSHM* shm, size_t *boardSizeOut))[]{
-    *boardSizeOut = shm->boardSize;
-    char (*board)[*boardSizeOut] = malloc(sizeof(char) * (*boardSizeOut) * (*boardSizeOut));
-    for(size_t i = 0; i < *boardSizeOut; i++){
-        for(size_t j = 0; j < *boardSizeOut; j++){
-            board[i][j] = shm->board[j + i * (*boardSizeOut)];
+    char (*board)[shm->boardSize] = malloc(sizeof(char) * (shm->boardSize) * (shm->boardSize));
+    for(size_t i = 0; i < shm->boardSize; i++){
+        for(size_t j = 0; j < shm->boardSize; j++){
+            board[i][j] = shm->board[j + i * (shm->boardSize)];
         }
     }
+    *boardSizeOut = shm->boardSize;
     return board;
 }
 

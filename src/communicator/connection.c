@@ -73,6 +73,9 @@ ServerMessage* receiveServerMessage(Connection* connection) {
 
 //TODO: Test readLineFromServer
 char* readLineFromServer(Connection* connection){
+    
+    //TODO: Check if Server is still available (with select)
+    
     ssize_t length = 0;
     char currentChar = 'a';
     char* result = NULL;

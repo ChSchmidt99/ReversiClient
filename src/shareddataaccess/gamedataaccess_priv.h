@@ -14,11 +14,11 @@ typedef struct {
     char gameName[NAME_BUFFER_SIZE];
     pid_t thinkerPID;
     pid_t communicatorPID;
+    int isThinking;
     SharedPlayerInfo ownInfo;
     size_t opponentCount;
     SharedPlayerInfo opponents[MAX_OPPONENTS];
 } SharedGameData;
-
 
 typedef struct _GameDataSHM {
     SharedGameData* sharedData;

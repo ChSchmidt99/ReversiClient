@@ -5,8 +5,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include "shareddataaccess/boarddataaccess.h"
+#include "shareddataaccess/gamedataaccess.h"
 #include "info/process.h"
 
-void tick(BoardSHM* boardSHM, ProcessInfo* procInfo);
+int startThinker(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* procInfo);
 
 #endif

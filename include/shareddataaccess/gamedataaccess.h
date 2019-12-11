@@ -14,8 +14,8 @@
     pid_t getThinkerPID(GameDataSHM* shm);
     void setCommunicatorPID(GameDataSHM* shm, pid_t PID);
     pid_t getCommunicatorPID(GameDataSHM* shm);
-    //void setProcessIDs(GameDataSHM* shm, int PIDs[2]);
-    //int* getProcessIDs(GameDataSHM* shm);
+    int getIsThinking(GameDataSHM* shm);
+    void setIsThinking(GameDataSHM* shm, int val);
     void setOwnPlayerMeta(GameDataSHM* shm, PlayerMeta* meta);
     PlayerMeta* getOwnPlayerMeta(GameDataSHM* shm);
     void setOpponenPlayerMeta(GameDataSHM* shm, PlayerMeta* meta, size_t index);
@@ -23,7 +23,6 @@
     void setOpponenCount(GameDataSHM* shm, size_t count);
     size_t getOpponenCount(GameDataSHM* shm);
 
-    
 
     
 #endif

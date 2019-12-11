@@ -23,8 +23,8 @@ void teardownConnection(Connection* connection);
 void teardownSHM(BoardSHM* boardSHM, GameDataSHM* gameSHM);
 void initGameSHM(GameDataSHM* gameSHM, GameInstance* gameInstance);
 
-int thinkerProcess(BoardSHM* boardSHM, ProcessInfo* procInfo);
-int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime);
+int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo);
+int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime, ProcessInfo* procInfo);
 
 //TODO: Get strc+c signal and execute teardown!
 
@@ -71,7 +71,6 @@ int main(int argc, char *argv[]) {
 
     pid_t parentId = getpid();
     
-    
     ProcessInfo* processInfo = createProcessInfo();
     setProcParent(processInfo, &parentId);
 
@@ -84,13 +83,14 @@ int main(int argc, char *argv[]) {
         //Child
         setProcChild(processInfo, &processID);
         setCommunicatorPID(gameSHM,getpid());
-        exitCode = communicatorProcess(boardSHM, gameSHM, connection, moveTime);
+        exitCode = communicatorProcess(boardSHM, gameSHM, connection, moveTime, processInfo);
         teardownConnection(connection);
+        kill(SIGTERM,*processInfo->parent);
     } else {
         //Parent
         teardownConnection(connection);
         setCommunicatorPID(gameSHM,getpid());
-        exitCode = thinkerProcess(boardSHM,processInfo);
+        exitCode = thinkerProcess(boardSHM, gameSHM, processInfo);
     }
 
     teardownSHM(boardSHM, gameSHM);
@@ -101,6 +101,7 @@ void initGameSHM(GameDataSHM* gameSHM, GameInstance* gameInstance){
     setGameName(gameSHM, gameInstance->gameName);
     setOwnPlayerMeta(gameSHM, gameInstance->ownPlayer);
     setOpponenCount(gameSHM, gameInstance->opponentCount);
+    setIsThinking(gameSHM,0);
     for (size_t i = 0; i < gameInstance->opponentCount; i++)
         setOpponenPlayerMeta(gameSHM, gameInstance->opponents[i],i);
 }
@@ -137,20 +138,33 @@ Connection* initiateConnectionSequence(int argc, char *argv[]){
     return connection;
 }
 
-int thinkerProcess(BoardSHM* boardSHM, ProcessInfo* procInfo){
-    // start the thinker process
-    tick(boardSHM, procInfo);
+int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo){
+    
+    close(readFileDescriptor(procInfo));
+    
+    int exitCode = EXIT_SUCCESS;
+
+    if (startThinker(boardSHM,gameSHM,procInfo) == -1){
+        exitCode = EXIT_FAILURE;
+    }
 
     if((waitpid (getProcChild(procInfo), NULL, 0)) < 0) {
         perror ("Error waiting for child processes to die");
-        exit (EXIT_FAILURE);
+        exitCode = EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
+
+    close(writeFileDescriptor(procInfo));
+    return exitCode;
 }
 
-int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime){
-    if (startGameLoop(connection, boardSHM, gameSHM, moveTime) == -1)
+int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime, ProcessInfo* procInfo){
+    close(writeFileDescriptor(procInfo));
+    int readFD = procInfo->fd[0];
+    if (startGameLoop(connection, boardSHM, gameSHM, moveTime,readFD) == -1){
+        close(readFileDescriptor(procInfo));
         return EXIT_FAILURE;
-    else
+    } else{
+        close(readFileDescriptor(procInfo));
         return EXIT_SUCCESS;
+    }
 }

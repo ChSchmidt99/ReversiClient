@@ -5,6 +5,6 @@
     #include "shareddataaccess/gamedataaccess.h"
     #include "communicator/connection.h"
 
-    int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime);
+    int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime, int pipeReadFD);
 
 #endif

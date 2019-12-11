@@ -3,18 +3,20 @@
 
 //#define BOARD_SIZE 8
 
-int gameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
+int gameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
 ServerMessage* receiveMessage(Connection* connection);
-int interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-int receivedMove(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime);
-int receivedMoveOk(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-int receivedWait(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-int receivedQuit(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-char* getMove();
+int interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
+int receivedMove(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime, int pipeReadFD);
+int receivedMoveOk(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
+int receivedWait(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
+int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
+int receivedQuit(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
+char* thinkUntilThinkerResponse(Connection* connection, int pipeReadFD);
 
-int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime);
-int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM, GameDataSHM* gameSHM);
+int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime, int pipeReadFD);
+int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
 int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]);
 
-void signalThinker(pid_t thinkerPID);
+int notifyServerAboutThinking(Connection* connection);
+void signalThinker(GameDataSHM* gameSHM);
+int pipeReadIsReady(int fd);
