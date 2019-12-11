@@ -1,18 +1,26 @@
 #ifndef SERVERMESSAGE_H
 #define SERVERMESSAGE_H
 
+typedef enum _ServerMessageType {
+    Error = 0,
+    Prolog = 1,
+    Wait = 2,
+    Move = 3,
+    Gameover = 4,
+    MoveOk = 5,
+    Endfield = 6,
+    Quit = 7,
+    OkThink = 8,
+    FieldCommand = 9
+} ServerMessageType;
+
 typedef struct _ServerMessage {
-    char* clearText;
-    char* message;
-    void* data;
-    int isError;
+    char* messageReference;
+    ServerMessageType type;
 } ServerMessage;
 
-ServerMessage* newServerMessage(char* message, char* clearText, void* data, int isError);
-void freeServerMessage(ServerMessage* serverMessage);
-
-//TODO: Implement Me
 ServerMessage* parseServerMessage(char* message);
-void printServerMessage(ServerMessage* serverMessage);
+void freeServerMessage(ServerMessage* serverMessage);
+int parseMoveTime(ServerMessage* message);
 
 #endif

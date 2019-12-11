@@ -1,48 +1,88 @@
-#include <unistd.h>
+#include "thinker_priv.h"
+
 #include <string.h>
 #include <stdlib.h>
-#include "thinker/thinker.h"
-#include "thinker/field.h"
+#include <signal.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
-void tick(char* shm, int pipe[]) {
-    close(pipe[0]);
+#include "ai/mcst_api.h"
+#include "misc/utilities.h"
 
-    sigset_t sigset;
-    int sig;
-    sigemptyset(&sigset);
-    if(sigaddset(&sigset, SIGUSR1) == -1) {
-        perror("sigaddset");
+//TODO: Move to core and centralize with communicator
+#define MOVE_BUFFER_SIZE 3
+
+typedef struct _Thinker {
+    BoardSHM* boardSHM;
+    GameDataSHM* gameSHM; 
+    ProcessInfo* processInfo;
+} Thinker;
+
+Thinker* thinker;
+
+int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processInfo){
+    thinker = malloc(sizeof(thinker));
+    thinker->boardSHM = boardSHM;
+    thinker->gameSHM = gameSHM;
+    thinker->processInfo = processInfo;
+    if (addSignalHandler() == -1){
+        perror("Failed to add Signal handler");
+        return -1;
     }
-    sigprocmask(SIG_BLOCK, &sigset, NULL);
-    if(sigwait(&sigset, &sig) != 0) {
-        perror("sigwait");
+    return 0;
+}
+
+void deinitThinker(){
+    free(thinker);
+}
+
+int addSignalHandler(){
+    struct sigaction newSig;
+    newSig.sa_handler = &handle_Signal;
+    newSig.sa_flags = SA_RESTART;
+    sigfillset(&newSig.sa_mask);
+    return sigaction(SIGUSR1,&newSig,NULL);
+}
+
+void handle_Signal(int signal){
+    switch (signal){
+    case SIGUSR1:
+        receivedThinkSignal();
+        break;
+    default:
+        printf("Caught wrong signal");
+        break;
+    }
+}
+
+void receivedThinkSignal(){
+    int isThinking = getIsThinking(thinker->gameSHM);
+    if (!isThinking)
+        return;
+
+    printf("Thinker thinking...");
+    size_t boardSize = getBoardSize(thinker->boardSHM);
+    char (*board)[boardSize] = getBoard(thinker->boardSHM);
+    PlayerMeta* playerInfo = getOwnPlayerMeta(thinker->gameSHM);
+    
+    char playerSymbol = 'B';
+    if (playerInfo->number == 1)
+        playerSymbol = 'W';
+
+    char* move = CalculateNextMoveAIOptimizedThreads(board,playerSymbol,2,2);
+
+    printf("Writing move %s to Pipe with fd: %i ...\n",move,writeFileDescriptor(thinker->processInfo));
+    ssize_t writtenSize = write(writeFileDescriptor(thinker->processInfo),move,MOVE_BUFFER_SIZE);
+    
+    if (writtenSize != MOVE_BUFFER_SIZE){
+        perror("Failed to write to Pipe!");
+    } else {
+        printf("Successfuly wrode to Pipe!\n");
     }
 
-    printf("Got signal from communicator, waking up..\n");
-    printf("Loading current board\n");
-    if(shm != NULL)
-        printf("%s", shm);
-    /*
-    Field* field = createField(8, 8);
-    loadFieldFromSHM(field, shm);
-    long int x = -1, y = -1;
-    for(unsigned int j = 0; j < field->width; j++) {
-        for(unsigned int i = 0 ; i < field->height; i++) {
-            if(isValidMove(field, 'W', j, i)) {
-                x = j;
-                y = i;
-                break;
-            }
-        }
-    }
-
-    printf("Found available move: %li %li", x, y);
-    */
-
-    /*
-    char* move = toString(x, y);
-    write(pipe[1], move, sizeof(move) + 1);
+    free(board);
+    freePlayerMeta(playerInfo);
     free(move);
-     */
-    printf("Sent move to connector, sleeping again\n");
+    setIsThinking(thinker->gameSHM, 0);
+    printf("Thinker Finished...\n");
 }

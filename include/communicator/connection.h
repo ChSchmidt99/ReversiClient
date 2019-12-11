@@ -2,16 +2,25 @@
 #define CONNECTION_H
 
 #include <stdlib.h>
+#include <sys/types.h>
+#include "servermessage.h"
+
+#define DEFAULT_MESSAGE_BUFFER_SIZE 512
 
 typedef struct _Connection Connection;
 
 Connection* newConnection(const char* hostname, const char* port);
 void freeConnection(Connection* connection);
 
-void connectToServer(Connection* connection);
-void disconnectFromServer(Connection* connectoion);
+int connectToServer(Connection* connection);
+int disconnectFromServer(Connection* connectoion);
 
-char* readServerMessage(Connection* connection);
-void writeMessageToServer(Connection* connection, char* message);
+ServerMessage* receiveServerMessage(Connection* connection);
+
+//Depreciated, use readLineFromServer instead!
+char* readServerMessage(Connection* connection, ssize_t buffSize, char buffer[buffSize]);
+
+char* readLineFromServer(Connection* connection);
+void writeLineToServer(Connection* connection, char* message);
 
 #endif 

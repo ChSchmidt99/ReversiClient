@@ -4,7 +4,11 @@
 
 #include <signal.h>
 #include <stdio.h>
+#include "shareddataaccess/boarddataaccess.h"
+#include "shareddataaccess/gamedataaccess.h"
+#include "info/process.h"
 
-void tick(char* shm, int pipe[]);
+int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processInfo);
+void deinitThinker();
 
 #endif

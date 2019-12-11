@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "utilities.h"
+#include "misc/utilities.h"
 
 typedef struct _Params {
     char* hostName;

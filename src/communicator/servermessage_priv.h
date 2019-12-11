@@ -1,5 +1,6 @@
 #include "communicator/servermessage.h"
 
-int unwrapError(char* message);
-char* getClearText(char* message);
-void* getData(char* message);
+
+ServerMessage* initServerMessage(char* messageReference, ServerMessageType type);
+int isError(const char* message);
+ServerMessageType getType(const char* message);

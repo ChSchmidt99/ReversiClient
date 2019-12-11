@@ -1,4 +1,4 @@
-#include "config.h"
+#include "misc/config.h"
 #include <string.h>
 
 #define NUMBER_OF_STRING 3
