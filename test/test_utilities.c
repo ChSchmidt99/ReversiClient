@@ -29,6 +29,7 @@ static char * test_Slice() {
     return 0;
 }
 
+/*
 static char * test_SliceLimit() {
     size_t length = 0;
     char* in = "Hallo ich bin ein toller test";
@@ -38,6 +39,7 @@ static char * test_SliceLimit() {
     freeTokens(tokens);
     return 0;
 }
+*/
 
 static char* test_freeArray(){
     char** testArr = malloc(sizeof(char**) * 2);
@@ -78,7 +80,7 @@ static char * utilities_tests() {
     mu_run_test(test_joinTokens);
     mu_run_test(test_joinTokens_single_token);
     mu_run_test(test_remove_delimiter);
-    mu_run_test(test_SliceLimit);
+    //mu_run_test(test_SliceLimit);
     return 0;
 }
  

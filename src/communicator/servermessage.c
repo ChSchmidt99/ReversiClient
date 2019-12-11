@@ -52,7 +52,7 @@ ServerMessageType getType(const char* message){
     if(strcmp(splittedMessage[0], OK_THINK_COMMAND) == 0) 
         out = OkThink;
     if(strcmp(splittedMessage[0], FIELD_COMMAND) == 0) 
-        out = Field;
+        out = FieldCommand;
 
     freeTokens(splittedMessage);
     return out;

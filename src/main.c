@@ -26,8 +26,7 @@ void initGameSHM(GameDataSHM* gameSHM, GameInstance* gameInstance);
 int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo);
 int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime, ProcessInfo* procInfo);
 
-//TODO: Get strc+c signal and execute teardown!
-
+//TODO: Cach strc+c signal and execute teardown!
 int main(int argc, char *argv[]) {
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
@@ -69,10 +68,7 @@ int main(int argc, char *argv[]) {
     initGameSHM(gameSHM,gameInstance);
     freeGameInstance(gameInstance);
 
-    pid_t parentId = getpid();
-    
     ProcessInfo* processInfo = createProcessInfo();
-    setProcParent(processInfo, &parentId);
 
     int exitCode = EXIT_SUCCESS;
     pid_t processID = fork();
@@ -81,20 +77,23 @@ int main(int argc, char *argv[]) {
         teardownSHM(boardSHM,gameSHM);
     } else if (processID == 0){
         //Child
-        setProcChild(processInfo, &processID);
+        pid_t pId = getpid();
+        setProcChild(processInfo, &pId);
         setCommunicatorPID(gameSHM,getpid());
         exitCode = communicatorProcess(boardSHM, gameSHM, connection, moveTime, processInfo);
         teardownConnection(connection);
-
         detachBoardSHM(boardSHM);
         detachGameDataSHM(gameSHM);
     } else {
         //Parent
+        pid_t pId = getpid();
+        setProcParent(processInfo, &pId);
         teardownConnection(connection);
         setCommunicatorPID(gameSHM,getpid());
         exitCode = thinkerProcess(boardSHM, gameSHM, processInfo);
         teardownSHM(boardSHM, gameSHM);
     }
+
     return exitCode;
 }
 
@@ -143,15 +142,13 @@ int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInf
     close(readFileDescriptor(procInfo));
     int exitCode = EXIT_SUCCESS;
 
-    if (startThinker(boardSHM,gameSHM,procInfo) == -1){
+    if (initThinkerOnce(boardSHM,gameSHM,procInfo) == -1){
         exitCode = EXIT_FAILURE;
     }
 
-    if((waitpid (getProcChild(procInfo), NULL, 0)) < 0) {
-        perror ("Error waiting for child processes to die");
-        exitCode = EXIT_FAILURE;
-    }
+    while (waitpid(*procInfo->child,NULL,0) == 0);
 
+    deinitThinker();
     close(writeFileDescriptor(procInfo));
     return exitCode;
 }

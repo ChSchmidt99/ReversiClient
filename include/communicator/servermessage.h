@@ -11,7 +11,7 @@ typedef enum _ServerMessageType {
     Endfield = 6,
     Quit = 7,
     OkThink = 8,
-    Field = 9
+    FieldCommand = 9
 } ServerMessageType;
 
 typedef struct _ServerMessage {

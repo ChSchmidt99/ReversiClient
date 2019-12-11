@@ -177,7 +177,7 @@ int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     if(message->type == Error){
         printf("%s\n",message->messageReference);
         return -1;
-    } else if (message->type != Field){
+    } else if (message->type != FieldCommand){
         printf("Unexpected Command: '%s'\n",message->messageReference);
         return -1;
     }

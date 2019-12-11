@@ -5,6 +5,7 @@
 #include "./test_field.c"
 #include "./test_board_data_access.c"
 #include "./test_gamesequence.c"
+#include "./test_playground.c"
 
  int tests_run = 0;
 
@@ -14,6 +15,7 @@
      mu_run_test_no_count(field_tests);
      mu_run_test_no_count(board_data_access_tests);
      mu_run_test_no_count(gamesequence_tests);
+     mu_run_test_no_count(playground);
    return 0;
  }
  

@@ -190,7 +190,7 @@ char* waitForThinkerResponse(Connection* connection, int pipeReadFD){
     }
 }
 
-//TODO: Pass timeout in
+//TODO: Pass timeout time in
 int pipeReadIsReady(int fd){
     fd_set rfds;
     FD_ZERO(&rfds);
@@ -200,7 +200,7 @@ int pipeReadIsReady(int fd){
     timeout.tv_usec = 0;
     int ret = select(1,&rfds,NULL,NULL,&timeout);
     if (ret == -1)
-        panic("Select Failed!");
+        printf("Select Failed!");
     
     return ret;
 }

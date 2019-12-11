@@ -12,18 +12,19 @@
 //TODO: Move to core and centralize with communicator
 #define MOVE_BUFFER_SIZE 3
 
-//TODO: Is there a better way than using global vars=
-int isRunning;
-BoardSHM* boardSharedMem; 
-GameDataSHM* gameSharedMem; 
-ProcessInfo* processInfo;
-int errorFlag = 0;
+typedef struct _Thinker {
+    BoardSHM* boardSHM;
+    GameDataSHM* gameSHM; 
+    ProcessInfo* processInfo;
+} Thinker;
 
-int startThinker(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* procInfo){
-    boardSharedMem = boardSHM;
-    gameSharedMem = gameSHM;
-    processInfo = procInfo;
-    
+Thinker* thinker;
+
+int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processInfo){
+    thinker = malloc(sizeof(thinker));
+    thinker->boardSHM = boardSHM;
+    thinker->gameSHM = gameSHM;
+    thinker->processInfo = processInfo;
     if (addSignalHandler() == -1){
         perror("Failed to add Signal handler");
         return -1;
@@ -31,12 +32,15 @@ int startThinker(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* procInfo
     return 0;
 }
 
+void deinitThinker(){
+    free(thinker);
+}
+
 int addSignalHandler(){
     struct sigaction newSig;
     newSig.sa_handler = &handle_Signal;
     newSig.sa_flags = SA_RESTART;
     sigfillset(&newSig.sa_mask);
-
     return sigaction(SIGUSR1,&newSig,NULL);
 }
 
@@ -52,6 +56,7 @@ void handle_Signal(int signal){
 }
 
 void receivedThinkSignal(){
+
     //TODO: Do thinking
     /*
     printf("Board in shared Mem: \n");
@@ -71,14 +76,18 @@ void receivedThinkSignal(){
 
     //TODO: Check if isThinking is checked
     //TODO: Replace by real move
+    
     char buff[MOVE_BUFFER_SIZE] = {'E','3','\0'};
-    PlayerMeta* playerInfo = getOwnPlayerMeta(gameSharedMem);
+    
+    /*
+    PlayerMeta* playerInfo = getOwnPlayerMeta(thinker->gameSHM);
     if (playerInfo->number == 1){
         buff[1] = '5'; 
     }
+    */
 
-    printf("Writing move %s to Pipe with fd: %i ...\n",buff,writeFileDescriptor(processInfo));
-    ssize_t writtenSize = write(writeFileDescriptor(processInfo),buff,MOVE_BUFFER_SIZE);
+    printf("Writing move %s to Pipe with fd: %i ...\n",buff,writeFileDescriptor(thinker->processInfo));
+    ssize_t writtenSize = write(writeFileDescriptor(thinker->processInfo),buff,MOVE_BUFFER_SIZE);
     
     if (writtenSize != MOVE_BUFFER_SIZE){
         perror("Failed to write to Pipe!");
@@ -86,5 +95,7 @@ void receivedThinkSignal(){
         printf("Successfuly wrode to Pipe!\n");
     }
 
-    setIsThinking(gameSharedMem, 0);
+    printf("Thinker Finished...\n");
+
+    //setIsThinking(thinker->gameSHM, 0);
 }

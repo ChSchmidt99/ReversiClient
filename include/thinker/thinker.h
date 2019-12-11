@@ -8,6 +8,7 @@
 #include "shareddataaccess/gamedataaccess.h"
 #include "info/process.h"
 
-int startThinker(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* procInfo);
+int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processInfo);
+void deinitThinker();
 
 #endif
