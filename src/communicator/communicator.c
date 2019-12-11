@@ -22,7 +22,7 @@ int hasAcceptedVersion(Connection* connection){
         result = 0;
     }
     freeServerMessage(message);
-    return 1;
+    return result;
 }
 
 GameKind receiveGameKind(Connection* connection){
