@@ -13,8 +13,8 @@ void logMessage(char* message, int level){
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
-    
-    char* newString = malloc((strlen(str) + 1) * sizeof(char));    
+
+    char* newString = malloc((strlen(str) + 1) * sizeof(char));
     if (newString == NULL){
         perror("Failed to allocate memory");
     }
@@ -35,7 +35,7 @@ void printStringWithTerminator(const char* str){
     for (int i = 0; i <= length; i++){
         if (str[i] == '\0')
             printf("NULLTERM");
-        else         
+        else
             printf("%c",str[i]);
     }
     printf("\n");
@@ -47,9 +47,35 @@ void freeArrayWithContents(void** arr, size_t length){
     }
     free(arr);
 }
+
+char** sliceLimit(const char* str, char *delimiter, size_t* lengthOut, int limit) {
+    char *copy = copyStringToNewMemoryAddr(str);
+
+    char** result = NULL;
+    char* token = strtok(copy, delimiter);
+
+    unsigned long length = strlen(str);
+    unsigned long index = 0;
+    while(token && limit-- > 0) {
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
+
+        if(result == NULL)
+            panic("Cannot realloc to split string to char**\n");
+
+        result[*lengthOut - 1] = token;
+        index += strlen(token) + 1;
+        token = strtok(NULL, delimiter);
+    }
+
+    if(token && index < length) {
+        result = realloc(result, sizeof(char*) * ++(*lengthOut));
+        result[*lengthOut - 1] = copy + index;
+    }
+    return result;
+}
     
 char** slice(const char* str, char *delimiter, size_t* lengthOut) {
-    
+
     char* copy = copyStringToNewMemoryAddr(str);
 
     char** result = NULL;
@@ -60,9 +86,9 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     while(token) {
         result = realloc(result, sizeof(char*) * ++(*lengthOut));
 
-        if(result == NULL) 
+        if(result == NULL)
             panic("Cannot realloc to split string to char**\n");
-        
+
 
         result[*lengthOut - 1] = token;
 
@@ -70,6 +96,7 @@ char** slice(const char* str, char *delimiter, size_t* lengthOut) {
     }
     return result;
 }
+
 
 char* newStringWithoutDelimiter(const char* str, char delimiter){
     char* out = NULL;

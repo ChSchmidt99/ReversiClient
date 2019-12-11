@@ -7,17 +7,16 @@ char* receiveServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error)
         panic(message->messageReference);
-    
-    char* out = copyStringToNewMemoryAddr(message->messageReference + 2); 
+
+    char* out = copyStringToNewMemoryAddr(message->messageReference + 2);
     freeServerMessage(message);
     return out;
 }
 
 int hasAcceptedVersion(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-    int result = 1;
     if (message->type == Error)
-        result = 0;
+        return 0;
     freeServerMessage(message);
     return 1;
 }
@@ -60,7 +59,7 @@ PlayerMeta* receivePlayerMeta(Connection* connection){
 PlayerMeta* parsePlayerMeta(char* message){
     size_t length = 0;
     char** tokens = slice(message," ",&length);
-    
+
     //TODO: find better way to do this!
     if (length < 4)
         panic("unexpected playermeta string, expected 4 tokens");
@@ -88,7 +87,7 @@ PlayerMeta* receiveOtherPlayer(Connection* connection){
 PlayerMeta* parseOtherPlayerMeta(char* message){
     size_t length = 0;
     char** tokens = slice(message," ",&length);
-    
+
     //TODO: find better way to do this!
     if (length < 4)
         panic("unexpected playermeta string, expected 4 tokens");
@@ -103,7 +102,7 @@ PlayerMeta* parseOtherPlayerMeta(char* message){
 
 char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount){
     size_t nameTokenCount = tokenCount - 3;
-    char* nameTokens[nameTokenCount]; 
+    char* nameTokens[nameTokenCount];
     size_t index = 0;
     for (size_t i = 2; i < tokenCount - 1; i++){
         nameTokens[index] = tokens[i];
