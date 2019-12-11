@@ -70,7 +70,7 @@ PlayerMeta* receivePlayerMeta(Connection* connection){
 PlayerMeta* parsePlayerMeta(char* message){
     size_t length = 0;
     char** tokens = slice(message," ",&length);
-    
+
     //TODO: find better way to do this!
     if (length < 4){
         printf("unexpected playermeta string, expected 4 tokens");
@@ -102,7 +102,7 @@ PlayerMeta* receiveOtherPlayer(Connection* connection){
 PlayerMeta* parseOtherPlayerMeta(char* message){
     size_t length = 0;
     char** tokens = slice(message," ",&length);
-    
+
     //TODO: find better way to do this!
     if (length < 4){
         printf("unexpected playermeta string, expected 4 tokens");
@@ -119,7 +119,7 @@ PlayerMeta* parseOtherPlayerMeta(char* message){
 
 char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount){
     size_t nameTokenCount = tokenCount - 3;
-    char* nameTokens[nameTokenCount]; 
+    char* nameTokens[nameTokenCount];
     size_t index = 0;
     for (size_t i = 2; i < tokenCount - 1; i++){
         nameTokens[index] = tokens[i];

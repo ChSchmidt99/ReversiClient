@@ -22,9 +22,9 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
 
     if (!hasAcceptedVersion(connection))
         panic("Server Did not accept Client Version");
-    else 
+    else
         printf("Server Accepted Client Version\n");
-    
+
     sendGameId(connection, gameId);
 
     GameKind gameKind = receiveGameKind(connection);
