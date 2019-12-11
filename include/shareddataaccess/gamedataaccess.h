@@ -10,8 +10,12 @@
     int clearGameDataSHM(GameDataSHM* sharedMemory);
     void setGameName(GameDataSHM* shm, char* gameName);
     char* getGameName(GameDataSHM* shm);
-    void setProcessIDs(GameDataSHM* shm, int PIDs[2]);
-    int* getProcessIDs(GameDataSHM* shm);
+    void setThinkerPID(GameDataSHM* shm, pid_t PID);
+    pid_t getThinkerPID(GameDataSHM* shm);
+    void setCommunicatorPID(GameDataSHM* shm, pid_t PID);
+    pid_t getCommunicatorPID(GameDataSHM* shm);
+    //void setProcessIDs(GameDataSHM* shm, int PIDs[2]);
+    //int* getProcessIDs(GameDataSHM* shm);
     void setOwnPlayerMeta(GameDataSHM* shm, PlayerMeta* meta);
     PlayerMeta* getOwnPlayerMeta(GameDataSHM* shm);
     void setOpponenPlayerMeta(GameDataSHM* shm, PlayerMeta* meta, size_t index);

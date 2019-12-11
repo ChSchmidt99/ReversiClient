@@ -20,10 +20,11 @@
 
 Connection* initiateConnectionSequence(int argc, char *argv[]);
 void teardownConnection(Connection* connection);
-void teardownSHM(BoardSHM* boardSHM);
+void teardownSHM(BoardSHM* boardSHM, GameDataSHM* gameSHM);
+void initGameSHM(GameDataSHM* gameSHM, GameInstance* gameInstance);
 
-int parentProcess(BoardSHM* boardSHM, ProcessInfo* procInfo);
-int childProcess(BoardSHM* boardSHM, Connection* connection, int moveTime, ProcessInfo* procInfo);
+int thinkerProcess(BoardSHM* boardSHM, ProcessInfo* procInfo);
+int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime);
 
 //TODO: Get strc+c signal and execute teardown!
 
@@ -46,7 +47,6 @@ int main(int argc, char *argv[]) {
     printGameInstanceDetails(gameInstance);
     free(gameId);
     free(playerPreference);
-    freeGameInstance(gameInstance);
 
     //TODO: Move to better spot!
     int moveTime = waitForFirstMove(connection);
@@ -65,10 +65,12 @@ int main(int argc, char *argv[]) {
     
     //TODO: Use rows and cols instead of size
     BoardSHM* boardSHM = createBoardSHM(rows);
-
-
+    GameDataSHM* gameSHM = createGameDataSHM();
+    initGameSHM(gameSHM,gameInstance);
+    freeGameInstance(gameInstance);
 
     pid_t parentId = getpid();
+    
     
     ProcessInfo* processInfo = createProcessInfo();
     setProcParent(processInfo, &parentId);
@@ -77,29 +79,42 @@ int main(int argc, char *argv[]) {
     pid_t processID = fork();
     if (processID < 0){
         printf("Failed To Fork!\n");
-        teardownSHM(boardSHM);
+        teardownSHM(boardSHM,gameSHM);
     } else if (processID == 0){
         //Child
         setProcChild(processInfo, &processID);
-        exitCode = childProcess(boardSHM, connection, moveTime, processInfo);
-
+        setCommunicatorPID(gameSHM,getpid());
+        exitCode = communicatorProcess(boardSHM, gameSHM, connection, moveTime);
         teardownConnection(connection);
-        teardownSHM(boardSHM);
     } else {
         //Parent
         teardownConnection(connection);
-        exitCode = parentProcess(boardSHM,processInfo);
-        teardownSHM(boardSHM);
+        setCommunicatorPID(gameSHM,getpid());
+        exitCode = thinkerProcess(boardSHM,processInfo);
     }
 
+    teardownSHM(boardSHM, gameSHM);
     return exitCode;
-}   
+}
 
-void teardownSHM(BoardSHM* boardSHM){
+void initGameSHM(GameDataSHM* gameSHM, GameInstance* gameInstance){
+    setGameName(gameSHM, gameInstance->gameName);
+    setOwnPlayerMeta(gameSHM, gameInstance->ownPlayer);
+    setOpponenCount(gameSHM, gameInstance->opponentCount);
+    for (size_t i = 0; i < gameInstance->opponentCount; i++)
+        setOpponenPlayerMeta(gameSHM, gameInstance->opponents[i],i);
+}
+
+void teardownSHM(BoardSHM* boardSHM, GameDataSHM* gameSHM){
     if (detachBoardSHM(boardSHM) == -1)
         panic("Failed to detach boardSHM");
     if (clearBoardSHM(boardSHM) == -1)
         panic("Failed to clear boardSHM");
+
+    if (detachGameDataSHM(gameSHM) == -1)
+        panic("Failed to detach gameSHM");
+    if (clearGameDataSHM(gameSHM) == -1)
+        panic("Failed to clear gameSHM");
 }
 
 void teardownConnection(Connection* connection){
@@ -122,7 +137,7 @@ Connection* initiateConnectionSequence(int argc, char *argv[]){
     return connection;
 }
 
-int parentProcess(BoardSHM* boardSHM, ProcessInfo* procInfo){
+int thinkerProcess(BoardSHM* boardSHM, ProcessInfo* procInfo){
     // start the thinker process
     tick(boardSHM, procInfo);
 
@@ -133,7 +148,9 @@ int parentProcess(BoardSHM* boardSHM, ProcessInfo* procInfo){
     return EXIT_SUCCESS;
 }
 
-int childProcess(BoardSHM* boardSHM, Connection* connection, int moveTime, ProcessInfo* procInfo){
-    if (startGameLoop(connection, boardSHM, moveTime) == -1)
-            printf("Terminated with Error!");
+int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime){
+    if (startGameLoop(connection, boardSHM, gameSHM, moveTime) == -1)
+        return EXIT_FAILURE;
+    else
+        return EXIT_SUCCESS;
 }

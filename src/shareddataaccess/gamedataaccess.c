@@ -52,13 +52,20 @@ char* getGameName(GameDataSHM* shm){
     return shm->sharedData->gameName;
 }
 
-void setProcessIDs(GameDataSHM* shm, int PIDs[2]){
-    shm->sharedData->prozessIds[0] = PIDs[0];
-    shm->sharedData->prozessIds[1] = PIDs[1];
+void setThinkerPID(GameDataSHM* shm, pid_t PID){
+    shm->sharedData->thinkerPID = PID;
 }
 
-int* getProcessIDs(GameDataSHM* shm){
-    return shm->sharedData->prozessIds;
+pid_t getThinkerPID(GameDataSHM* shm){
+    return shm->sharedData->thinkerPID;
+}
+
+void setCommunicatorPID(GameDataSHM* shm, pid_t PID){
+    shm->sharedData->communicatorPID = PID;
+}
+
+pid_t getCommunicatorPID(GameDataSHM* shm){
+    return shm->sharedData->communicatorPID;
 }
 
 void setOwnPlayerMeta(GameDataSHM* shm, PlayerMeta* meta){

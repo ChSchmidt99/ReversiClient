@@ -12,7 +12,8 @@ typedef struct {
 
 typedef struct {
     char gameName[NAME_BUFFER_SIZE];
-    int prozessIds[2];
+    pid_t thinkerPID;
+    pid_t communicatorPID;
     SharedPlayerInfo ownInfo;
     size_t opponentCount;
     SharedPlayerInfo opponents[MAX_OPPONENTS];
