@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
         pid_t pId = getpid();
         setProcParent(processInfo, &pId);
         teardownConnection(connection);
-        setCommunicatorPID(gameSHM,getpid());
+        setThinkerPID(gameSHM,getpid());
         exitCode = thinkerProcess(boardSHM, gameSHM, processInfo);
         teardownSHM(boardSHM, gameSHM);
     }
@@ -150,6 +150,9 @@ int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInf
 
     deinitThinker();
     close(writeFileDescriptor(procInfo));
+
+    printf("Returning Thinker Process!\n");
+
     return exitCode;
 }
 

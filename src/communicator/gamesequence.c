@@ -140,8 +140,6 @@ int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM*
     if (signalThinker(gameSHM) == -1)
         return -1;
 
-    printf("Returned From Signaling Thinker\n");
-
     char* move = waitForThinkerResponse(connection, pipeReadFD);
     if (move == (char*)-1)
         return -1;
@@ -198,7 +196,10 @@ int pipeReadIsReady(int fd){
     struct timeval timeout;
     timeout.tv_sec = 3;
     timeout.tv_usec = 0;
-    int ret = select(1,&rfds,NULL,NULL,&timeout);
+    int ret = select(fd+1,&rfds,NULL,NULL,&timeout);
+
+    printf("Select returned: %i\n",ret);
+
     if (ret == -1)
         printf("Select Failed!");
     
