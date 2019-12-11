@@ -106,7 +106,10 @@ int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM)
     char convertedBoard[boardSize][boardSize];
     if (convertBoard(board,boardSize,convertedBoard) == -1)
         return -1;
-    //setBoard(sharedMem,convertedBoard);
+
+    printf("trying to set Board...\n");
+    setBoard(boardSHM,boardSize,convertedBoard);
+    printf("set board successful\n");
     return 0;
 }
 

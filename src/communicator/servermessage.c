@@ -11,6 +11,7 @@
 #define ENDFIELD_COMMAND "ENDFIELD"
 #define QUIT_COMMAND "QUIT"
 #define OK_THINK_COMMAND "OKTHINK"
+#define FIELD_COMMAND "FIELD"
 
 ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
     ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
@@ -50,6 +51,8 @@ ServerMessageType getType(const char* message){
         out = Quit;
     if(strcmp(splittedMessage[0], OK_THINK_COMMAND) == 0) 
         out = OkThink;
+    if(strcmp(splittedMessage[0], FIELD_COMMAND) == 0) 
+        out = Field;
 
     freeTokens(splittedMessage);
     return out;

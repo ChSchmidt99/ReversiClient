@@ -156,31 +156,29 @@ int nextMessageIsEndplayers(Connection* connection){
 //TODO: Cleanup
 int waitForFirstMove(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
-
-    printf("Received: %s\n",message->messageReference);
-
-    int moveTime = -1;
     if(message->type == Error){
         printf("%s\n",message->messageReference);
-    } else if(message->type == Quit){
-        
+        return freeServerMessageAndReturnInt(message, -1);
     } else if (message->type == Wait){
         sendOkWait(connection);
         freeServerMessage(message);
         return waitForFirstMove(connection);
     } else if (message->type == Move){
-        moveTime = parseMoveTime(message);
+        int moveTime = parseMoveTime(message);
+        return freeServerMessageAndReturnInt(message, moveTime);
     } else {
-        printf("Unexpected Command received");
+        printf("Unexpected Command received: %s\n",message->messageReference);
+        return freeServerMessageAndReturnInt(message, -1);
     }
-    freeServerMessage(message);
-    return moveTime;
 }
 
 int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     ServerMessage* message = receiveServerMessage(connection);
     if(message->type == Error){
         printf("%s\n",message->messageReference);
+        return -1;
+    } else if (message->type != Field){
+        printf("Unexpected Command: '%s'\n",message->messageReference);
         return -1;
     }
     
@@ -278,4 +276,9 @@ void sendPlayerPreference(Connection* connection, const char* preference){
         writeLineToServer(connection, message);
         free(message);
     }
+}
+
+int freeServerMessageAndReturnInt(ServerMessage* message, int i){
+    freeServerMessage(message);
+    return i;
 }

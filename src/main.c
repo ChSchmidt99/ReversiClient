@@ -20,38 +20,14 @@
 
 Connection* initiateConnectionSequence(int argc, char *argv[]);
 void teardownConnection(Connection* connection);
+void teardownSHM(BoardSHM* boardSHM);
+
+int parentProcess(BoardSHM* boardSHM, ProcessInfo* procInfo);
+int childProcess(BoardSHM* boardSHM, Connection* connection, int moveTime, ProcessInfo* procInfo);
+
+//TODO: Get strc+c signal and execute teardown!
 
 int main(int argc, char *argv[]) {
-    
-
-/*
-int parentProcess(int argc, char *argv[],SharedMemory* sharedMem, ProcessInfo* procInfo);
-int childProcess(int argc, char *argv[],SharedMemory* sharedMem, ProcessInfo* procInfo);
-
-int main(int argc, char *argv[]) {
-    pid_t processID;
-    pid_t parentId = getpid();
-    
-    SharedMemory* sharedMem = createSharedMemory();
-    ProcessInfo* processInfo = createProcessInfo();
-    setProcParent(processInfo, &parentId);
-
-    if((processID = fork()) < 0) {
-        panic("Failed to fork");
-    } else if (processID > 0){
-        setProcChild(processInfo, &processID);
-
-        printf("Parent PID is %i, child PID is %i\n", parentId, processID);
-        return parentProcess(argc,argv,sharedMem, processInfo);
-    } else {
-        return childProcess(argc,argv,sharedMem, processInfo);
-    }
-
-    clearSharedData(sharedMem);
-}
-
-int childProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* procInfo){
-*/
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL) {
         printf("GameId must be set!\n");
@@ -79,9 +55,10 @@ int childProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* p
         teardownConnection(connection);
         return EXIT_FAILURE;
     }
+
     size_t rows = 0;
     size_t cols = 0;
-    if (receiveBoardDimensions(connection,&rows,&cols) != -1){
+    if (receiveBoardDimensions(connection,&rows,&cols) == -1){
         teardownConnection(connection);
         return EXIT_FAILURE;
     }
@@ -89,29 +66,36 @@ int childProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* p
     //TODO: Use rows and cols instead of size
     BoardSHM* boardSHM = createBoardSHM(rows);
 
-    if (startGameLoop(connection, boardSHM, moveTime) == -1)
-        printf("Terminated with Error!");
 
-    //pid_t processID;
-    /*
-    if((processID = fork()) < 0) {
-        panic("Failed to fork");
+
+    pid_t parentId = getpid();
+    
+    ProcessInfo* processInfo = createProcessInfo();
+    setProcParent(processInfo, &parentId);
+
+    int exitCode = EXIT_SUCCESS;
+    pid_t processID = fork();
+    if (processID < 0){
+        printf("Failed To Fork!\n");
+        teardownSHM(boardSHM);
     } else if (processID == 0){
-        //Parend
-        wait(NULL);
-    } else {
         //Child
-        startGameLoop(connection, boardSHM, moveTime);
-        disconnectFromServer(connection);
-        freeConnection(connection);
-        free(gameId);
-        free(playerPreference);
-        exit(EXIT_SUCCESS);
-    }
-    */
+        setProcChild(processInfo, &processID);
+        exitCode = childProcess(boardSHM, connection, moveTime, processInfo);
 
-    disconnectFromServer(connection);
-    freeConnection(connection);
+        teardownConnection(connection);
+        teardownSHM(boardSHM);
+    } else {
+        //Parent
+        teardownConnection(connection);
+        exitCode = parentProcess(boardSHM,processInfo);
+        teardownSHM(boardSHM);
+    }
+
+    return exitCode;
+}   
+
+void teardownSHM(BoardSHM* boardSHM){
     if (detachBoardSHM(boardSHM) == -1)
         panic("Failed to detach boardSHM");
     if (clearBoardSHM(boardSHM) == -1)
@@ -137,16 +121,19 @@ Connection* initiateConnectionSequence(int argc, char *argv[]){
         panic("Failed to connect to server");
     return connection;
 }
-/*
-int parentProcess(int argc, char *argv[], SharedMemory* sharedMem, ProcessInfo* procInfo){
+
+int parentProcess(BoardSHM* boardSHM, ProcessInfo* procInfo){
     // start the thinker process
-    tick(sharedMem, procInfo);
+    tick(boardSHM, procInfo);
 
     if((waitpid (getProcChild(procInfo), NULL, 0)) < 0) {
         perror ("Error waiting for child processes to die");
         exit (EXIT_FAILURE);
     }
     return EXIT_SUCCESS;
-
 }
-*/
+
+int childProcess(BoardSHM* boardSHM, Connection* connection, int moveTime, ProcessInfo* procInfo){
+    if (startGameLoop(connection, boardSHM, moveTime) == -1)
+            printf("Terminated with Error!");
+}

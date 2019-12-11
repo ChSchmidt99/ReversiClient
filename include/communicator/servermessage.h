@@ -10,7 +10,8 @@ typedef enum _ServerMessageType {
     MoveOk = 5,
     Endfield = 6,
     Quit = 7,
-    OkThink = 8
+    OkThink = 8,
+    Field = 9
 } ServerMessageType;
 
 typedef struct _ServerMessage {

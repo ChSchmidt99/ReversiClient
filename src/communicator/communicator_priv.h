@@ -18,6 +18,8 @@
 PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
 PlayerMeta* parsePlayerMeta(char* message);
 
+int freeServerMessageAndReturnInt(ServerMessage* message, int i);
+
 char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount);
 char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount);
 
