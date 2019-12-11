@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include "thinker/field.h"
 #include "utilities.h"
@@ -16,6 +17,7 @@ int isRunning;
 BoardSHM* boardSharedMem; 
 GameDataSHM* gameSharedMem; 
 ProcessInfo* processInfo;
+int errorFlag = 0;
 
 int startThinker(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* procInfo){
     boardSharedMem = boardSHM;
@@ -26,8 +28,7 @@ int startThinker(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* procInfo
         perror("Failed to add Signal handler");
         return -1;
     }
-    isRunning = 1;
-    return startThinkerLoop();
+    return 0;
 }
 
 int addSignalHandler(){
@@ -35,30 +36,14 @@ int addSignalHandler(){
     newSig.sa_handler = &handle_Signal;
     newSig.sa_flags = SA_RESTART;
     sigfillset(&newSig.sa_mask);
-    
-    if (sigaction(SIGUSR1,&newSig,NULL) == -1 )
-        return -1;
 
-    return sigaction(SIGTERM,&newSig,NULL);
-}
-
-//TODO: Maybe don't make recursive, danger of stack overflow?
-int startThinkerLoop(){
-    pause();
-    if (isRunning)
-        return startThinkerLoop();
-    else
-        return 0;
+    return sigaction(SIGUSR1,&newSig,NULL);
 }
 
 void handle_Signal(int signal){
-    switch (signal)
-    {
+    switch (signal){
     case SIGUSR1:
         receivedThinkSignal();
-        break;
-    case SIGTERM:
-        receivedTermSignal();
         break;
     default:
         printf("Caught wrong signal");
@@ -82,6 +67,9 @@ void receivedThinkSignal(){
     }
     */
 
+    printf("Thinker Received Think Signal\n");
+
+    //TODO: Check if isThinking is checked
     //TODO: Replace by real move
     char buff[MOVE_BUFFER_SIZE] = {'E','3','\0'};
     PlayerMeta* playerInfo = getOwnPlayerMeta(gameSharedMem);
@@ -89,15 +77,14 @@ void receivedThinkSignal(){
         buff[1] = '5'; 
     }
 
-    printf("Writing move %s to Pipe...\n",buff);
-
+    printf("Writing move %s to Pipe with fd: %i ...\n",buff,writeFileDescriptor(processInfo));
     ssize_t writtenSize = write(writeFileDescriptor(processInfo),buff,MOVE_BUFFER_SIZE);
-    if (writtenSize != MOVE_BUFFER_SIZE)
-        panic("Failed to write to Pipe!");
+    
+    if (writtenSize != MOVE_BUFFER_SIZE){
+        perror("Failed to write to Pipe!");
+    } else {
+        printf("Successfuly wrode to Pipe!\n");
+    }
 
-}
-
-void receivedTermSignal(){
-    isRunning = 0;
-    printf("Terminating Thinker...\n");
+    setIsThinking(gameSharedMem, 0);
 }

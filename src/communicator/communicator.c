@@ -225,8 +225,10 @@ char** receiveBoard(Connection* connection, size_t rows){
 }
 
 int receiveOkThink(Connection* connection){
-    printf("Received OkThink\n");
     ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error){
+        printf("Got Error: %s\n",message->messageReference);
+    }
     int result = 0;
     if (message->type == OkThink)
         result = 1;

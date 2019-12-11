@@ -8,6 +8,9 @@ ProcessInfo* createProcessInfo() {
     if(pipe(fd) < 0)
         panic("Could not create a pipe");
 
+    //TODO: Remove me
+    printf("Created Pipe fd[0] = %i; fd[1] = %i;\n",fd[0],fd[1]);
+
     ProcessInfo* info = malloc(sizeof(ProcessInfo));
     info->fd[0] = fd[0];
     info->fd[1] = fd[1];

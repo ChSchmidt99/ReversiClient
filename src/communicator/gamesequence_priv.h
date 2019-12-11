@@ -11,12 +11,12 @@ int receivedMoveOk(Connection* connection, BoardSHM* boardSHM, GameDataSHM* game
 int receivedWait(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
 int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
 int receivedQuit(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
-char* thinkUntilThinkerResponse(Connection* connection, int pipeReadFD);
+char* waitForThinkerResponse(Connection* connection, int pipeReadFD);
 
 int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime, int pipeReadFD);
 int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM, GameDataSHM* gameSHM, int pipeReadFD);
 int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]);
 
 int notifyServerAboutThinking(Connection* connection);
-void signalThinker(GameDataSHM* gameSHM);
+int signalThinker(GameDataSHM* gameSHM);
 int pipeReadIsReady(int fd);

@@ -85,15 +85,16 @@ int main(int argc, char *argv[]) {
         setCommunicatorPID(gameSHM,getpid());
         exitCode = communicatorProcess(boardSHM, gameSHM, connection, moveTime, processInfo);
         teardownConnection(connection);
-        kill(SIGTERM,*processInfo->parent);
+
+        detachBoardSHM(boardSHM);
+        detachGameDataSHM(gameSHM);
     } else {
         //Parent
         teardownConnection(connection);
         setCommunicatorPID(gameSHM,getpid());
         exitCode = thinkerProcess(boardSHM, gameSHM, processInfo);
+        teardownSHM(boardSHM, gameSHM);
     }
-
-    teardownSHM(boardSHM, gameSHM);
     return exitCode;
 }
 
@@ -139,9 +140,7 @@ Connection* initiateConnectionSequence(int argc, char *argv[]){
 }
 
 int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo){
-    
     close(readFileDescriptor(procInfo));
-    
     int exitCode = EXIT_SUCCESS;
 
     if (startThinker(boardSHM,gameSHM,procInfo) == -1){

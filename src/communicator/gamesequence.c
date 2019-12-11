@@ -137,10 +137,12 @@ int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM*
         return -1;
     
     notifyServerAboutThinking(connection);
-    signalThinker(gameSHM);
+    if (signalThinker(gameSHM) == -1)
+        return -1;
 
-    
-    char* move = thinkUntilThinkerResponse(connection, pipeReadFD);
+    printf("Returned From Signaling Thinker\n");
+
+    char* move = waitForThinkerResponse(connection, pipeReadFD);
     if (move == (char*)-1)
         return -1;
 
@@ -159,14 +161,22 @@ int notifyServerAboutThinking(Connection* connection){
     }
 }
 
-void signalThinker(GameDataSHM* gameSHM){
+int signalThinker(GameDataSHM* gameSHM){
     setIsThinking(gameSHM, 1);
     pid_t thinkerPID = getThinkerPID(gameSHM);
-    kill(thinkerPID, SIGUSR1);
+    
+    printf("Sending Think Signal\n");
+    if (kill(thinkerPID, SIGUSR1) == -1){
+        perror("Failed to signal thinker");
+        return -1;
+    }
+    return 0;
 }
 
-char* thinkUntilThinkerResponse(Connection* connection, int pipeReadFD){    
+char* waitForThinkerResponse(Connection* connection, int pipeReadFD){    
+    printf("waitForThinker Response...\n");
     if (pipeReadIsReady(pipeReadFD)){
+        printf("Pipe is Ready!\n");
         char* move = malloc(sizeof(char) * MOVE_BUFFER_SIZE);
         ssize_t readAmount = read(pipeReadFD,move,MOVE_BUFFER_SIZE);
         if (readAmount != MOVE_BUFFER_SIZE){
@@ -175,20 +185,18 @@ char* thinkUntilThinkerResponse(Connection* connection, int pipeReadFD){
         }  
         return move;
     } else {
-        if (notifyServerAboutThinking(connection) == -1){
-            return (char*) -1;
-        } else {
-            return thinkUntilThinkerResponse(connection,pipeReadFD);
-        }
+        printf("Wait For Thinker Timeout\n");
+        return (char*) -1;
     }
 }
 
+//TODO: Pass timeout in
 int pipeReadIsReady(int fd){
     fd_set rfds;
     FD_ZERO(&rfds);
     FD_SET(fd,&rfds);
     struct timeval timeout;
-    timeout.tv_sec = 0;
+    timeout.tv_sec = 3;
     timeout.tv_usec = 0;
     int ret = select(1,&rfds,NULL,NULL,&timeout);
     if (ret == -1)
