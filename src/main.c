@@ -66,45 +66,30 @@ int preForkHandler(Connection* connection, InputParams* params, InitialSharedDat
     return 0;
 }
 
-int communicatorEntry(ProcessInfo* processInfo){
+int communicatorEntry(ProcessInfo* processInfo, Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
     printf("Communicator Entry!\n");
-    //exitCode = communicatorProcess(match->boardSHM, match->gameSHM, connection, match->moveTime, processInfo);
+    if (startGameLoop(connection, boardSHM, gameSHM, processInfo) == -1)
+        return -1;
+     else
+        return 1;
     return 0;
 }
 
-int thinkerEntry(ProcessInfo* processInfo){
+int thinkerEntry(ProcessInfo* processInfo, BoardSHM* boardSHM, GameDataSHM* gameSHM){
     printf("Thinker Entry!\n");
-    //exitCode = thinkerProcess(match->boardSHM, match->gameSHM, processInfo);
+    
+    if (initThinkerOnce(boardSHM,gameSHM,processInfo) == -1){
+        return -1;
+    }
+
+    while (waitpid(getChildPID(processInfo),NULL,0) == 0);
+    
+    printf("Child PID was: %i\n",getChildPID(processInfo));
+
+    deinitThinker();
+    printf("Thinker returning\n");
     return 0;
 }
-
-
-/*
-
-
-
-int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo){
-    int exitCode = EXIT_SUCCESS;
-
-    if (initThinkerOnce(boardSHM,gameSHM,procInfo) == -1){
-        exitCode = EXIT_FAILURE;
-    }
-
-    while (waitpid(*procInfo->child,NULL,0) == 0);
-    deinitThinker();
-    printf("Returning Thinker Process!\n");
-    return exitCode;
-}
-
-int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime, ProcessInfo* procInfo){
-    int readFD = procInfo->fd[0];
-    if (startGameLoop(connection, boardSHM, gameSHM, moveTime,readFD) == -1){
-        return EXIT_FAILURE;
-    } else{
-        return EXIT_SUCCESS;
-    }
-}
-*/
 
 void initInputParams(int argc,char* argv[],InputParams* inputParams){
     char* gameId = readGameID(argc,argv);

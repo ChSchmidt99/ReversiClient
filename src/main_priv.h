@@ -12,8 +12,8 @@ typedef struct _Match {
 } Match;
 
 int preForkHandler(Connection* connection, InputParams* inputParams, InitialSharedData* initSharedDataOut);
-int communicatorEntry(ProcessInfo* processInfo);
-int thinkerEntry(ProcessInfo* processInfo);
+int communicatorEntry(ProcessInfo* processInfo, Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
+int thinkerEntry(ProcessInfo* processInfo, BoardSHM* boardSHM, GameDataSHM* gameSHM);
 
 Match* initMatch(int argc, char *argv[],Connection* connection);
 void teardownConnection(Connection* connection);

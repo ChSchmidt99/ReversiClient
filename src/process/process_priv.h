@@ -13,12 +13,12 @@ int pipeAndFork(ProcessManagementInput* input, Connection* connection, GameDataS
 ProcessInfo* setupCommunicatorProcess(int pipe[2], GameDataSHM* gameSHM);
 void teardownCommunicatorProcess(ProcessInfo* processInfo, Connection* connection, GameDataSHM* gameSHM, BoardSHM* boardSHM);
 
-ProcessInfo* setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection);
+ProcessInfo* setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection, pid_t childPID);
 void teardownThinkerProcess(ProcessInfo* processInfo, GameDataSHM* gameSHM, BoardSHM* boardSHM);
 
 int teardownConnection(Connection* connection);
 
-ProcessInfo* createProcessInfo(int pipe[2]);
+ProcessInfo* createProcessInfo(int pipe[2], pid_t parent, pid_t child);
 void freeProcessInfo(ProcessInfo* procInfo);
 
 int readFileDescriptor(ProcessInfo* info);

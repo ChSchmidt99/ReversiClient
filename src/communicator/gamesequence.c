@@ -10,12 +10,14 @@
 
 #define MOVE_BUFFER_SIZE 3
 
-int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, int moveTime, int pipeReadFD){
+int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processinfo){
     logMessage("Started Game Loop",1);
-    if (executeMoveSequence(connection,boardSHM, gameSHM, moveTime, pipeReadFD) == -1){
+    //TODO: Pass in Process info instead of fd
+    //TODO: Remove Movetime and fetch where needed
+    if (executeMoveSequence(connection,boardSHM, gameSHM, getMoveTime(gameSHM), readFileDescriptor(processinfo)) == -1){
         return -1;
     }
-    if (gameLoop(connection,boardSHM, gameSHM, pipeReadFD) == -1){
+    if (gameLoop(connection,boardSHM, gameSHM, readFileDescriptor(processinfo)) == -1){
         return -1;
     }
     return 0;
@@ -164,6 +166,8 @@ int signalThinker(GameDataSHM* gameSHM){
     setIsThinking(gameSHM, 1);
     pid_t thinkerPID = getThinkerPID(gameSHM);
     
+    printf("Thinker PID was: %i\n",thinkerPID);
+
     printf("Sending Think Signal\n");
     if (kill(thinkerPID, SIGUSR1) == -1){
         perror("Failed to signal thinker");
@@ -195,7 +199,7 @@ int pipeReadIsReady(int fd){
     FD_ZERO(&rfds);
     FD_SET(fd,&rfds);
     struct timeval timeout;
-    timeout.tv_sec = 3;
+    timeout.tv_sec = 5;
     timeout.tv_usec = 0;
     int ret = select(fd+1,&rfds,NULL,NULL,&timeout);
 

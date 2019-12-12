@@ -14,7 +14,6 @@ int startProcessManagement(ProcessManagementInput* input){
     
     BoardSHM* boardSHM = createBoardSHM(initialSharedData.boardSize);
     GameDataSHM* gameSHM = initGameDataSHM(&initialSharedData);
-
     return pipeAndFork(input,connection,gameSHM,boardSHM);
 }
 
@@ -47,12 +46,12 @@ int pipeAndFork(ProcessManagementInput* input, Connection* connection, GameDataS
         printf("Failed To Fork!\n");
     } else if (processID == 0){
         ProcessInfo* processInfo = setupCommunicatorProcess(fd,gameSHM);
-        int ret = input->communicatorEntry(processInfo);
+        int ret = input->communicatorEntry(processInfo,connection,boardSHM,gameSHM);
         teardownCommunicatorProcess(processInfo,connection,gameSHM,boardSHM);
         exitWithExitCode(ret);
     } else {
-        ProcessInfo* processInfo = setupThinkerProcess(fd,gameSHM,connection);
-        int ret = input->thinkerEntry(processInfo);
+        ProcessInfo* processInfo = setupThinkerProcess(fd,gameSHM,connection,processID);
+        int ret = input->thinkerEntry(processInfo, boardSHM, gameSHM);
         teardownThinkerProcess(processInfo,gameSHM,boardSHM);    
         return ret;
     }
@@ -60,7 +59,7 @@ int pipeAndFork(ProcessManagementInput* input, Connection* connection, GameDataS
 }
 
 ProcessInfo* setupCommunicatorProcess(int pipe[2], GameDataSHM* gameSHM){
-    ProcessInfo* processInfo = createProcessInfo(pipe);
+    ProcessInfo* processInfo = createProcessInfo(pipe,getppid(),getpid());
     setCommunicatorPID(gameSHM,getpid());
     close(writeFileDescriptor(processInfo));
     return processInfo;
@@ -76,8 +75,8 @@ void teardownCommunicatorProcess(ProcessInfo* processInfo, Connection* connectio
     freeProcessInfo(processInfo);
 }
 
-ProcessInfo* setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection){
-    ProcessInfo* processInfo = createProcessInfo(pipe);
+ProcessInfo* setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection, pid_t childPID){
+    ProcessInfo* processInfo = createProcessInfo(pipe,getpid(),childPID);
     setThinkerPID(gameSHM,getpid());
     teardownConnection(connection);
     close(readFileDescriptor(processInfo));
@@ -100,12 +99,12 @@ int teardownConnection(Connection* connection){
     return 0;
 }
 
-ProcessInfo* createProcessInfo(int pipe[2]){
+ProcessInfo* createProcessInfo(int pipe[2], pid_t parent, pid_t child){
     ProcessInfo* info = malloc(sizeof(ProcessInfo));
     info->fd[0] = pipe[0];
     info->fd[1] = pipe[1];
-    info->parent = getppid();
-    info->child = getpid();
+    info->parent = parent;
+    info->child = child;
     return info;
 }
 
@@ -119,4 +118,12 @@ int readFileDescriptor(ProcessInfo* info) {
 
 int writeFileDescriptor(ProcessInfo* info) {
     return info->fd[1];
+}
+
+pid_t getChildPID(ProcessInfo* info){
+    return info->child;
+}
+
+pid_t getParentPID(ProcessInfo* info){
+    return info->parent;
 }

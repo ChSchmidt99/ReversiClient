@@ -28,13 +28,16 @@ typedef struct _InputParams {
 
 typedef struct _ProcessManagementInput {
     int(*preForkHandler)(Connection* connection, InputParams* inputParams,InitialSharedData *initSharedDataOut);
-    int(*thinkerEntry)(ProcessInfo* processInfo);
-    int(*communicatorEntry)(ProcessInfo* processInfo);
+    int(*thinkerEntry)(ProcessInfo* processInfo, BoardSHM* boardSHM, GameDataSHM* gameSHM);
+    int(*communicatorEntry)(ProcessInfo* processInfo, Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
     InputParams* inputParams;
 } ProcessManagementInput;
 
 int startProcessManagement(ProcessManagementInput* handlers);
+
 int readFileDescriptor(ProcessInfo* info);
 int writeFileDescriptor(ProcessInfo* info);
 
+pid_t getChildPID(ProcessInfo* info);
+pid_t getParentPID(ProcessInfo* info);
 #endif
