@@ -20,11 +20,17 @@ typedef struct _InitialSharedData {
     PlayerMeta* opponents[MAX_OPPONENTS];
 } InitialSharedData;
 
+typedef struct _InputParams {
+    ConfigParams* configParams;
+    char* gameId;
+    char* playerPreference;
+} InputParams;
+
 typedef struct _ProcessManagementInput {
-    int(*preForkHandler)(Connection* connection, InitialSharedData *initSharedDataOut);
+    int(*preForkHandler)(Connection* connection, InputParams* inputParams,InitialSharedData *initSharedDataOut);
     int(*thinkerEntry)(ProcessInfo* processInfo);
     int(*communicatorEntry)(ProcessInfo* processInfo);
-    Params* params;
+    InputParams* inputParams;
 } ProcessManagementInput;
 
 int startProcessManagement(ProcessManagementInput* handlers);

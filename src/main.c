@@ -18,41 +18,51 @@
 //TODO: Cach strc+c signal and execute teardown!
 int main(int argc, char *argv[]){
     srand(time(NULL));
-    char* configFilePath = getConfigPath(argc,argv);
-    Params* params = getParamsFromFile(configFilePath);
-    free(configFilePath);
-    
+
+    InputParams inputParams;
+    initInputParams(argc,argv, &inputParams);
+
     ProcessManagementInput forkIn;
     forkIn.preForkHandler = &preForkHandler;
     forkIn.communicatorEntry = &communicatorEntry;
     forkIn.thinkerEntry = &thinkerEntry;
-    forkIn.params = params;
+    forkIn.inputParams = &inputParams;    
 
     int err = startProcessManagement(&forkIn);
-    freeParams(params);
+    deinitInputParams(&inputParams);
     exitWithExitCode(err);
 }
 
-int preForkHandler(Connection* connection, InitialSharedData* initSharedDataOut){
-    initSharedDataOut->boardSize = 8;
-    initSharedDataOut->gameName = "Test Board Name";
-    initSharedDataOut->moveTime = 3000;
-    initSharedDataOut->opponentCount = 1;
-    
-    PlayerMeta* ownInfo = newPlayerMeta(0,"Player 1",1);
-    PlayerMeta* testOpponent = newPlayerMeta(1,"Player 2",1);
-    
-    initSharedDataOut->opponents[0] = testOpponent;
-    initSharedDataOut->ownInfo = ownInfo;
-
-    printf("Pre Fork Handler\n");
-    /*
-    Match* match = initMatch(argc,argv,connection);
-    if (match == (Match*) -1){
-        teardownConnection(connection);
+int preForkHandler(Connection* connection, InputParams* params, InitialSharedData* initSharedDataOut){
+    GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,params->gameId, params->playerPreference);
+    if (gameInstance == (GameInstance*)-1){
+        printf("Failed Prolog!");
         return EXIT_FAILURE;
     }
-    */
+    printGameInstanceDetails(gameInstance);
+
+    int moveTime = waitForFirstMove(connection);
+    if (moveTime == -1){
+        printf("Failed to wait for first Move!");
+        return EXIT_FAILURE;
+    }
+
+    size_t rows = 0;
+    size_t cols = 0;
+    if (receiveBoardDimensions(connection,&rows,&cols) == -1){
+        return EXIT_FAILURE;
+    }
+    
+    initSharedDataOut->boardSize = rows;
+    initSharedDataOut->gameName = gameInstance->gameName;
+    initSharedDataOut->moveTime = moveTime;
+    initSharedDataOut->opponentCount = gameInstance->opponentCount;
+    initSharedDataOut->ownInfo = gameInstance->ownPlayer;
+    if (gameInstance->opponentCount >= MAX_OPPONENTS)
+        panic("Number of opponents not implemented!");
+    for(size_t i = 0; i < gameInstance->opponentCount; i++)
+        initSharedDataOut->opponents[i] = gameInstance->opponents[i];
+
     return 0;
 }
 
@@ -71,42 +81,6 @@ int thinkerEntry(ProcessInfo* processInfo){
 
 /*
 
-Match* initMatch(int argc, char *argv[],Connection* connection){
-    char* gameId = readGameID(argc,argv);
-    if (gameId == NULL)
-        panic("GameId must be set!");
-    
-    char* playerPreference = readPreferencedPlayerNumber(argc,argv);
-
-    GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,gameId, playerPreference);
-    if (gameInstance == (GameInstance*)-1){
-        printf("Failed Prolog!");
-        
-        return EXIT_FAILURE;
-    }
-    printGameInstanceDetails(gameInstance);
-    free(gameId);
-    free(playerPreference);
-
-    //TODO: Move to better spot!
-    int moveTime = waitForFirstMove(connection);
-    if (moveTime == -1){
-        printf("Failed to wait for first Move!");
-        return EXIT_FAILURE;
-    }
-
-    size_t rows = 0;
-    size_t cols = 0;
-    if (receiveBoardDimensions(connection,&rows,&cols) == -1){
-        return EXIT_FAILURE;
-    }
-    
-    //TODO: Use rows and cols instead of size
-    BoardSHM* boardSHM = createBoardSHM(rows);
-    GameDataSHM* gameSHM = createGameDataSHM();
-    initGameSHM(gameSHM,gameInstance);
-    freeGameInstance(gameInstance);
-}
 
 
 int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo){
@@ -131,6 +105,30 @@ int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* co
     }
 }
 */
+
+void initInputParams(int argc,char* argv[],InputParams* inputParams){
+    char* gameId = readGameID(argc,argv);
+    if (gameId == NULL)
+        panic("GameId must be set!");
+    
+    inputParams->gameId = gameId;
+    inputParams->playerPreference = readPreferencedPlayerNumber(argc,argv);
+    inputParams->configParams = getConfigParams(argc,argv);
+}
+
+void deinitInputParams(InputParams* inputParams){
+    freeConfigParams(inputParams->configParams);
+    free(inputParams->gameId);
+    free(inputParams->playerPreference);
+}
+
+ConfigParams* getConfigParams(int argc, char* argv[]){
+    char* configFilePath = getConfigPath(argc,argv);
+    ConfigParams* params = getParamsFromFile(configFilePath);
+    free(configFilePath);
+    return params;
+}
+
 char* getConfigPath(int argc, char *argv[]){
     char* configFilePath = readConfigFilePath(argc, argv);
     if (configFilePath == NULL) 

@@ -5,16 +5,16 @@
 #include <stdio.h>
 #include "misc/utilities.h"
 
-typedef struct _Params {
+typedef struct _ConfigParams {
     char* hostName;
     char* portNumber;
     char* gameKind;
-} Params;
+} ConfigParams;
 
-Params* newParams(char* hostName, char* portNumber, char* gameKind);
-void freeParams(Params* params);
+ConfigParams* newParams(char* hostname, char* portNumber, char* gameKind);
+void freeConfigParams(ConfigParams* params);
 
 FILE* openFile(char* path);
-Params* getParamsFromFile(char *filePath);
+ConfigParams* getParamsFromFile(char *filePath);
 
 #endif

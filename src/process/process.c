@@ -5,9 +5,9 @@
 #include <unistd.h>
 
 int startProcessManagement(ProcessManagementInput* input){
-    Connection* connection = initiateConnectionSequence(input->params->hostName,input->params->portNumber);
+    Connection* connection = initiateConnectionSequence(input->inputParams->configParams->hostName,input->inputParams->configParams->portNumber);
     InitialSharedData initialSharedData;
-    if (input->preForkHandler(connection, &initialSharedData) == -1){
+    if (input->preForkHandler(connection,input->inputParams,&initialSharedData) == -1){
         teardownConnection(connection);
         return -1;
     }
