@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
-    PlayerMeta* meta = malloc(sizeof(PlayerMeta));
+    PlayerMeta* meta = safeMalloc(sizeof(PlayerMeta));
     meta->name = copyStringToNewMemoryAddr(name);
     meta->number = number;
     meta->isReady = isReady;

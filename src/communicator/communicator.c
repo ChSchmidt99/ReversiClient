@@ -197,7 +197,7 @@ int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
 //Use proper array instead of double ptr
 char** receiveBoard(Connection* connection, size_t rows){
     logMessage("Receiving Board...\n",1);
-    char** board = malloc(sizeof(char*) * rows);
+    char** board = safeMalloc(sizeof(char*) * rows);
     for(size_t i = 0; i < rows; i++){
         //TODO: Replace receiveServerMessage with safelyReceiveServerMessage, which unwraps Error
         ServerMessage* message = receiveServerMessage(connection);

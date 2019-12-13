@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     forkIn.preForkHandler = &preForkHandler;
     forkIn.communicatorEntry = &communicatorEntry;
     forkIn.thinkerEntry = &thinkerEntry;
-    forkIn.inputParams = &inputParams;    
+    forkIn.inputParams = &inputParams;
 
     int err = startProcessManagement(&forkIn);
     deinitInputParams(&inputParams);
@@ -36,14 +36,14 @@ int main(int argc, char *argv[]){
 int preForkHandler(Connection* connection, InputParams* params, InitialSharedData* initSharedDataOut){
     GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,params->gameId, params->playerPreference);
     if (gameInstance == (GameInstance*)-1){
-        printf("Failed Prolog!");
+        perror("Failed Prolog!\n");
         return EXIT_FAILURE;
     }
     printGameInstanceDetails(gameInstance);
 
     int moveTime = waitForFirstMove(connection);
     if (moveTime == -1){
-        printf("Failed to wait for first Move!");
+        perror("Failed to wait for first Move!\n");
         return EXIT_FAILURE;
     }
 
@@ -67,7 +67,6 @@ int preForkHandler(Connection* connection, InputParams* params, InitialSharedDat
 }
 
 int communicatorEntry(ProcessInfo* processInfo, Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    printf("Communicator Entry!\n");
     if (startGameLoop(connection, boardSHM, gameSHM, processInfo) == -1)
         return -1;
      else

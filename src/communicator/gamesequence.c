@@ -180,7 +180,7 @@ char* waitForThinkerResponse(Connection* connection, int pipeReadFD){
     printf("waitForThinker Response...\n");
     if (pipeReadIsReady(pipeReadFD)){
         printf("Pipe is Ready!\n");
-        char* move = malloc(sizeof(char) * MOVE_BUFFER_SIZE);
+        char* move = safeMalloc(sizeof(char) * MOVE_BUFFER_SIZE);
         ssize_t readAmount = read(pipeReadFD,move,MOVE_BUFFER_SIZE);
         if (readAmount != MOVE_BUFFER_SIZE){
             printf("Failed to read from Pipe");

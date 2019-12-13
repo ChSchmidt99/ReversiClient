@@ -43,9 +43,9 @@ static char * test_SliceLimit() {
 */
 
 static char* test_freeArray(){
-    char** testArr = malloc(sizeof(char**) * 2);
-    testArr[0] = malloc(sizeof(char) * 5);
-    testArr[1] = malloc(sizeof(char) * 5);
+    char** testArr = safeMalloc(sizeof(char**) * 2);
+    testArr[0] = safeMalloc(sizeof(char) * 5);
+    testArr[1] = safeMalloc(sizeof(char) * 5);
     freeArrayWithContents((void**)testArr,2);
     return 0;
 }

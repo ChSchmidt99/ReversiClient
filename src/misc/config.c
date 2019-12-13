@@ -6,7 +6,7 @@
 #define MAX_STRING_SIZE 100
 
 ConfigParams* newParams(char* hostname, char* portNumber, char* gameKind){
-    ConfigParams* params = malloc(sizeof(ConfigParams));
+    ConfigParams* params = safeMalloc(sizeof(ConfigParams));
     params->hostName = copyStringToNewMemoryAddr(hostname);
     params->portNumber = copyStringToNewMemoryAddr(portNumber);
     params->gameKind = copyStringToNewMemoryAddr(gameKind);

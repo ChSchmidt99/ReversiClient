@@ -18,7 +18,7 @@ struct _Connection {
 };
 
 Connection* newConnection(const char* hostname, const char* port){
-    Connection* connection = malloc(sizeof(Connection));
+    Connection* connection = safeMalloc(sizeof(Connection));
     connection->hostname = copyStringToNewMemoryAddr(hostname);
     connection->port = copyStringToNewMemoryAddr(port);
     connection->socket = -1;

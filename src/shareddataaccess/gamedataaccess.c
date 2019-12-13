@@ -5,7 +5,7 @@
 #include <sys/shm.h>
 
 GameDataSHM* newGameDataSHM(SharedGameData* shmData, int shmId){
-    GameDataSHM* shm = malloc(sizeof(GameDataSHM));
+    GameDataSHM* shm = safeMalloc(sizeof(GameDataSHM));
     shm->sharedData = shmData;
     shm->shmId = shmId;
     return shm;

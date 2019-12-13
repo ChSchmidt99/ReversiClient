@@ -21,7 +21,7 @@ typedef struct _Thinker {
 Thinker* thinker;
 
 int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processInfo){
-    thinker = malloc(sizeof(thinker));
+    thinker = safeMalloc(sizeof(thinker));
     thinker->boardSHM = boardSHM;
     thinker->gameSHM = gameSHM;
     thinker->processInfo = processInfo;

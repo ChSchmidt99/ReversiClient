@@ -100,7 +100,7 @@ int teardownConnection(Connection* connection){
 }
 
 ProcessInfo* createProcessInfo(int pipe[2], pid_t parent, pid_t child){
-    ProcessInfo* info = malloc(sizeof(ProcessInfo));
+    ProcessInfo* info = safeMalloc(sizeof(ProcessInfo));
     info->fd[0] = pipe[0];
     info->fd[1] = pipe[1];
     info->parent = parent;

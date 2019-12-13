@@ -1,10 +1,16 @@
 #include "misc/utilities.h"
 #include <string.h>
 
-//TODO: Clear shared memories at termination!
 void panic (char* message) {
     perror(message);
     exit (EXIT_FAILURE);
+}
+
+void* safeMalloc(size_t size){
+    void* ptr = malloc(size);
+    if (ptr == NULL)
+        panic("Failed to malloc\n");
+    return ptr;
 }
 
 void logMessage(char* message, int level){
@@ -13,11 +19,7 @@ void logMessage(char* message, int level){
 }
 
 char* copyStringToNewMemoryAddr(const char* str){
-
-    char* newString = malloc((strlen(str) + 1) * sizeof(char));
-    if (newString == NULL){
-        perror("Failed to allocate memory");
-    }
+    char* newString = safeMalloc((strlen(str) + 1) * sizeof(char));
     strcpy(newString,str);
     return newString;
 }

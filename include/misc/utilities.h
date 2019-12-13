@@ -8,6 +8,7 @@
 #define INT2VOIDP(i) (void*)(uintptr_t)(i)
 
 void panic(char* message);
+void* safeMalloc(size_t size);
 char* copyStringToNewMemoryAddr(const char* str);
 char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char* divider);    
 double fRand(double fMin, double fMax);

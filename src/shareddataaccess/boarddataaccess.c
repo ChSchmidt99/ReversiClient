@@ -6,7 +6,7 @@
 #include <sys/shm.h>
 
 BoardSHM* newBoardSHM(int shmId, size_t boardSize, char board[]){
-    BoardSHM* boardSHM = malloc(sizeof(BoardSHM));
+    BoardSHM* boardSHM = safeMalloc(sizeof(BoardSHM));
     boardSHM->board = board;
     boardSHM->boardSize = boardSize;
     boardSHM->shmId = shmId;
@@ -55,7 +55,7 @@ void setBoard(BoardSHM* shm, size_t boardSize, char board[][boardSize]){
     }
 }
 char (*getBoard(BoardSHM* shm))[]{
-    char (*board)[shm->boardSize] = malloc(sizeof(char) * (shm->boardSize) * (shm->boardSize));
+    char (*board)[shm->boardSize] = safeMalloc(sizeof(char) * (shm->boardSize) * (shm->boardSize));
     for(size_t i = 0; i < shm->boardSize; i++){
         for(size_t j = 0; j < shm->boardSize; j++){
             board[i][j] = shm->board[j + i * (shm->boardSize)];
