@@ -11,13 +11,12 @@
 #define MOVE_BUFFER_SIZE 3
 
 int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    logMessage("Started Game Loop",1);
-    if (executeMoveSequence(connection,boardSHM, gameSHM) == -1){
+    if (executeMoveSequence(connection,boardSHM, gameSHM) == -1)
         return -1;
-    }
-    if (gameLoop(connection,boardSHM, gameSHM) == -1){
+    
+    if (gameLoop(connection,boardSHM, gameSHM) == -1)
         return -1;
-    }
+    
     return 0;
 }
 
@@ -30,7 +29,7 @@ int gameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
 }
 
 int interpretAndFreeServerMessage(Connection* connection, ServerMessage* serverMessage, BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    //TODO: Free Server Message
+    //TODO: cleanup!
     switch (serverMessage->type){
     case Error:
         printf("Gor Error: %s\n",serverMessage->messageReference);
@@ -95,6 +94,7 @@ int receivedWait(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSH
 
 int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
     logMessage("Received GameOver Command",1);
+    //TODO: Implement me!
     panic("Implement Me");
     return 0;
 }
@@ -104,9 +104,7 @@ int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM,
     if (convertBoard(board,boardSize,convertedBoard) == -1)
         return -1;
 
-    printf("trying to set Board...\n");
     setBoard(boardSHM,boardSize,convertedBoard);
-    printf("set board successful\n");
     return 0;
 }
 
@@ -114,7 +112,7 @@ int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardS
     for (size_t i = 0; i < boardSize; i++){
         char* row = newStringWithoutDelimiter(stringBoard[i],' ');
         if (strlen(row) != boardSize + 1){
-            printf("Unexpected board row length\n");
+            perror("Unexpected board row length!\n");
             return -1;
         }
         for (size_t j = 0; j < boardSize; j++){
@@ -167,50 +165,29 @@ int signalThinker(GameDataSHM* gameSHM){
     pid_t thinkerPID = processInfo->thinkerPID;
     freeProcessInfo(processInfo);
 
-    printf("Sending Think Signal\n");
     if (kill(thinkerPID, SIGUSR1) == -1){
-        perror("Failed to signal thinker");
+        perror("Failed to signal thinker\n");
         return -1;
     }
     return 0;
 }
 
 char* waitForThinkerResponse(Connection* connection, GameDataSHM* gameSHM){    
-    printf("waitForThinker Response...\n");
-
     ProcessInfo* processInfo = getProcessInfo(gameSHM);
     int readFD = readFileDescriptor(processInfo->fd);
     freeProcessInfo(processInfo);
 
-    if (pipeReadIsReady(readFD)){
-        printf("Pipe is Ready!\n");
+    int timeout = getMoveTime(gameSHM) / 1000;
+    if (fileDescriptorReadIsReady(readFD,timeout)){
         char* move = safeMalloc(sizeof(char) * MOVE_BUFFER_SIZE);
         ssize_t readAmount = read(readFD,move,MOVE_BUFFER_SIZE);
         if (readAmount != MOVE_BUFFER_SIZE){
-            printf("Failed to read from Pipe");
+            perror("Failed to read from Pipe");
             return (char*) -1;
         }  
         return move;
     } else {
-        printf("Wait For Thinker Timeout\n");
+        perror("Timeout waiting for thinker\n");
         return (char*) -1;
     }
-}
-
-//TODO: Pass timeout time in
-int pipeReadIsReady(int fd){
-    fd_set rfds;
-    FD_ZERO(&rfds);
-    FD_SET(fd,&rfds);
-    struct timeval timeout;
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
-    int ret = select(fd+1,&rfds,NULL,NULL,&timeout);
-
-    printf("Select returned: %i\n",ret);
-
-    if (ret == -1)
-        printf("Select Failed!");
-    
-    return ret;
 }

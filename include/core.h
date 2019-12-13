@@ -2,8 +2,8 @@
 #define CORE_H
     
     #include <sys/types.h>
-
     #define MAX_OPPONENTS 4
+    #define CONNECTION_TIMEOUT_IN_SEC 60
 
     typedef enum _GameKind {
         gamekind_Unkown = 0,

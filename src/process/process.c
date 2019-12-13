@@ -1,11 +1,11 @@
 #include "process_priv.h"
 
 #include "misc/utilities.h"
+#include "core.h"
 #include <stdlib.h>
 #include <unistd.h>
 
 int startProcessManagement(ProcessManagementInput* input){
-    
     Connection* connection = initiateConnectionSequence(input->inputParams->hostName,input->inputParams->portNumber);
     InitialSharedData initialSharedData;
     if (input->preForkHandler(connection,input->inputParams,&initialSharedData) == -1){
@@ -19,7 +19,7 @@ int startProcessManagement(ProcessManagementInput* input){
 }
 
 Connection* initiateConnectionSequence(char* hostName, char* portNumber){
-    Connection* connection = newConnection(hostName,portNumber);
+    Connection* connection = newConnection(hostName,portNumber,CONNECTION_TIMEOUT_IN_SEC);
     if (connectToServer(connection) == -1)
         panic("Failed to connect to server");
     return connection;
@@ -75,7 +75,6 @@ void teardownCommunicatorProcess(Connection* connection, GameDataSHM* gameSHM, B
     freeBoardSHM(boardSHM);
     detachGameDataSHM(gameSHM);
     freeGameDataSHM(gameSHM);
-    freeProcessInfo(processInfo);
 }
 
 void setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection){
@@ -91,7 +90,6 @@ void teardownThinkerProcess(GameDataSHM* gameSHM, BoardSHM* boardSHM){
     clearBoardSHM(boardSHM);
     detachGameDataSHM(gameSHM);
     clearGameDataSHM(gameSHM);
-    freeProcessInfo(processInfo);
 }
 
 int teardownConnection(Connection* connection){

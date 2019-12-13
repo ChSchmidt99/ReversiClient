@@ -19,4 +19,3 @@ int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardS
 
 int notifyServerAboutThinking(Connection* connection);
 int signalThinker(GameDataSHM* gameSHM);
-int pipeReadIsReady(int fd);

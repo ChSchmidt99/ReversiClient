@@ -15,13 +15,15 @@ struct _Connection {
     char* hostname;
     char* port;
     int socket;
+    int timeoutInSec;
 };
 
-Connection* newConnection(const char* hostname, const char* port){
+Connection* newConnection(const char* hostname, const char* port,int timeoutInSec){
     Connection* connection = safeMalloc(sizeof(Connection));
     connection->hostname = copyStringToNewMemoryAddr(hostname);
     connection->port = copyStringToNewMemoryAddr(port);
     connection->socket = -1;
+    connection->timeoutInSec = timeoutInSec;
     return connection;
 }
 
@@ -71,11 +73,10 @@ ServerMessage* receiveServerMessage(Connection* connection) {
     return parseServerMessage(readLineFromServer(connection));
 }
 
-//TODO: Test readLineFromServer
 char* readLineFromServer(Connection* connection){
-    
-    //TODO: Check if Server is still available (with select)
-    
+    if (!fileDescriptorReadIsReady(connection->socket,connection->timeoutInSec))
+        panic("Server Timeout!");
+
     ssize_t length = 0;
     char currentChar = 'a';
     char* result = NULL;
@@ -95,21 +96,6 @@ char* readLineFromServer(Connection* connection){
         result[length - 1] = currentChar;
     } 
     return result;
-}
-
-//TODO: Maybe return Error Code and don't panic, but lets see about that
-//Depreciated, use readLineFromServer!
-char* readServerMessage(Connection* connection, ssize_t buffSize, char buffer[buffSize]){
-    if (connection->socket == -1)
-        panic("Not connectet to server");
-    
-    ssize_t len = read(connection->socket, buffer, buffSize - 1);
-
-    if (len == buffSize - 1)
-        panic("Could not read ServerMessage, buffer was too small!");
-
-    buffer[len] = '\0';
-    return buffer;
 }
 
 void writeLineToServer(Connection* connection, char* message){
