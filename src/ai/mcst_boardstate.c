@@ -7,12 +7,7 @@
 #define MAX_POSSIBLE_MOVES 64
 
 char (*NewEmptyBoard())[BOARD_SIZE]{
-    char(*board)[BOARD_SIZE] = malloc(sizeof(char) * BOARD_SIZE * BOARD_SIZE);
-    
-    //TODO: Remove NULL checks for performance?
-    if (board == NULL)
-        panic("Malloc Failed");
-
+    char(*board)[BOARD_SIZE] = safeMalloc(sizeof(char) * BOARD_SIZE * BOARD_SIZE);
     for (int i = 0; i < BOARD_SIZE; i++){
         for (int j = 0; j < BOARD_SIZE; j++){
             board[i][j] = MCST_EMPTY_SYMBOL;
@@ -29,9 +24,7 @@ void InitBoardWithStartingPosition(char(*board)[BOARD_SIZE]){
 }
 
 char (*CopyBoard(char(*board)[BOARD_SIZE]))[BOARD_SIZE]{
-    char(*out)[BOARD_SIZE] = malloc(sizeof(char) * BOARD_SIZE * BOARD_SIZE);
-    if (out == NULL)
-        panic("Malloc Failed");
+    char(*out)[BOARD_SIZE] = safeMalloc(sizeof(char) * BOARD_SIZE * BOARD_SIZE);
 
     for (size_t i = 0; i < BOARD_SIZE; i++){
         for (size_t j = 0; j < BOARD_SIZE; j++){
@@ -183,18 +176,14 @@ void ExecuteMove(char(*board)[BOARD_SIZE], int row, int col, char forPlayer){
 
 size_t** getPossibleMoves(char(*board)[BOARD_SIZE], char forPlayer, size_t* numberOfMovesOut){
     size_t index = 0;
-    size_t** out = malloc(sizeof(size_t*) * MAX_POSSIBLE_MOVES);
-    if (out == NULL)
-        panic("Malloc Failed");
+    size_t** out = safeMalloc(sizeof(size_t*) * MAX_POSSIBLE_MOVES);
 
     for (size_t row = 0; row < BOARD_SIZE; row++){
         for (size_t col = 0; col < BOARD_SIZE; col++){
             if (isOccupied(board,row,col) == 0){
                 if (isAdjointMove(board,row,col) == 1){
                     if (enclosesOpponentPiece(board, forPlayer, row, col) == 1){
-                        size_t* arr = malloc(sizeof(size_t) * 2);
-                        if (board == NULL)
-                            panic("Malloc Failed");
+                        size_t* arr = safeMalloc(sizeof(size_t) * 2);
                         arr[0] = row;
                         arr[1] = col;
                         out[index] = arr;
@@ -210,9 +199,7 @@ size_t** getPossibleMoves(char(*board)[BOARD_SIZE], char forPlayer, size_t* numb
 
 //TODO: Only 8x8 Boards supportded, make dynamic!
 char* getIdentifier(int row, int col){
-    char* out = malloc(sizeof(char) * 3);
-    if (out == NULL)
-        panic("Malloc Failed");
+    char* out = safeMalloc(sizeof(char) * 3);
 
     out[0] = 'A' + col;
     out[1] = '8' - row;

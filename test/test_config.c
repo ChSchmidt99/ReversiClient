@@ -9,16 +9,16 @@ static int compareParamStructs(int firstParamElement, int secondParamElement, in
 };
 
 static char* testGetParamsFromFile() {
-    Params* params = getParamsFromFile(WHITESPACE_CONFIG_FILE_PATH);
-    Params* paramsToCompareWith = newParams("sysprak.priv.lab.nm.ifi.lmu.de", "1357", "Reversi");
+    ConfigParams* params = getParamsFromFile(WHITESPACE_CONFIG_FILE_PATH);
+    ConfigParams* paramsToCompareWith = newParams("sysprak.priv.lab.nm.ifi.lmu.de", "1357", "Reversi");
     mu_assert("Elements in both Param Structs should be equal", compareParamStructs(
             strcmp(params->hostName,paramsToCompareWith->hostName),
             strcmp(params->portNumber,paramsToCompareWith->portNumber),
             strcmp(params->gameKind,paramsToCompareWith->gameKind)
         ) == 0
     );
-    freeParams(paramsToCompareWith);
-    freeParams(params);
+    freeConfigParams(paramsToCompareWith);
+    freeConfigParams(params);
     return 0;
 }
 

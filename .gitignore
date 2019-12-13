@@ -5,5 +5,7 @@ build/*
 !build/.gitkeep
 CMakeLists.txt
 .idea
-cmake-build-debug/
+cmake-build-debug
 bundle.zip
+testOut/*
+

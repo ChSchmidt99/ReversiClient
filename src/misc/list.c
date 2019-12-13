@@ -15,9 +15,7 @@ struct List_t{
 };
 
 List* newEmptyList(){
-    List* newList = malloc(sizeof(List));
-    if (newList == NULL)
-        panic("Malloc Failed");
+    List* newList = safeMalloc(sizeof(List));
     newList->length = 0;
     newList->head = NULL;
     return newList;
@@ -26,16 +24,12 @@ List* newEmptyList(){
 List* newListFromArray(void** data, size_t length){
     Node* previousList = NULL;
     for (int i = length - 1; i >= 0; i--){
-        Node* list = malloc(sizeof(Node));
-        if (list == NULL)
-            panic("Malloc Failed");
+        Node* list = safeMalloc(sizeof(Node));
         list->nextEntry = previousList;
         list->data = data[i];
         previousList = list;
     }
-    List* newList = malloc(sizeof(List));
-    if (newList == NULL)
-        panic("Malloc Failed");
+    List* newList = safeMalloc(sizeof(List));
     newList->length = length;
     newList->head = previousList;
     return newList;
@@ -43,9 +37,7 @@ List* newListFromArray(void** data, size_t length){
 
 void appendToNode(Node* node, void* data){
     if (node->nextEntry == NULL){
-        Node* newList = malloc(sizeof(Node));
-        if (newList == NULL)
-            panic("Malloc Failed");
+        Node* newList = safeMalloc(sizeof(Node));
 
         newList->nextEntry = NULL;
         newList->data = data;
@@ -57,9 +49,7 @@ void appendToNode(Node* node, void* data){
 
 void append(List* list, void* data){
     if (list->head == NULL){
-        Node* newNode = malloc(sizeof(Node));
-        if (newNode == NULL)
-            panic("Malloc Failed");
+        Node* newNode = safeMalloc(sizeof(Node));
         newNode->nextEntry = NULL;
         newNode->data = data;
         list->head = newNode;
@@ -186,7 +176,6 @@ size_t getLength(List* list){
     return list->length;
 }
 
-//TODO: Test freeListContents
 void FreeNodeContents(Node* nodes){
     free(nodes->data);
     if (nodes->nextEntry != NULL)

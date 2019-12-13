@@ -79,7 +79,7 @@ Node_mcst* buildMCSTTree(char(*board)[BOARD_SIZE], char forPlayer, time_t return
 }
 
 expandMCSTTreeInput* newExpandMCSTTreeInput(Node_mcst* rootNode, char forPlayer, time_t returnTimestamp){
-    expandMCSTTreeInput* out = malloc(sizeof(expandMCSTTreeInput));
+    expandMCSTTreeInput* out = safeMalloc(sizeof(expandMCSTTreeInput));
     out->rootNode = rootNode;
     out->forPlayer = forPlayer;
     out->returnTimestamp = returnTimestamp;

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
-    PlayerMeta* meta = malloc(sizeof(PlayerMeta));
+    PlayerMeta* meta = safeMalloc(sizeof(PlayerMeta));
     meta->name = copyStringToNewMemoryAddr(name);
     meta->number = number;
     meta->isReady = isReady;
@@ -13,6 +13,19 @@ PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
 void freePlayerMeta(PlayerMeta* meta){
     free(meta->name);
     free(meta);
+}
+
+ProcessInfo* newProcessInfo(int pipe[2], pid_t thinkerPID, pid_t communicatorPID){
+    ProcessInfo* info = safeMalloc(sizeof(ProcessInfo));
+    info->fd[0] = pipe[0];
+    info->fd[1] = pipe[1];
+    info->thinkerPID = thinkerPID;
+    info->communicatorPID = communicatorPID;
+    return info;
+}
+
+void freeProcessInfo(ProcessInfo* procInfo) {
+    free(procInfo);
 }
 
 char* gameKindString(GameKind gameKind){

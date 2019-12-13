@@ -5,7 +5,7 @@
 #include <sys/shm.h>
 
 GameDataSHM* newGameDataSHM(SharedGameData* shmData, int shmId){
-    GameDataSHM* shm = malloc(sizeof(GameDataSHM));
+    GameDataSHM* shm = safeMalloc(sizeof(GameDataSHM));
     shm->sharedData = shmData;
     shm->shmId = shmId;
     return shm;
@@ -51,20 +51,15 @@ char* getGameName(GameDataSHM* shm){
     return shm->sharedData->gameName;
 }
 
-void setThinkerPID(GameDataSHM* shm, pid_t PID){
-    shm->sharedData->thinkerPID = PID;
+void setProcessInfo(GameDataSHM* shm, ProcessInfo* processInfo){
+    shm->sharedData->processInfo.fd[0] = processInfo->fd[0];
+    shm->sharedData->processInfo.fd[1] = processInfo->fd[1];
+    shm->sharedData->processInfo.communicatorPID = processInfo->communicatorPID;
+    shm->sharedData->processInfo.thinkerPID = processInfo->thinkerPID;
 }
 
-pid_t getThinkerPID(GameDataSHM* shm){
-    return shm->sharedData->thinkerPID;
-}
-
-void setCommunicatorPID(GameDataSHM* shm, pid_t PID){
-    shm->sharedData->communicatorPID = PID;
-}
-
-pid_t getCommunicatorPID(GameDataSHM* shm){
-    return shm->sharedData->communicatorPID;
+ProcessInfo* getProcessInfo(GameDataSHM* shm){
+    return newProcessInfo(shm->sharedData->processInfo.fd,shm->sharedData->processInfo.thinkerPID,shm->sharedData->processInfo.communicatorPID);
 }
 
 void setOwnPlayerMeta(GameDataSHM* shm, PlayerMeta* meta){
@@ -108,4 +103,12 @@ int getIsThinking(GameDataSHM* shm){
 
 void setIsThinking(GameDataSHM* shm, int val){
     shm->sharedData->isThinking = val;
+}
+
+int getMoveTime(GameDataSHM* shm){
+    return shm->sharedData->moveTime;
+}
+
+void setMoveTime(GameDataSHM* shm, int val){
+    shm->sharedData->moveTime = val;
 }
