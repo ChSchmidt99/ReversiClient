@@ -67,24 +67,23 @@ int preForkHandler(Connection* connection, InputParams* params, InitialSharedDat
     return 0;
 }
 
-int communicatorEntry(ProcessInfo* processInfo, Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    if (startGameLoop(connection, boardSHM, gameSHM, processInfo) == -1)
+int communicatorEntry(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
+    if (startGameLoop(connection, boardSHM, gameSHM) == -1)
         return -1;
      else
         return 1;
     return 0;
 }
 
-int thinkerEntry(ProcessInfo* processInfo, BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    printf("Thinker Entry!\n");
-    
-    if (initThinkerOnce(boardSHM,gameSHM,processInfo) == -1){
+int thinkerEntry(BoardSHM* boardSHM, GameDataSHM* gameSHM){    
+    if (initThinkerOnce(boardSHM,gameSHM) == -1){
         return -1;
     }
 
-    while (waitpid(getChildPID(processInfo),NULL,0) == 0);
+    ProcessInfo* processInfo = getProcessInfo(gameSHM);
+    while (waitpid(processInfo->communicatorPID,NULL,0) == 0);
+    freeProcessInfo(processInfo);
     
-    printf("Child PID was: %i\n",getChildPID(processInfo));
     deinitThinker();
     printf("Thinker returning\n");
     return 0;

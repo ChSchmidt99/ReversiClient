@@ -46,29 +46,31 @@ int pipeAndFork(ProcessManagementInput* input, Connection* connection, GameDataS
     if (processID < 0){
         printf("Failed To Fork!\n");
     } else if (processID == 0){
-        ProcessInfo* processInfo = setupCommunicatorProcess(fd,gameSHM);
-        int ret = input->communicatorEntry(processInfo,connection,boardSHM,gameSHM);
-        teardownCommunicatorProcess(processInfo,connection,gameSHM,boardSHM);
+        setupCommunicatorProcess(fd,gameSHM);
+        int ret = input->communicatorEntry(connection,boardSHM,gameSHM);
+        teardownCommunicatorProcess(connection,gameSHM,boardSHM);
         exitWithExitCode(ret);
     } else {
-        ProcessInfo* processInfo = setupThinkerProcess(fd,gameSHM,connection,processID);
-        int ret = input->thinkerEntry(processInfo, boardSHM, gameSHM);
-        teardownThinkerProcess(processInfo,gameSHM,boardSHM);    
+        setupThinkerProcess(fd,gameSHM,connection);
+        int ret = input->thinkerEntry(boardSHM, gameSHM);
+        teardownThinkerProcess(gameSHM,boardSHM);    
         return ret;
     }
     return -1;
 }
 
-ProcessInfo* setupCommunicatorProcess(int pipe[2], GameDataSHM* gameSHM){
-    ProcessInfo* processInfo = createProcessInfo(pipe,getppid(),getpid());
-    setCommunicatorPID(gameSHM,getpid());
-    close(writeFileDescriptor(processInfo));
-    return processInfo;
+void setupCommunicatorProcess(int pipe[2], GameDataSHM* gameSHM){
+    ProcessInfo* processInfo = newProcessInfo(pipe,getppid(),getpid());
+    setProcessInfo(gameSHM,processInfo);
+    freeProcessInfo(processInfo);
+    close(writeFileDescriptor(pipe));
 }
 
-void teardownCommunicatorProcess(ProcessInfo* processInfo, Connection* connection, GameDataSHM* gameSHM, BoardSHM* boardSHM){
+void teardownCommunicatorProcess(Connection* connection, GameDataSHM* gameSHM, BoardSHM* boardSHM){
+    ProcessInfo* processInfo = getProcessInfo(gameSHM);
+    close(readFileDescriptor(processInfo->fd));
+    freeProcessInfo(processInfo);
     teardownConnection(connection);
-    close(readFileDescriptor(processInfo));
     detachBoardSHM(boardSHM);
     freeBoardSHM(boardSHM);
     detachGameDataSHM(gameSHM);
@@ -76,16 +78,15 @@ void teardownCommunicatorProcess(ProcessInfo* processInfo, Connection* connectio
     freeProcessInfo(processInfo);
 }
 
-ProcessInfo* setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection, pid_t childPID){
-    ProcessInfo* processInfo = createProcessInfo(pipe,getpid(),childPID);
-    setThinkerPID(gameSHM,getpid());
+void setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connection){
+    close(readFileDescriptor(pipe));
     teardownConnection(connection);
-    close(readFileDescriptor(processInfo));
-    return processInfo;
 }
 
-void teardownThinkerProcess(ProcessInfo* processInfo, GameDataSHM* gameSHM, BoardSHM* boardSHM){
-    close(writeFileDescriptor(processInfo));
+void teardownThinkerProcess(GameDataSHM* gameSHM, BoardSHM* boardSHM){
+    ProcessInfo* processInfo = getProcessInfo(gameSHM);
+    close(writeFileDescriptor(processInfo->fd));
+    freeProcessInfo(processInfo);
     detachBoardSHM(boardSHM);
     clearBoardSHM(boardSHM);
     detachGameDataSHM(gameSHM);
@@ -100,31 +101,10 @@ int teardownConnection(Connection* connection){
     return 0;
 }
 
-ProcessInfo* createProcessInfo(int pipe[2], pid_t parent, pid_t child){
-    ProcessInfo* info = safeMalloc(sizeof(ProcessInfo));
-    info->fd[0] = pipe[0];
-    info->fd[1] = pipe[1];
-    info->parent = parent;
-    info->child = child;
-    return info;
+int readFileDescriptor(int fd[2]) {
+    return fd[0];
 }
 
-void freeProcessInfo(ProcessInfo* procInfo) {
-    free(procInfo);
-}
-
-int readFileDescriptor(ProcessInfo* info) {
-    return info->fd[0];
-}
-
-int writeFileDescriptor(ProcessInfo* info) {
-    return info->fd[1];
-}
-
-pid_t getChildPID(ProcessInfo* info){
-    return info->child;
-}
-
-pid_t getParentPID(ProcessInfo* info){
-    return info->parent;
+int writeFileDescriptor(int fd[2]) {
+    return fd[1];
 }

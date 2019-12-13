@@ -1,5 +1,9 @@
 #ifndef CORE_H
 #define CORE_H
+    
+    #include <sys/types.h>
+
+    #define MAX_OPPONENTS 4
 
     typedef enum _GameKind {
         gamekind_Unkown = 0,
@@ -20,7 +24,17 @@
         char* playerPreference;
     } InputParams;
 
+    typedef struct _ProcessInfo {
+        pid_t communicatorPID;
+        pid_t thinkerPID;
+        int fd[2];
+    } ProcessInfo;
+
     PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
     void freePlayerMeta(PlayerMeta* meta);
+
+    ProcessInfo* newProcessInfo(int pipe[2], pid_t thinkerPID, pid_t communicatorPID);
+    void freeProcessInfo(ProcessInfo* procInfo);
+
     char* gameKindString(GameKind gameKind);
 #endif

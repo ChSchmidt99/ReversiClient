@@ -1,8 +1,8 @@
 #include "shareddataaccess/gamedataaccess.h"
+#include "core.h"
 
 //TODO: Make dynamic
 #define NAME_BUFFER_SIZE 256
-#define MAX_OPPONENTS 1
 
 typedef struct {
     char name[NAME_BUFFER_SIZE];
@@ -12,8 +12,7 @@ typedef struct {
 
 typedef struct {
     char gameName[NAME_BUFFER_SIZE];
-    pid_t thinkerPID;
-    pid_t communicatorPID;
+    ProcessInfo processInfo;
     int isThinking;
     int moveTime;
     SharedPlayerInfo ownInfo;

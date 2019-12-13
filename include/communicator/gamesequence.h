@@ -6,6 +6,6 @@
     #include "communicator/connection.h"
     #include "process/process.h"
 
-    int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processinfo);
+    int startGameLoop(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
 
 #endif

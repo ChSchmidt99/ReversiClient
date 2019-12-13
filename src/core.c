@@ -15,6 +15,19 @@ void freePlayerMeta(PlayerMeta* meta){
     free(meta);
 }
 
+ProcessInfo* newProcessInfo(int pipe[2], pid_t thinkerPID, pid_t communicatorPID){
+    ProcessInfo* info = safeMalloc(sizeof(ProcessInfo));
+    info->fd[0] = pipe[0];
+    info->fd[1] = pipe[1];
+    info->thinkerPID = thinkerPID;
+    info->communicatorPID = communicatorPID;
+    return info;
+}
+
+void freeProcessInfo(ProcessInfo* procInfo) {
+    free(procInfo);
+}
+
 char* gameKindString(GameKind gameKind){
     if (gameKind == gamekind_Reversi)
         return copyStringToNewMemoryAddr("Reversi");

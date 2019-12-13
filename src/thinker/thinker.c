@@ -15,16 +15,14 @@
 typedef struct _Thinker {
     BoardSHM* boardSHM;
     GameDataSHM* gameSHM; 
-    ProcessInfo* processInfo;
 } Thinker;
 
 Thinker* thinker;
 
-int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM, ProcessInfo* processInfo){
+int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM){
     thinker = safeMalloc(sizeof(thinker));
     thinker->boardSHM = boardSHM;
     thinker->gameSHM = gameSHM;
-    thinker->processInfo = processInfo;
     if (addSignalHandler() == -1){
         perror("Failed to add Signal handler");
         return -1;
@@ -71,9 +69,10 @@ void receivedThinkSignal(){
 
     char* move = CalculateNextMoveAIOptimizedThreads(board,playerSymbol,2,2);
 
-    printf("Writing move %s to Pipe with fd: %i ...\n",move,writeFileDescriptor(thinker->processInfo));
-    ssize_t writtenSize = write(writeFileDescriptor(thinker->processInfo),move,MOVE_BUFFER_SIZE);
-    
+    ProcessInfo* processInfo = getProcessInfo(thinker->gameSHM);
+    ssize_t writtenSize = write(writeFileDescriptor(processInfo->fd),move,MOVE_BUFFER_SIZE);
+    freeProcessInfo(processInfo);
+
     if (writtenSize != MOVE_BUFFER_SIZE){
         perror("Failed to write to Pipe!");
     } else {
