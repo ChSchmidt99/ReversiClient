@@ -58,7 +58,7 @@ void receivedThinkSignal(){
     if (!isThinking)
         return;
 
-    printf("Thinker thinking...");
+    printf("Thinker thinking...\n");
     size_t boardSize = getBoardSize(thinker->boardSHM);
     char (*board)[boardSize] = getBoard(thinker->boardSHM);
     PlayerMeta* playerInfo = getOwnPlayerMeta(thinker->gameSHM);
@@ -75,8 +75,6 @@ void receivedThinkSignal(){
 
     if (writtenSize != MOVE_BUFFER_SIZE){
         perror("Failed to write to Pipe!");
-    } else {
-        printf("Successfuly wrode to Pipe!\n");
     }
 
     free(board);
