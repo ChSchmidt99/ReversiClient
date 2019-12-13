@@ -12,6 +12,14 @@
         int isReady;
     } PlayerMeta;
 
+    typedef struct _InputParams {
+        char* hostName;
+        char* portNumber;
+        char* gameKind;
+        char* gameId;
+        char* playerPreference;
+    } InputParams;
+
     PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
     void freePlayerMeta(PlayerMeta* meta);
     char* gameKindString(GameKind gameKind);

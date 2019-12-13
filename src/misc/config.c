@@ -5,21 +5,6 @@
 #define FILEPATH_BUFFER_SIZE 256
 #define MAX_STRING_SIZE 100
 
-ConfigParams* newParams(char* hostname, char* portNumber, char* gameKind){
-    ConfigParams* params = safeMalloc(sizeof(ConfigParams));
-    params->hostName = copyStringToNewMemoryAddr(hostname);
-    params->portNumber = copyStringToNewMemoryAddr(portNumber);
-    params->gameKind = copyStringToNewMemoryAddr(gameKind);
-    return params;
-}
-
-void freeConfigParams(ConfigParams* params){
-    free(params->gameKind);
-    free(params->portNumber);
-    free(params->hostName);
-    free(params);
-}
-
 FILE* openFile(char* path) {
     FILE *file = NULL;
     if ((file=fopen(path,"r")) == NULL) { 
@@ -29,9 +14,11 @@ FILE* openFile(char* path) {
     return file;
 }
 
-ConfigParams* getParamsFromFile(char *filePath) {
-  
+int setParamsFromFile(InputParams* params, char *filePath){
   FILE* configFile = openFile(filePath);
+  if (configFile == NULL)
+    return -1;
+
   char ch;
   int i = 0;
   char paramsArray[NUMBER_OF_STRING][MAX_STRING_SIZE];
@@ -63,7 +50,9 @@ ConfigParams* getParamsFromFile(char *filePath) {
       }
       pointer[i++] = ch;
   }
-  ConfigParams* params = newParams(paramsArray[0], paramsArray[1], paramsArray[2]);
+  params->hostName = copyStringToNewMemoryAddr(paramsArray[0]);
+  params->portNumber = copyStringToNewMemoryAddr(paramsArray[1]);
+  params->gameKind = copyStringToNewMemoryAddr(paramsArray[2]);
   fclose(configFile);
-  return params;
+  return 0;
 }

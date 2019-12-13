@@ -4,17 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "misc/utilities.h"
-
-typedef struct _ConfigParams {
-    char* hostName;
-    char* portNumber;
-    char* gameKind;
-} ConfigParams;
-
-ConfigParams* newParams(char* hostname, char* portNumber, char* gameKind);
-void freeConfigParams(ConfigParams* params);
+#include "core.h"
 
 FILE* openFile(char* path);
-ConfigParams* getParamsFromFile(char *filePath);
-
+int setParamsFromFile(InputParams* params, char *filePath);
 #endif

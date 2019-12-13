@@ -22,7 +22,6 @@ void initGameSHM(GameDataSHM* gameSHM, GameInstance* gameInstance);
 int thinkerProcess(BoardSHM* boardSHM,GameDataSHM* gameSHM, ProcessInfo* procInfo);
 int communicatorProcess(BoardSHM* boardSHM, GameDataSHM* gameSHM, Connection* connection, int moveTime, ProcessInfo* procInfo);
 
-void initInputParams(int argc,char* argv[],InputParams* inputParams);
+int initInputParams(int argc,char* argv[],InputParams* inputParams);
 void deinitInputParams(InputParams* inputParams);
-ConfigParams* getConfigParams(int argc, char* argv[]);
 char* getConfigPath();

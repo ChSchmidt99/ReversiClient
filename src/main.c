@@ -20,7 +20,8 @@ int main(int argc, char *argv[]){
     srand(time(NULL));
 
     InputParams inputParams;
-    initInputParams(argc,argv, &inputParams);
+    if (initInputParams(argc,argv, &inputParams) == -1)
+        panic("Failed to init input params");
 
     ProcessManagementInput forkIn;
     forkIn.preForkHandler = &preForkHandler;
@@ -84,33 +85,30 @@ int thinkerEntry(ProcessInfo* processInfo, BoardSHM* boardSHM, GameDataSHM* game
     while (waitpid(getChildPID(processInfo),NULL,0) == 0);
     
     printf("Child PID was: %i\n",getChildPID(processInfo));
-
     deinitThinker();
     printf("Thinker returning\n");
     return 0;
 }
 
-void initInputParams(int argc,char* argv[],InputParams* inputParams){
+int initInputParams(int argc,char* argv[],InputParams* inputParams){
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL)
         panic("GameId must be set!");
     
     inputParams->gameId = gameId;
     inputParams->playerPreference = readPreferencedPlayerNumber(argc,argv);
-    inputParams->configParams = getConfigParams(argc,argv);
+    char* filePath = getConfigPath(argc,argv);
+    int ret = setParamsFromFile(inputParams,filePath);
+    free(filePath);
+    return ret;
 }
 
 void deinitInputParams(InputParams* inputParams){
-    freeConfigParams(inputParams->configParams);
+    free(inputParams->hostName);
+    free(inputParams->portNumber);
+    free(inputParams->gameKind);
     free(inputParams->gameId);
     free(inputParams->playerPreference);
-}
-
-ConfigParams* getConfigParams(int argc, char* argv[]){
-    char* configFilePath = getConfigPath(argc,argv);
-    ConfigParams* params = getParamsFromFile(configFilePath);
-    free(configFilePath);
-    return params;
 }
 
 char* getConfigPath(int argc, char *argv[]){

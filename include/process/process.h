@@ -5,6 +5,7 @@
 #include "shareddataaccess/gamedataaccess.h"
 #include "communicator/connection.h"
 #include "misc/config.h"
+#include "core.h"
 #include <sys/types.h>
 
 #define MAX_OPPONENTS 4
@@ -19,12 +20,6 @@ typedef struct _InitialSharedData {
     size_t opponentCount;
     PlayerMeta* opponents[MAX_OPPONENTS];
 } InitialSharedData;
-
-typedef struct _InputParams {
-    ConfigParams* configParams;
-    char* gameId;
-    char* playerPreference;
-} InputParams;
 
 typedef struct _ProcessManagementInput {
     int(*preForkHandler)(Connection* connection, InputParams* inputParams,InitialSharedData *initSharedDataOut);
