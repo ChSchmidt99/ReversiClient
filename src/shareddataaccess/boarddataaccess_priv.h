@@ -8,4 +8,3 @@ typedef struct _BoardSHM {
 } BoardSHM;
 
 BoardSHM* newBoardSHM(int shmId, size_t boardSize, char board[]);
-void freeBoardSHM(BoardSHM* shm);

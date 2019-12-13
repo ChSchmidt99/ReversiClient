@@ -9,7 +9,7 @@
 
 typedef struct _Connection Connection;
 
-Connection* newConnection(const char* hostname, const char* port);
+Connection* newConnection(const char* hostname, const char* port,int timeoutInSec);
 void freeConnection(Connection* connection);
 
 int connectToServer(Connection* connection);

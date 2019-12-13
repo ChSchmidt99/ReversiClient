@@ -9,9 +9,7 @@
 #include "misc/list.h"
 
 Node_mcst* NewMCSTNode(char(*board)[BOARD_SIZE],char playerForNextTurn, Node_mcst* previousNode){
-    Node_mcst* node = malloc(sizeof(Node_mcst));
-    if (node == NULL)
-        panic("Malloc Failed");
+    Node_mcst* node = safeMalloc(sizeof(Node_mcst));
     node->boardState = board;
     node->playerForNextTurn = playerForNextTurn;
     node->parentNode = previousNode;
@@ -157,7 +155,7 @@ Node_mcst** CalculateAllChildren(Node_mcst* parentNode, size_t* childCountOut){
     List* states = GetPossibleBoardStates(parentNode->boardState, parentNode->playerForNextTurn);
     size_t numberOfStates = getLength(states);
     if (numberOfStates > 0){
-        Node_mcst** nodes = malloc(sizeof(Node_mcst*) * numberOfStates);
+        Node_mcst** nodes = safeMalloc(sizeof(Node_mcst*) * numberOfStates);
         for (size_t i = 0; i < numberOfStates; i++){
             char (*state)[BOARD_SIZE] = getAtIndex(states,i);
             Node_mcst* newNode = NewMCSTNode(state, GetNextPlayer(state,parentNode->playerForNextTurn), parentNode);
@@ -178,7 +176,7 @@ void addAllChildren(Node_mcst* parentNode){
     List* states = GetPossibleBoardStates(parentNode->boardState, parentNode->playerForNextTurn);
     size_t numberOfStates = getLength(states);
     if (numberOfStates > 0){
-        Node_mcst** nodes = malloc(sizeof(Node_mcst*) * numberOfStates);
+        Node_mcst** nodes = safeMalloc(sizeof(Node_mcst*) * numberOfStates);
         for (size_t i = 0; i < numberOfStates; i++){
             char (*state)[BOARD_SIZE] = getAtIndex(states,i);
             Node_mcst* newNode = NewMCSTNode(state, GetNextPlayer(state,parentNode->playerForNextTurn), parentNode);

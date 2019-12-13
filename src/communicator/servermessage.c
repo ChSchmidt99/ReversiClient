@@ -15,7 +15,7 @@
 #define FIELD_COMMAND "FIELD"
 
 ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
-    ServerMessage* serverMessage = malloc(sizeof(ServerMessage));
+    ServerMessage* serverMessage = safeMalloc(sizeof(ServerMessage));
     serverMessage->type = type;
     serverMessage->messageReference = messageReference;
     return serverMessage;

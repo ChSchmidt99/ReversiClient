@@ -63,7 +63,7 @@ GameInstance* initiateProlog(Connection* connection, const char* version, const 
 
 
 GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName){
-    GameInstance* newInstance = malloc(sizeof(GameInstance) + sizeof(PlayerMeta*) * opponentCount);
+    GameInstance* newInstance = safeMalloc(sizeof(GameInstance) + sizeof(PlayerMeta*) * opponentCount);
     newInstance->gameKind = gameKind;
     newInstance->ownPlayer = ownPlayer;
     newInstance->opponentCount = opponentCount;

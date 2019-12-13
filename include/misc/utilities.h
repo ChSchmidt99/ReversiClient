@@ -8,6 +8,7 @@
 #define INT2VOIDP(i) (void*)(uintptr_t)(i)
 
 void panic(char* message);
+void* safeMalloc(size_t size);
 char* copyStringToNewMemoryAddr(const char* str);
 char* concatStringToNewMemoryAddr(const char* str1, const char* str2, const char* divider);    
 double fRand(double fMin, double fMax);
@@ -20,5 +21,7 @@ void freeTokens(char** tokens);
 char* joinTokens(char** tokens, size_t length, char* delimiter);
 void freeArrayWithContents(void** arr, size_t length);
 void logMessage(char* message, int level);
+void exitWithExitCode(int err);
+int fileDescriptorReadIsReady(int fd, int timeoutInSeconds);
 
 #endif

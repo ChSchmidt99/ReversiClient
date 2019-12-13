@@ -1,7 +1,5 @@
 #include "communicator_priv.h"
 
-//TODO: Parse Server Messages and wrap responses in ServerMessageType
-//TODO: Cache if wrong response type
 char* receiveServerGreeting(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);
     if (message->type == Error){
@@ -196,10 +194,8 @@ int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
 
 //Use proper array instead of double ptr
 char** receiveBoard(Connection* connection, size_t rows){
-    logMessage("Receiving Board...\n",1);
-    char** board = malloc(sizeof(char*) * rows);
+    char** board = safeMalloc(sizeof(char*) * rows);
     for(size_t i = 0; i < rows; i++){
-        //TODO: Replace receiveServerMessage with safelyReceiveServerMessage, which unwraps Error
         ServerMessage* message = receiveServerMessage(connection);
         if(message->type == Error){
             printf("%s\n",message->messageReference);

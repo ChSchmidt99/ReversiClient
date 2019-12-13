@@ -44,4 +44,12 @@ $(BUILD_DIR)/$(PROG_MAINO): $(PROG_MAIN)
 clean:
 	$(RM) -r $(BUILD_DIR) 
 
+bundle:
+	$(RM) -r bundle.zip 
+	zip -r bundle.zip src/  include/  makefile
+
+testscript:
+	$(RM) -r testOut
+	./test_script.sh testOut testLog bundle.zip 
+
 MKDIR_P ?= mkdir -p
