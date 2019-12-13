@@ -69,6 +69,7 @@ void receivedThinkSignal(){
     if (playerInfo->number == 1)
         playerSymbol = 'W';
 
+    //TODO: Use move time
     char* move = CalculateNextMoveAIOptimizedThreads(board,playerSymbol,2,2);
 
     printf("Writing move %s to Pipe with fd: %i ...\n",move,writeFileDescriptor(thinker->processInfo));

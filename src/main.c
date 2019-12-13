@@ -16,9 +16,6 @@
 #include "info/process.h"
 
 
-//TODO: wait still needed? not available on macOS
-//#include <wait.h>
-
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
