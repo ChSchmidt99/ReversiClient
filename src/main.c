@@ -15,6 +15,7 @@
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
+//TODO: Improve Logging!
 //TODO: Cach strc+c signal and execute teardown!
 int main(int argc, char *argv[]){
     srand(time(NULL));
