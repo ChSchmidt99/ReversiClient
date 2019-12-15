@@ -90,13 +90,16 @@ int thinkerEntry(BoardSHM* boardSHM, GameDataSHM* gameSHM){
     return 0;
 }
 
-int initInputParams(int argc,char* argv[],InputParams* inputParams){
+int initInputParams(int argc, char* argv[], InputParams* inputParams){
     char* gameId = readGameID(argc,argv);
     if (gameId == NULL)
         panic("GameId must be set!");
     
     inputParams->gameId = gameId;
-    inputParams->playerPreference = readPreferencedPlayerNumber(argc,argv);
+    char* playerPref = readPreferencedPlayerNumber(argc,argv);    
+    //TODO: Do in a cleaner and safer way (Convert from 1 -> 0 and 2 -> 1)
+    playerPref[0] -= 1;
+    inputParams->playerPreference = playerPref;
     char* filePath = getConfigPath(argc,argv);
     int ret = setParamsFromFile(inputParams,filePath);
     free(filePath);

@@ -68,7 +68,7 @@ void receivedThinkSignal(){
         playerSymbol = 'W';
 
     //TODO: Use move time
-    char* move = CalculateNextMoveAIOptimizedThreads(board,playerSymbol,2,2);
+    char* move = CalculateNextMoveAIOptimizedThreads(board,playerSymbol,1,1);
 
     ProcessInfo* processInfo = getProcessInfo(thinker->gameSHM);
     ssize_t writtenSize = write(writeFileDescriptor(processInfo->fd),move,MOVE_BUFFER_SIZE);

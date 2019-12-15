@@ -4,7 +4,7 @@
 
 CC=gcc
 
-TARGET_EXEC ?= play
+TARGET_EXEC ?= sysprak-client
 TEST_EXEC ?= test
 
 TEST_MAIN ?= test/test_main.c
@@ -51,5 +51,9 @@ bundle:
 testscript:
 	$(RM) -r testOut
 	./test_script.sh testOut testLog bundle.zip 
+
+play: $(BUILD_DIR)/$(TARGET_EXEC)
+	$(BUILD_DIR)/$(TARGET_EXEC) -g $(GAME_ID) -p $(PLAYER)
+
 
 MKDIR_P ?= mkdir -p
