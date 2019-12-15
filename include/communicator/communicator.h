@@ -14,6 +14,10 @@ char* receiveGameName(Connection* connection);
 PlayerMeta* receivePlayerMeta(Connection* connection);
 int reveiveTotalPlayers(Connection* connection);
 PlayerMeta* receiveOtherPlayer(Connection* connection);
+
+int player1Won(Connection* connection);
+int player0Won(Connection* connection);
+
 int nextMessageIsEndplayers(Connection* connection);
 
 char** receiveBoard(Connection* connection, size_t rows);

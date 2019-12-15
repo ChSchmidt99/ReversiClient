@@ -15,14 +15,13 @@ char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCa
     Node_mcst* mcstTree = buildMCSTTree(board,forPlayer,soonestReturnTimestamp,threads);
     Node_mcst* chosenChild = getChildWithMaxScoreAndMaxGames(mcstTree, latestReturnTimestamp, forPlayer);    
     char* move = GetMoveForBoardStates(board,chosenChild->boardState);
-    
     printf("Tree For Player %c, number of Games: %i\n",forPlayer,mcstTree->gameCount);
-    
     //TODO: Maybe free Tree after return for performance increase
     FreeMCSTTree(mcstTree);
     return move;
 }
 
+//TODO: Make terminate instantly after min calc time,
 char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, time_t minCalculatingTime, time_t maxCalculatingTime){
     time_t soonestReturnTimestamp = time(NULL) + minCalculatingTime;
     time_t latestReturnTimestamp = time(NULL) + maxCalculatingTime;

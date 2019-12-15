@@ -13,6 +13,8 @@
 #define QUIT_COMMAND "QUIT"
 #define OK_THINK_COMMAND "OKTHINK"
 #define FIELD_COMMAND "FIELD"
+#define PLAYER_0_WON "PLAYER0WON"
+#define PLAYER_1_WON "PLAYER1WON"
 
 ServerMessage* initServerMessage(char* messageReference, ServerMessageType type){
     ServerMessage* serverMessage = safeMalloc(sizeof(ServerMessage));
@@ -54,6 +56,10 @@ ServerMessageType getType(const char* message){
         out = OkThink;
     if(strcmp(splittedMessage[0], FIELD_COMMAND) == 0) 
         out = FieldCommand;
+    if(strcmp(splittedMessage[0], PLAYER_0_WON) == 0) 
+        out = Player0Won;
+    if(strcmp(splittedMessage[0], PLAYER_1_WON) == 0) 
+        out = Player1Won;
 
     freeTokens(splittedMessage);
     return out;

@@ -233,6 +233,52 @@ int receiveOkThink(Connection* connection){
     return result;
 }
 
+int player0Won(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error){
+        printf("Got Error: %s\n",message->messageReference);
+    } else if (message->type != Player0Won) {
+        panic("Unexpected Message type");
+    }
+    size_t length = 0;
+    char** tokens = slice(message->messageReference, " ",&length);
+    if (length != 3){
+        panic("Unexpected message length");
+    }
+
+    int result = 0;
+    if (strcmp(tokens[2],WON_TRUE) == 0){
+        result = 1;
+    }
+
+    freeTokens(tokens);
+    freeServerMessage(message);
+    return result;
+}
+
+int player1Won(Connection* connection){
+    ServerMessage* message = receiveServerMessage(connection);
+    if (message->type == Error){
+        printf("Got Error: %s\n",message->messageReference);
+    } else if (message->type != Player1Won) {
+        panic("Unexpected Message type");
+    }
+    size_t length = 0;
+    char** tokens = slice(message->messageReference, " ",&length);
+    if (length != 3){
+        panic("Unexpected message length");
+    }
+
+    int result = 0;
+    if (strcmp(tokens[2],WON_TRUE) == 0){
+        result = 1;
+    }
+
+    freeTokens(tokens);
+    freeServerMessage(message);
+    return result;
+}
+
 void sendOkWait(Connection* connection){
     printf("Sending: '%s'\n",OK_WAIT_COMMAND);
     writeLineToServer(connection, OK_WAIT_COMMAND);

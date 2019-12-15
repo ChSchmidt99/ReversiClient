@@ -75,7 +75,6 @@ int receivedMove(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSH
         return gameLoop(connection,boardSHM, gameSHM);
 }
 
-//TODO: Check if quit is caught everywhere!
 int receivedQuit(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
     logMessage("Quit received",1);
     return 0;
@@ -94,8 +93,29 @@ int receivedWait(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSH
 
 int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
     logMessage("Received GameOver Command",1);
-    //TODO: Implement me!
-    panic("Implement Me");
+    size_t rows;
+    size_t cols;
+    if (receiveBoardDimensions(connection,&rows,&cols) == -1)
+        return -1;
+
+    char** board = receiveBoard(connection,rows);
+    //TODO: Own function
+    printf("Winning Board:\n");
+    for (size_t i = 0; i < rows; i++){
+        printf("%s\n",board[i]);
+    }
+    free(board);
+
+    //TODO: Get player name and print it 
+    //TODO: Own function
+    int player0Winner = player0Won(connection);
+    player1Won(connection);
+    if (player0Winner){
+        printf("Player 0 Won!\n");
+    } else {
+        printf("Player 1 Won!\n");
+    }
+
     return 0;
 }
 
@@ -145,6 +165,7 @@ int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM*
 
     sendMove(connection,move);
     free(move);
+    free(stringBoard);
     return 0;
 }
 
