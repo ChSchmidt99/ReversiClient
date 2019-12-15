@@ -23,5 +23,6 @@ void freeArrayWithContents(void** arr, size_t length);
 void logMessage(char* message, int level);
 void exitWithExitCode(int err);
 int fileDescriptorReadIsReady(int fd, int timeoutInSeconds);
+long long currentTimestampInMs();
 
 #endif

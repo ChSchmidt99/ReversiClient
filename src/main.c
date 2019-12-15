@@ -98,7 +98,8 @@ int initInputParams(int argc, char* argv[], InputParams* inputParams){
     inputParams->gameId = gameId;
     char* playerPref = readPreferencedPlayerNumber(argc,argv);    
     //TODO: Do in a cleaner and safer way (Convert from 1 -> 0 and 2 -> 1)
-    playerPref[0] -= 1;
+    if (playerPref != NULL)
+        playerPref[0] -= 1;
     inputParams->playerPreference = playerPref;
     char* filePath = getConfigPath(argc,argv);
     int ret = setParamsFromFile(inputParams,filePath);

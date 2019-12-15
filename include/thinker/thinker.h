@@ -8,6 +8,7 @@
 #include "shareddataaccess/gamedataaccess.h"
 #include "process/process.h"
 
+#define LATENCY_CORRECTION_TIME 1500
 int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM);
 void deinitThinker();
 

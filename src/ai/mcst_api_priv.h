@@ -9,10 +9,10 @@ Node_mcst* buildMCSTTree(char(*board)[BOARD_SIZE], char forPlayer, time_t return
 typedef struct {
     Node_mcst* rootNode; 
     char forPlayer;
-    time_t returnTimestamp;
+    long long returnTimestamp;
 } expandMCSTTreeInput;
 
-expandMCSTTreeInput* newExpandMCSTTreeInput(Node_mcst* rootNode, char forPlayer, time_t returnTimestamp);
+expandMCSTTreeInput* newExpandMCSTTreeInput(Node_mcst* rootNode, char forPlayer, long long returnTimestamp);
 void freeExpandMCSTTreeInput(expandMCSTTreeInput* input);
 
 void* expandMCSTTree(void* input);

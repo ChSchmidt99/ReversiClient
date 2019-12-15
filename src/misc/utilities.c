@@ -1,6 +1,7 @@
 #include "misc/utilities.h"
 #include <string.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 void panic (char* message) {
     perror(message);
@@ -165,4 +166,11 @@ int fileDescriptorReadIsReady(int fd, int timeoutInSeconds){
         panic("Select Failed!");
     
     return ret;
+}
+
+long long currentTimestampInMs(){
+    struct timeval te; 
+    gettimeofday(&te, NULL); 
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; 
+    return milliseconds;
 }

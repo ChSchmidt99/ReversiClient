@@ -8,5 +8,5 @@
     // Time in Seconds
     //TODO: use time in ms
     char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCalculatingTime, time_t maxCalculatingTime, size_t threads);
-    char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, time_t minCalculatingTime, time_t maxCalculatingTime);
+    char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, long long calcTimeinMs);
 #endif

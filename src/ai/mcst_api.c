@@ -22,9 +22,9 @@ char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCa
 }
 
 //TODO: Make terminate instantly after min calc time,
-char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, time_t minCalculatingTime, time_t maxCalculatingTime){
-    time_t soonestReturnTimestamp = time(NULL) + minCalculatingTime;
-    time_t latestReturnTimestamp = time(NULL) + maxCalculatingTime;
+//TODO: Cleanup
+char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, long long calcTimeinMs){
+    long long returnTimestamp = currentTimestampInMs() + calcTimeinMs;
     
     Node_mcst* rootNode = NewMCSTNode(board,forPlayer,NULL);
     size_t childCount = 0;
@@ -34,7 +34,7 @@ char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlay
     expandMCSTTreeInput* input[childCount];
 
     for (size_t i = 0; i < childCount; i++){
-        input[i] = newExpandMCSTTreeInput(children[i],forPlayer,soonestReturnTimestamp);
+        input[i] = newExpandMCSTTreeInput(children[i],forPlayer,returnTimestamp);
         if (startThread(&threadIDs[i],expandMCSTTree,input[i]) != 0)
             panic("Failed to start Thread");
     }
@@ -51,7 +51,7 @@ char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlay
         rootNode->winCount += children[i]->winCount;
     }
     
-    Node_mcst* chosenChild = getChildWithMaxScoreAndMaxGames(rootNode, latestReturnTimestamp, forPlayer);        
+    Node_mcst* chosenChild = getChildWithMaxScore(rootNode);
     char* move = GetMoveForBoardStates(board,chosenChild->boardState);
     
     printf("Tree For Player %c, number of Games: %i\n",forPlayer,rootNode->gameCount);
@@ -77,7 +77,7 @@ Node_mcst* buildMCSTTree(char(*board)[BOARD_SIZE], char forPlayer, time_t return
     return rootNode;
 }
 
-expandMCSTTreeInput* newExpandMCSTTreeInput(Node_mcst* rootNode, char forPlayer, time_t returnTimestamp){
+expandMCSTTreeInput* newExpandMCSTTreeInput(Node_mcst* rootNode, char forPlayer, long long returnTimestamp){
     expandMCSTTreeInput* out = safeMalloc(sizeof(expandMCSTTreeInput));
     out->rootNode = rootNode;
     out->forPlayer = forPlayer;
@@ -91,7 +91,7 @@ void freeExpandMCSTTreeInput(expandMCSTTreeInput* input){
 
 void* expandMCSTTree(void* input){
     expandMCSTTreeInput* in = input;
-    while (time(NULL) < in->returnTimestamp){
+    while (currentTimestampInMs() < in->returnTimestamp){
         DescendAI(in->rootNode, in->forPlayer);
     } 
     return NULL;
