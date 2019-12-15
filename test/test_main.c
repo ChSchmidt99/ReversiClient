@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "misc/minunit.h"
 #include "./test_utilities.c"
-#include "./test_config.c"
 
 #include "./test_board_data_access.c"
 #include "./test_gamesequence.c"
@@ -12,7 +11,6 @@
 
  static char * all_tests() {
      mu_run_test_no_count(utilities_tests);
-     mu_run_test_no_count(config_tests);
      mu_run_test_no_count(board_data_access_tests);
      mu_run_test_no_count(gamesequence_tests);
      mu_run_test_no_count(playground);
