@@ -25,6 +25,8 @@ int setParamsFromFile(InputParams* params, char *filePath){
   char key[100];
   char keyValue[100];
   char *pointer = key;
+  memset(key,0,sizeof(key));
+  memset(keyValue,0,sizeof(keyValue));
   while ((ch = getc(configFile)) != EOF) {
       if (ch == '\t' || ch == ' ') continue;
       else if ( ch == '=') {
