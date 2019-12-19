@@ -138,6 +138,7 @@ int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardS
         for (size_t j = 0; j < boardSize; j++){
             boardBuffer[i][j] = row[j + 1];
         }
+        free(row);
     }
     return 0;
 }
@@ -165,6 +166,7 @@ int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM*
 
     sendMove(connection,move);
     free(move);
+    //TODO: Properly free Board!
     free(stringBoard);
     return 0;
 }

@@ -64,6 +64,7 @@ int preForkHandler(Connection* connection, InputParams* params, InitialSharedDat
     for(size_t i = 0; i < gameInstance->opponentCount; i++)
         initSharedDataOut->opponents[i] = gameInstance->opponents[i];
 
+    freeGameInstance(gameInstance);
     return 0;
 }
 

@@ -78,6 +78,7 @@ PlayerMeta* parsePlayerMeta(char* message){
     int number = atoi(tokens[2]);
     char* name = getNameFromPlayerMetaTokens(tokens,length);
     PlayerMeta* out = newPlayerMeta(number,name,1);
+    free(name);
     freeTokens(tokens);
     return out;
 }
@@ -111,6 +112,7 @@ PlayerMeta* parseOtherPlayerMeta(char* message){
     char* name = getNameForOtherPlayersTokens(tokens,length);
     int isReady = atoi(tokens[length - 1]);
     PlayerMeta* out = newPlayerMeta(number,name, isReady);
+    free(name);
     freeTokens(tokens);
     return out;
 }
@@ -132,8 +134,10 @@ int reveiveTotalPlayers(Connection* connection){
         printf("%s\n",message->messageReference);
         return -1;
     }
+    
 
     char ASCInum = message->messageReference[8];
+    freeServerMessage(message);
     return ASCInum - '0';
 }
 
@@ -192,7 +196,7 @@ int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     return 0;
 }
 
-//Use proper array instead of double ptr
+//TODO: Use proper array instead of double ptr
 char** receiveBoard(Connection* connection, size_t rows){
     char** board = safeMalloc(sizeof(char*) * rows);
     for(size_t i = 0; i < rows; i++){

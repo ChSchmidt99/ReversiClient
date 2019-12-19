@@ -20,7 +20,7 @@ typedef struct _Thinker {
 Thinker* thinker;
 
 int initThinkerOnce(BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    thinker = safeMalloc(sizeof(thinker));
+    thinker = safeMalloc(sizeof(Thinker));
     thinker->boardSHM = boardSHM;
     thinker->gameSHM = gameSHM;
     if (addSignalHandler() == -1){
