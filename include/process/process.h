@@ -8,7 +8,6 @@
 #include "misc/config.h"
 #include "core.h"
 
-//TODO: Move Processinfo to core or gameDataSHM
 
 typedef struct _InitialSharedData {
     size_t boardSize;

@@ -7,7 +7,7 @@
 typedef struct _Match {
     BoardSHM* boardSHM;
     GameDataSHM* gameSHM;
-    //TODO: remove moveTime
+    //TODO: check if used and if not remove moveTime
     int moveTime;
 } Match;
 

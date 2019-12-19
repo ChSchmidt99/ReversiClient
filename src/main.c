@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
-#include <sys/wait.h>
 
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"

@@ -8,7 +8,6 @@
 
 #define BOARDSIZE 8
 
-//TODO: 1 Thread for every possible move? no overlapping like that
 char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCalculatingTime, time_t maxCalculatingTime, size_t threads){
     time_t soonestReturnTimestamp = time(NULL) + minCalculatingTime;
     time_t latestReturnTimestamp = time(NULL) + maxCalculatingTime;
@@ -21,7 +20,6 @@ char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCa
     return move;
 }
 
-//TODO: Make terminate instantly after min calc time,
 //TODO: Cleanup
 char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, long long calcTimeinMs){
     long long returnTimestamp = currentTimestampInMs() + calcTimeinMs;

@@ -188,7 +188,6 @@ void addAllChildren(Node_mcst* parentNode){
     freeList(states);
 }
 
-//TODO: Check how expensive funtion calls are in C and maybe replace for performance
 bool isLeafNode(Node_mcst* node){
     if (node->childCount == 0)
         return true;

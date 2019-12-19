@@ -6,7 +6,6 @@
 #include "communicator/servermessage.h"
 #include "core.h"
 
-//TODO: Maybe use communicator struct instead of connection
 char* receiveServerGreeting(Connection* connection);
 int hasAcceptedVersion(Connection* connection);
 GameKind receiveGameKind(Connection* connection);
