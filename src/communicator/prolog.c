@@ -77,13 +77,11 @@ GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t 
 
 void freeGameInstance(GameInstance* instance){
     //TODO: Check if pointers are freed sufficientally
-    /*
     for (size_t i = 0; i < instance->opponentCount; i++){
         freePlayerMeta(instance->opponents[i]);
     }
-    */
     free(instance->gameName);
-    free(instance->ownPlayer);
+    freePlayerMeta(instance->ownPlayer);
     free(instance);
 }
 

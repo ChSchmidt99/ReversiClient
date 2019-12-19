@@ -65,6 +65,7 @@ int preForkHandler(Connection* connection, InputParams* params, InitialSharedDat
     for(size_t i = 0; i < gameInstance->opponentCount; i++)
         initSharedDataOut->opponents[i] = gameInstance->opponents[i];
 
+    //TODO: Memory Leak! gameInstance stuff has to be copied to initSharedDataOut
     freeGameInstance(gameInstance);
     return 0;
 }
