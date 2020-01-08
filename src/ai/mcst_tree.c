@@ -53,35 +53,11 @@ void DescendAI(Node_mcst* rootNode, char expectedWinner){
     }
 }
 
-/*
+
 void expand(Node_mcst* leafNode, char expectedWinner){
     addAllChildren(leafNode);
     simulateAllChildren(leafNode, expectedWinner);
     backpropagateAllChildren(leafNode);
-}
-*/
-
-void expand(Node_mcst* leafNode, char expectedWinner){
-    size_t childCount = 0;
-    Node_mcst** nodes = CalculateAllChildren(leafNode,&childCount);
-    simulateAllNodes(nodes,childCount,expectedWinner);
-    mergeChildren(nodes, childCount,leafNode);
-}
-
-void mergeChildren(Node_mcst** children, size_t childCount, Node_mcst* parent){
-    //TODO: Centralize backprop, dont use winCount
-    if (parent->childCount == 0){
-        parent->childNodes = children;
-        parent->childCount = childCount;
-        backpropagateAllChildren(parent);
-    } else {
-        for (size_t i = 0; i < parent->childCount; i++){
-            parent->childNodes[i]->gameCount += children[i]->gameCount;
-            parent->childNodes[i]->winCount += children[i]->winCount;
-            backpropagate(parent,children[i]->winCount);
-            freeMCSTNode(children[i]);
-        }
-    }
 }
 
 //IMPROVEMENT: Instead of simulating use neural network
@@ -150,6 +126,7 @@ double calculateUTC(Node_mcst* node, double explorationFactor, int parentTotalGa
     return node->winCount / node->gameCount + explorationFactor * sqrt(log(parentTotalGames)/node->gameCount);
 }
 
+//TODO: Remove Duplicate Code CalculateAllChildren and addAllChildren
 Node_mcst** CalculateAllChildren(Node_mcst* parentNode, size_t* childCountOut){
     List* states = GetPossibleBoardStates(parentNode->boardState, parentNode->playerForNextTurn);
     size_t numberOfStates = getLength(states);
@@ -168,7 +145,6 @@ Node_mcst** CalculateAllChildren(Node_mcst* parentNode, size_t* childCountOut){
         *childCountOut = 0;
         return NULL;
     }
-    
 }
 
 void addAllChildren(Node_mcst* parentNode){
