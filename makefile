@@ -21,7 +21,7 @@ OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 INC_FLAGS := -Iinclude
 LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function # -lm -lpthread
 
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) $(BUILD_DIR)/$(PROG_MAINO)
+$(TARGET_EXEC): $(OBJS) $(BUILD_DIR)/$(PROG_MAINO)
 	$(CC) $(OBJS) $(BUILD_DIR)/$(PROG_MAINO) -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/%.c.o: %.c
@@ -43,17 +43,18 @@ $(BUILD_DIR)/$(PROG_MAINO): $(PROG_MAIN)
 
 clean:
 	$(RM) -r $(BUILD_DIR) 
+	$(RM) $(TARGET_EXEC)
 
 bundle:
 	$(RM) -r bundle.zip 
-	zip -r bundle.zip src/  include/  makefile
+	zip -r bundle.zip src/  include/  makefile client.conf
 
 testscript:
 	$(RM) -r testOut
 	./test_script.sh testOut testLog bundle.zip 
 
-play: $(BUILD_DIR)/$(TARGET_EXEC)
-	$(BUILD_DIR)/$(TARGET_EXEC) -g $(GAME_ID) -p $(PLAYER)
+play: $(TARGET_EXEC)
+	./$(TARGET_EXEC) -g $(GAME_ID) -p $(PLAYER)
 
 
 MKDIR_P ?= mkdir -p
