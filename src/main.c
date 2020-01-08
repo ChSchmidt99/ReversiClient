@@ -54,14 +54,14 @@ int preForkHandler(Connection* connection, InputParams* params, InitialSharedDat
     }
     
     initSharedDataOut->boardSize = rows;
-    initSharedDataOut->gameName = gameInstance->gameName;
+    initSharedDataOut->gameName = copyStringToNewMemoryAddr(gameInstance->gameName);
     initSharedDataOut->moveTime = moveTime;
     initSharedDataOut->opponentCount = gameInstance->opponentCount;
-    initSharedDataOut->ownInfo = gameInstance->ownPlayer;
+    initSharedDataOut->ownInfo = copyPlayerMetaToNewAddr(gameInstance->ownPlayer);
     if (gameInstance->opponentCount >= MAX_OPPONENTS)
         panic("Number of opponents not implemented!");
     for(size_t i = 0; i < gameInstance->opponentCount; i++)
-        initSharedDataOut->opponents[i] = gameInstance->opponents[i];
+        initSharedDataOut->opponents[i] = copyPlayerMetaToNewAddr(gameInstance->opponents[i]);
 
     //TODO: Memory Leak! gameInstance stuff has to be copied to initSharedDataOut
     freeGameInstance(gameInstance);

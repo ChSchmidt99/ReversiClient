@@ -12,3 +12,5 @@ void setupThinkerProcess(int pipe[2], GameDataSHM* gameSHM, Connection* connecti
 void teardownThinkerProcess(GameDataSHM* gameSHM, BoardSHM* boardSHM);
 
 int teardownConnection(Connection* connection);
+
+void deinitSharedData(InitialSharedData *initialSharedData);

@@ -14,6 +14,7 @@ int startProcessManagement(ProcessManagementInput* input){
     }
     BoardSHM* boardSHM = createBoardSHM(initialSharedData.boardSize);
     GameDataSHM* gameSHM = initGameDataSHM(&initialSharedData);
+    deinitSharedData(&initialSharedData);
     return pipeAndFork(input,connection,gameSHM,boardSHM);
 }
 
@@ -104,4 +105,12 @@ int readFileDescriptor(int fd[2]) {
 
 int writeFileDescriptor(int fd[2]) {
     return fd[1];
+}
+
+void deinitSharedData(InitialSharedData *sharedData){
+    free(sharedData->gameName);
+    freePlayerMeta(sharedData->ownInfo);
+    for (size_t i = 0; i < sharedData->opponentCount; i++){
+        freePlayerMeta(sharedData->opponents[i]);
+    }
 }

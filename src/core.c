@@ -10,6 +10,10 @@ PlayerMeta* newPlayerMeta(int number, char* name, int isReady){
     return meta;
 }
 
+PlayerMeta* copyPlayerMetaToNewAddr(PlayerMeta* playerMeta){
+    return newPlayerMeta(playerMeta->number, playerMeta->name, playerMeta->isReady);
+}
+
 void freePlayerMeta(PlayerMeta* meta){
     free(meta->name);
     free(meta);

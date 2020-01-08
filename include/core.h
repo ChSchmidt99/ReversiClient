@@ -32,6 +32,7 @@
 
     PlayerMeta* newPlayerMeta(int number, char* name, int isReady);
     void freePlayerMeta(PlayerMeta* meta);
+    PlayerMeta* copyPlayerMetaToNewAddr(PlayerMeta* playerMeta);
 
     ProcessInfo* newProcessInfo(int pipe[2], pid_t thinkerPID, pid_t communicatorPID);
     void freeProcessInfo(ProcessInfo* procInfo);
