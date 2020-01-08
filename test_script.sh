@@ -97,13 +97,12 @@ fi
 
 
 ## start PLAYER1
-# GAME_ID=$ID PLAYER=$PLAYER1 make play  &>/dev/null &
-./$EXECNAME -g $ID -p $PLAYER1  &>/dev/null &
+GAME_ID=$ID PLAYER=$PLAYER1 make play  &>/dev/null &
 
 ## check Valgrind for PLAYER2
 rm -f $VALGRIND_LOG
-#valgrind --log-file=$VALGRIND_LOG -q --leak-check=full --trace-children=yes ./$EXECNAME -g $ID -p $PLAYER2 &>/dev/null &
-./$EXECNAME -g $ID -p $PLAYER2  &>/dev/null &
+valgrind --log-file=$VALGRIND_LOG -q --leak-check=full --trace-children=yes ./$EXECNAME -g $ID -p $PLAYER2 &>/dev/null &
+
 
 ## launch browser
 if $SPECTATE; then
