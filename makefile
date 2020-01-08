@@ -19,7 +19,15 @@ SRCS := $(shell find $(SRC_DIRS) -name *.c ! -name main.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
 INC_FLAGS := -Iinclude
-LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function # -lm -lpthread
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	# Linux Flags
+	LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function -lm -lpthread
+else 
+	# Non Linux Flags
+	LDFLAGS ?= $(INC_FLAGS) -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function # -lm -lpthread
+endif
 
 $(TARGET_EXEC): $(OBJS) $(BUILD_DIR)/$(PROG_MAINO)
 	$(CC) $(OBJS) $(BUILD_DIR)/$(PROG_MAINO) -o $@ $(LDFLAGS)
