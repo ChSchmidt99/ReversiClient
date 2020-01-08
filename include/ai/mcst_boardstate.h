@@ -11,7 +11,6 @@
     char (*NewEmptyBoard())[BOARD_SIZE];
     void InitBoardWithStartingPosition(char(*board)[BOARD_SIZE]);
     char (*CopyBoard(char(*board)[BOARD_SIZE]))[BOARD_SIZE];
-    void FreeBoard(char(*board)[BOARD_SIZE]);
 
     void ExecuteMove(char(*board)[BOARD_SIZE], int row, int col, char forPlayer);
     void ExecuteMoveWithIdentifier(char(*board)[BOARD_SIZE], char* move, char forPlayer);

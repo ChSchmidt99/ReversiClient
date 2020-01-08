@@ -25,7 +25,9 @@ char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCa
 char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlayer, long long calcTimeinMs){
     long long returnTimestamp = currentTimestampInMs() + calcTimeinMs;
     
-    Node_mcst* rootNode = NewMCSTNode(board,forPlayer,NULL);
+    char(*boardCopy)[BOARD_SIZE] = CopyBoard(board);
+
+    Node_mcst* rootNode = NewMCSTNode(boardCopy,forPlayer,NULL);
     size_t childCount = 0;
     Node_mcst** children = CalculateAllChildren(rootNode,&childCount);
 
@@ -56,9 +58,7 @@ char* CalculateNextMoveAIOptimizedThreads(char(*board)[BOARD_SIZE], char forPlay
     printf("Tree For Player %c, number of Games: %i\n",forPlayer,rootNode->gameCount);
     
     //IMPROVEMENT: Maybe send move to pipe before freeing tree for performance 
-    for (size_t i = 0; i < childCount; i++){
-        FreeMCSTTree(children[i]);
-    }
+    FreeMCSTTree(rootNode);
     return move;
 }
 

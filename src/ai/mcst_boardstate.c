@@ -34,10 +34,6 @@ char (*CopyBoard(char(*board)[BOARD_SIZE]))[BOARD_SIZE]{
     return out;
 }
 
-void FreeBoard(char(*board)[BOARD_SIZE]){
-    free(board);
-}
-
 List* GetPossibleBoardStates(char(*board)[BOARD_SIZE], char forPlayer){
     size_t numberOfStates;
     size_t** possibleMoves = getPossibleMoves(board,forPlayer,&numberOfStates);

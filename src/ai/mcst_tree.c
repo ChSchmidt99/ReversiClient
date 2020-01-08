@@ -39,7 +39,8 @@ void PrintNode(Node_mcst* node){
 }
 
 void freeMCSTNode(Node_mcst* node){
-    FreeBoard(node->boardState);
+    free(node->boardState);
+    free(node->childNodes);
     free(node);
 }
 
@@ -82,7 +83,7 @@ void simulateAllChildren(Node_mcst* parentNode, char expectedWinner){
 char rolloutForNode(Node_mcst* parentNode){
     char (*finishedBoard)[BOARD_SIZE] = simulateGame(CopyBoard(parentNode->boardState),parentNode->playerForNextTurn);
     char winner = GetWinner(finishedBoard);
-    FreeBoard(finishedBoard);
+    free(finishedBoard);
     return winner;
 }
 
@@ -91,7 +92,7 @@ char (*simulateGame(char (*startingBoard)[BOARD_SIZE],char currentPlayer))[BOARD
         return startingBoard;
 
     char (*nextBoard)[BOARD_SIZE] = GetRandomPossibleBoardState(startingBoard,currentPlayer);
-    FreeBoard(startingBoard);
+    free(startingBoard);
     return simulateGame(nextBoard,GetNextPlayer(nextBoard,currentPlayer));
 }
 
