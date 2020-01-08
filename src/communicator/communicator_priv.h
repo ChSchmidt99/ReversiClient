@@ -25,5 +25,7 @@ int freeServerMessageAndReturnInt(ServerMessage* message, int i);
 char* getNameFromPlayerMetaTokens(char** tokens, size_t tokenCount);
 char* getNameForOtherPlayersTokens(char** tokens, size_t tokenCount);
 
+int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]);
+
 GameKind parseGameKind(char* message);
 PlayerMeta* parseOtherPlayerMeta(char* message);

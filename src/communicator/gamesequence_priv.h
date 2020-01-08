@@ -14,8 +14,7 @@ int receivedQuit(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSH
 char* waitForThinkerResponse(Connection* connection, GameDataSHM* gameSHM);
 
 int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM, GameDataSHM* gameSHM);
-int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]);
+int writeBoardToSharedMemory(size_t boardSize, char board[][boardSize], BoardSHM* boardSHM, GameDataSHM* gameSHM);
 
 int notifyServerAboutThinking(Connection* connection);
 int signalThinker(GameDataSHM* gameSHM);

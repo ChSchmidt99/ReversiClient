@@ -197,32 +197,55 @@ int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
 }
 
 //IMPROVEMENT: Use proper array instead of double ptr
-char** receiveBoard(Connection* connection, size_t rows){
-    char** board = safeMalloc(sizeof(char*) * rows);
-    for(size_t i = 0; i < rows; i++){
+int receiveBoard(Connection* connection, size_t boardSize, char boardBuffer[][boardSize]){
+    char** stringBoard = safeMalloc(sizeof(char*) * boardSize);
+    for(size_t i = 0; i < boardSize; i++){
         ServerMessage* message = receiveServerMessage(connection);
         if(message->type == Error){
             printf("%s\n",message->messageReference);
             freeServerMessage(message);
-            return (char**) -1;
+            return -1;
         }
-            
-        board[i] = copyStringToNewMemoryAddr(message->messageReference + 2);
+        stringBoard[i] = copyStringToNewMemoryAddr(message->messageReference + 2);        
         freeServerMessage(message);
     }
 
     ServerMessage* message = receiveServerMessage(connection);
     if(message->type == Error){
         printf("%s\n",message->messageReference);
-        board = (char**) -1;
+        return -1;
     }
     else if(message->type != Endfield){
         printf("Expected Endfield!");
-        board = (char**) -1;
+        return -1;
     }
+
+    if (convertBoard(stringBoard, boardSize, boardBuffer) == -1)
+        return -1;
+
+    for(size_t i = 0; i < boardSize; i++){
+        free(stringBoard[i]);
+    }
+    free(stringBoard);
     freeServerMessage(message);
-    return board;
+    return 1;
 }
+
+int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]){
+    for (size_t i = 0; i < boardSize; i++){
+        char* row = newStringWithoutDelimiter(stringBoard[i],' ');
+        if (strlen(row) != boardSize + 1){
+            perror("Unexpected board row length!\n");
+            return -1;
+        }
+        for (size_t j = 0; j < boardSize; j++){
+            boardBuffer[i][j] = row[j + 1];
+        }
+        free(row);
+    }
+    return 0;
+}
+
 
 int receiveOkThink(Connection* connection){
     ServerMessage* message = receiveServerMessage(connection);

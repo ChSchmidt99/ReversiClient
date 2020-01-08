@@ -98,13 +98,18 @@ int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* ga
     if (receiveBoardDimensions(connection,&rows,&cols) == -1)
         return -1;
 
-    char** board = receiveBoard(connection,rows);
+    char board[rows][cols];
+    if(receiveBoard(connection,rows, board) == -1)
+        return -1;
+
     //TODO: Own function
     printf("Winning Board:\n");
     for (size_t i = 0; i < rows; i++){
-        printf("%s\n",board[i]);
+        for (size_t j = 0; j < rows; j++){
+            printf("%c",board[i][j]);
+        }
+        printf("\n");
     }
-    free(board);
 
     //TODO: Get player name and print it 
     //TODO: Own function
@@ -119,41 +124,25 @@ int receivedGameover(Connection* connection, BoardSHM* boardSHM, GameDataSHM* ga
     return 0;
 }
 
-int writeBoardToSharedMemory(char** board, size_t boardSize, BoardSHM* boardSHM, GameDataSHM* gameSHM){
-    char convertedBoard[boardSize][boardSize];
-    if (convertBoard(board,boardSize,convertedBoard) == -1)
-        return -1;
-
-    setBoard(boardSHM,boardSize,convertedBoard);
-    return 0;
-}
-
-int convertBoard(char** stringBoard, size_t boardSize, char boardBuffer[][boardSize]){
-    for (size_t i = 0; i < boardSize; i++){
-        char* row = newStringWithoutDelimiter(stringBoard[i],' ');
-        if (strlen(row) != boardSize + 1){
-            perror("Unexpected board row length!\n");
-            return -1;
-        }
-        for (size_t j = 0; j < boardSize; j++){
-            boardBuffer[i][j] = row[j + 1];
-        }
-        free(row);
-    }
+int writeBoardToSharedMemory(size_t boardSize, char board[][boardSize], BoardSHM* boardSHM, GameDataSHM* gameSHM){
+    setBoard(boardSHM,boardSize,board);
     return 0;
 }
 
 int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM* gameSHM){
     size_t boardSize = getBoardSize(boardSHM);
-    char** stringBoard = receiveBoard(connection,boardSize);
-    if (stringBoard == (char**) -1)
+    char board[boardSize][boardSize];
+    if(receiveBoard(connection,boardSize, board) == -1)
         return -1;
     
     for(size_t i = 0; i < boardSize; i++){
-        printf("%s\n",stringBoard[i]);
+        for(size_t j = 0; j < boardSize; j++){
+            printf("%c ",board[i][j]);
+        }
+        printf("\n");
     }
 
-    if (writeBoardToSharedMemory(stringBoard, boardSize, boardSHM, gameSHM) == -1)
+    if (writeBoardToSharedMemory(boardSize, board, boardSHM, gameSHM) == -1)
         return -1;
     
     notifyServerAboutThinking(connection);
@@ -166,8 +155,6 @@ int executeMoveSequence(Connection* connection, BoardSHM* boardSHM, GameDataSHM*
 
     sendMove(connection,move);
     free(move);
-    //TODO: Properly free Board!
-    free(stringBoard);
     return 0;
 }
 

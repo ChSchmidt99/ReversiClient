@@ -19,7 +19,7 @@ int player0Won(Connection* connection);
 
 int nextMessageIsEndplayers(Connection* connection);
 
-char** receiveBoard(Connection* connection, size_t rows);
+int receiveBoard(Connection* connection, size_t boardSize, char boardBuffer[][boardSize]);
 int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols);
 
 int receiveOkThink(Connection* connection);
