@@ -15,7 +15,7 @@ char* CalculateNextMoveAI(char(*board)[BOARD_SIZE], char forPlayer, time_t minCa
     Node_mcst* chosenChild = getChildWithMaxScoreAndMaxGames(mcstTree, latestReturnTimestamp, forPlayer);    
     char* move = GetMoveForBoardStates(board,chosenChild->boardState);
     printf("Tree For Player %c, number of Games: %i\n",forPlayer,mcstTree->gameCount);
-    //TODO: Maybe free Tree after return for performance increase
+    //IMPROVEMENT: Maybe free Tree after return for performance increase
     FreeMCSTTree(mcstTree);
     return move;
 }
@@ -96,7 +96,7 @@ void* expandMCSTTree(void* input){
 }
 
 Node_mcst* getChildWithMaxScoreAndMaxGames(Node_mcst* parent, time_t latestReturnTimestamp, char forPlayer){
-    //TODO: Only descend on the node with the highest score?
+    //IMPROVEMENT: Only descend on the node with the highest score?
     while (time(NULL) < latestReturnTimestamp){
         int maxGames = getChildMaxGames(parent);
         Node_mcst* maxScore = getChildWithMaxScore(parent);

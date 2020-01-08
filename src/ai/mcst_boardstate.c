@@ -69,7 +69,7 @@ char (*GetRandomPossibleBoardState(char(*board)[BOARD_SIZE], char forPlayer))[BO
     return out;
 }
 
-//TODO: Remove duplicate code
+//IMPROVEMENT: Remove duplicate code
 size_t GetPossibleMoveCount(char(*board)[BOARD_SIZE], char forPlayer){
     size_t moveCount = 0;
     for (size_t row = 0; row < BOARD_SIZE; row++){
@@ -197,7 +197,7 @@ size_t** getPossibleMoves(char(*board)[BOARD_SIZE], char forPlayer, size_t* numb
     return out;
 }
 
-//TODO: Only 8x8 Boards supportded, make dynamic!
+//IMPROVEMENT: Only 8x8 Boards supportded, make dynamic!
 char* getIdentifier(int row, int col){
     char* out = safeMalloc(sizeof(char) * 3);
 
@@ -229,7 +229,7 @@ int isAdjointMove(char(*board)[BOARD_SIZE], int row, int col){
     return 0;
 }
 
-//TODO: check if perfomance might increase by removing functions
+//IMPROVEMENT: check if perfomance might increase by removing functions
 int isOccupied(char(*board)[BOARD_SIZE], int row, int col){
     if (board[row][col] != MCST_EMPTY_SYMBOL){
         return 1;

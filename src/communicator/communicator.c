@@ -196,7 +196,7 @@ int receiveBoardDimensions(Connection* connection, size_t *rows, size_t *cols){
     return 0;
 }
 
-//TODO: Use proper array instead of double ptr
+//IMPROVEMENT: Use proper array instead of double ptr
 char** receiveBoard(Connection* connection, size_t rows){
     char** board = safeMalloc(sizeof(char*) * rows);
     for(size_t i = 0; i < rows; i++){

@@ -1,7 +1,7 @@
 #include "shareddataaccess/gamedataaccess.h"
 #include "core.h"
 
-//TODO: Make dynamic
+//IMPROVEMENT: Make dynamic
 #define NAME_BUFFER_SIZE 256
 
 typedef struct {

@@ -65,7 +65,6 @@ void expand(Node_mcst* leafNode, char expectedWinner){
     size_t childCount = 0;
     Node_mcst** nodes = CalculateAllChildren(leafNode,&childCount);
     simulateAllNodes(nodes,childCount,expectedWinner);
-    //TODO: Criticla Area, semaphore needed?
     mergeChildren(nodes, childCount,leafNode);
 }
 
@@ -85,7 +84,7 @@ void mergeChildren(Node_mcst** children, size_t childCount, Node_mcst* parent){
     }
 }
 
-//TODO: Instead of simulating use neural network
+//IMPROVEMENT: Instead of simulating use neural network
 void simulateAllNodes(Node_mcst** nodes, size_t nodeCount,char expectedWinner){
     for (size_t i = 0; i < nodeCount; i++){
         char winner = rolloutForNode(nodes[i]);

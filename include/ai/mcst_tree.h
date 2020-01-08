@@ -7,7 +7,7 @@
 
     typedef struct _Node_mcst Node_mcst;
 
-    //TODO: Use Binary representation for game board
+    //IMPROVEMENT: Use Binary representation for game board
     struct _Node_mcst{
         char(*boardState)[BOARD_SIZE];
         char playerForNextTurn;

@@ -2,7 +2,7 @@
 #define PROLOG_H
     #include "communicator/communicator.h"
 
-    //TODO: Use rows and cols instead of boardSize
+    //IMPROVEMENT: Use rows and cols instead of boardSize
     typedef struct _GameInstance {
         PlayerMeta* ownPlayer;
         GameKind gameKind;
