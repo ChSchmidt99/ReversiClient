@@ -12,7 +12,6 @@ int startProcessManagement(ProcessManagementInput* input){
         teardownConnection(connection);
         return -1;
     }
-    
     BoardSHM* boardSHM = createBoardSHM(initialSharedData.boardSize);
     GameDataSHM* gameSHM = initGameDataSHM(&initialSharedData);
     return pipeAndFork(input,connection,gameSHM,boardSHM);

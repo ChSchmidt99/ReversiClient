@@ -15,7 +15,6 @@
 #define VERSION_NUMBER "2.3"
 #define DEFAULT_CONFIG_PATH "./client.conf"
 
-//TODO: Improve Logging!
 //TODO: Cach strc+c signal and execute teardown!
 int main(int argc, char *argv[]){
     srand(time(NULL));
@@ -36,12 +35,11 @@ int main(int argc, char *argv[]){
 }
 
 int preForkHandler(Connection* connection, InputParams* params, InitialSharedData* initSharedDataOut){
-    GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,params->gameId, params->playerPreference);
-    if (gameInstance == (GameInstance*)-1){
-        perror("Failed Prolog!\n");
+    GameInstance* gameInstance = executeProlog(connection, params);
+    if (gameInstance == NULL){
+        perror("Failed Prolog\n");
         return EXIT_FAILURE;
     }
-    printGameInstanceDetails(gameInstance);
 
     int moveTime = waitForFirstMove(connection);
     if (moveTime == -1){
@@ -90,6 +88,18 @@ int thinkerEntry(BoardSHM* boardSHM, GameDataSHM* gameSHM){
     deinitThinker();
     printf("Thinker returning\n");
     return 0;
+}
+
+GameInstance* executeProlog(Connection* connection, InputParams* params){
+    printf("Starting Prolog...\n");
+    GameInstance* gameInstance = initiateProlog(connection,VERSION_NUMBER,params->gameId, params->playerPreference);
+    if (gameInstance == (GameInstance*)-1){
+        perror("Failed Prolog!\n");
+        return NULL;
+    }
+    printf("Succesfully Finished Prolog, Game Instance Info: \n\n");
+    printGameInstanceDetails(gameInstance);
+    return gameInstance;
 }
 
 int initInputParams(int argc, char* argv[], InputParams* inputParams){

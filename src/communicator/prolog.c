@@ -4,19 +4,18 @@
 #include "communicator/servermessage.h"
 #include "misc/utilities.h"
 
-void printAndFree(char* message);
 void printPlayerMeta(PlayerMeta* meta);
 GameInstance* initGameInstance(PlayerMeta* ownPlayer, GameKind gameKind, size_t opponentCount, PlayerMeta* opponents[opponentCount], char* gameName);
 
-//TODO: Splitup and clean function
+//IMPROVEMENT: Splitup and clean function
 GameInstance* initiateProlog(Connection* connection, const char* version, const char* gameId, const char* playerPreference){
 
     char* message = receiveServerGreeting(connection);
     if (message == (char*)-1)
         return (GameInstance*) -1;
 
-
-    printAndFree(message);
+    printf("Server Greeting: %s\n",message);
+    free(message);
 
     sendClientVersion(connection, version);
 
@@ -96,6 +95,7 @@ void printGameInstanceDetails(GameInstance* gameInstance){
     printf("Opponents Info: \n");
     for (size_t i = 0; i < gameInstance->opponentCount; i++)
         printPlayerMeta(gameInstance->opponents[i]);
+    printf("\n\n");
 }
 
 void printPlayerMeta(PlayerMeta* meta){
@@ -104,9 +104,4 @@ void printPlayerMeta(PlayerMeta* meta){
         printf("Ready\n");
     else
         printf("Not Ready\n");
-}
-
-void printAndFree(char* message){
-    printf("%s\n",message);
-    free(message);
 }

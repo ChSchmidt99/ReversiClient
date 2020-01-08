@@ -55,6 +55,7 @@ int connectToServer(Connection* connection){
         
     freeaddrinfo(socketAddr);
     connection->socket = sock;
+    printf("Successfully Connected to host '%s:%s'\n", connection->hostname, connection->port);
     return 0;
 }
 

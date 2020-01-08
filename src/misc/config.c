@@ -53,7 +53,6 @@ int setParamsFromFile(InputParams* params, char *filePath){
       pointer[i++] = ch;
   }
   params->hostName = copyStringToNewMemoryAddr(paramsArray[0]);
-  printf("%s\n", params->hostName);
   params->portNumber = copyStringToNewMemoryAddr(paramsArray[1]);
   params->gameKind = copyStringToNewMemoryAddr(paramsArray[2]);
   fclose(configFile);
